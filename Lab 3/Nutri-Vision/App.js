@@ -13,9 +13,26 @@ import LandingUI from './MobileApp/Screens/LandingUI';
 import ProfilePage from './MobileApp/Screens/ProfilePage'
 import Login from './MobileApp/Screens/Login';
 
+import { createNativeStackNavigator } from '@react-navigation/native-stack'; 
+import { NavigationContainer } from '@react-navigation/native'; 
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
-  return <Login/>;
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+      <Stack.Screen
+        name='Landing'
+        component={LandingUI}
+      />
+      <Stack.Screen
+        name='Login'
+        component={Login}
+      />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
   
 }
   /*const handlePress = () => console.log("Text pressed");
