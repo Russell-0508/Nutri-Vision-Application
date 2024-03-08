@@ -15,6 +15,7 @@ import {
 
 import Svg, { Path } from 'react-native-svg';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useNavigation } from "@react-navigation/native"
 // import { Stack, useRouter } from 'expo-router';
 // import { COLORS, icons, images, SIZES } from ' ./constants';
 
@@ -23,9 +24,9 @@ const screenWidth = Dimensions.get('window').width;
 // get 25% of screen height
 const curveHeight = Dimensions.get('window').height * 0.4;
 
-function Login(props) {
+function Login({navigation}) {
     const buttonClickHandler = () =>{
-        console.log('Button pressed');
+        console.log('Pressed create an account');
         // do something
     }
 
@@ -99,7 +100,7 @@ function Login(props) {
                 </TouchableOpacity>
             <View style={{marginTop: 50}}>
                 <TouchableOpacity 
-                    onPress={buttonClickHandler}
+                    onPress={()=>navigation.navigate("Profile")}
                     style={styles.buttonContainer}>
                     <Text style = {{
                         fontSize: 18,
@@ -112,7 +113,8 @@ function Login(props) {
             </View>
             <View style={{marginTop: 80}}>
                 <Text style={{
-                        alignSelf: 'center'
+                        alignSelf: 'center',
+                        fontSize: 18,
                     }}> Don't have an account? </Text>
                     <TouchableOpacity 
                         onPress={buttonClickHandler}
