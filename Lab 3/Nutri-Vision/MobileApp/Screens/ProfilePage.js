@@ -23,7 +23,7 @@ const ProfileScreen = () => {
       <ScrollView style={styles.container}>
         <View style={styles.profileHeader}>
           <Image
-            source={require('./assets/profile_image.png')}
+            source={require('../assets/profile_image.png')}
             style={styles.profileImage}
           />
           <Text style={styles.profileName}>{profileData.name}</Text>

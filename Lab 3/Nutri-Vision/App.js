@@ -9,13 +9,35 @@ import {  Platform,
           SafeAreaView, 
           Alert,
           Dimensions, } from 'react-native';
+//import LandingUI from './MobileApp/Screens/LandingUI';
+import * as React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LandingUI from './MobileApp/Screens/LandingUI';
+import ProfilePage from './MobileApp/Screens/ProfilePage';
+import ScannerPage from './MobileApp/Screens/ScannerPage';
 
 
+const Stack = createNativeStackNavigator();
 
-export default function App() {
+/*export default function App() {
   return <LandingUI/>;
+}*/
+
+function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="LandingUI">
+        <Stack.Screen name="LandingUI" component={LandingUI} options={{ title: 'Welcome' }}/>
+        <Stack.Screen name="ProfilePage" component={ProfilePage} />
+        <Stack.Screen name="ScannerPage" component={ScannerPage} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
 }
+
+export default App;
+
   /*const handlePress = () => console.log("Text pressed");
   //console.log(useImageDimensions());
 
