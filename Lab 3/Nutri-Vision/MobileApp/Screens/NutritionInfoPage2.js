@@ -56,8 +56,8 @@ export default function NutritionalInfoPage() {
   
 
    // Placeholder mass and calories 
-   const foodItemMass = "250g"; // Example mass
-   const foodItemCalories = "450 Calories"; // Example calories
+   const foodItemMass = "250g";
+   const foodItemCalories = "450 Calories";
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -118,8 +118,6 @@ export default function NutritionalInfoPage() {
             <MaterialIcons name="manage-search" size={24} color="#4CAF50" />
             <Text style={styles.tabTitle}>History</Text>
           </TouchableOpacity>
-            {/* Repeat for other tab items: Calories, Profile, More */}
-            {/* ... */}
           </View>
         </View>
     </SafeAreaView>
@@ -136,31 +134,30 @@ const styles = StyleSheet.create({
     paddingVertical: 10, 
     alignItems: 'center', 
     justifyContent: 'center',
-    position: 'relative', // Needed for absolute positioning of children
+    position: 'relative',
   },
   imageStyle: {
-    width: 150, // Set your desired width
-    height: 150, // Set your desired height
+    width: 150,
+    height: 150,
     marginTop: 30
   },
   threeDotButton: {
-    position: 'absolute', // Absolute position to place it at the top right
-    top: 15, // Adjust as needed
-    right: 30, // Adjust as needed
+    position: 'absolute', 
+    top: 15,
+    right: 30, 
   },
   heartButton: {
-    position: 'absolute', // Absolute position to place it below the three-dot button
-    top: 50, // Adjust this value so that it appears right below the three-dot button
-    right: 30, // Aligns with the three-dot button horizontally
+    position: 'absolute', 
+    top: 50,
+    right: 30, 
   },
   nutritionalInfoContainer: {
     backgroundColor: 'white',
-    borderRadius: 40, // Rounded corners
-    margin: -50, // Margin from the screen edges
+    borderRadius: 40, 
+    margin: -50,
     marginLeft: 0,
-    marginTop: 40, // Distance from the top
-    flex: 1, // Takes up all available space
-    //alignItems: 'center',
+    marginTop: 40, 
+    flex: 1, 
     justifyContent: 'flex-start', 
   },
   nutritionalInfoContainerText: {
@@ -216,7 +213,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'grey',
     alignSelf: 'stretch',
     marginTop: 8,
-    marginLeft: 40, // Adjust these values as needed
+    marginLeft: 40,
     marginRight: 90,
   },
   addIngredientButton: {
@@ -232,35 +229,33 @@ const styles = StyleSheet.create({
     marginRight: 150,
   },
   confirmMealButton: {
-    backgroundColor: 'grey', // The button's background color
-    borderRadius: 20, // Adjust for rounded corners
-    paddingVertical: 20, // Padding inside the button
-    paddingHorizontal: 20, // Padding inside the button
-    marginVertical: 20, // Margin outside the button
-    marginHorizontal: 40, // Center the button horizontally
+    backgroundColor: 'grey', 
+    borderRadius: 20, 
+    paddingVertical: 20, 
+    paddingHorizontal: 20, 
+    marginVertical: 20, 
+    marginHorizontal: 40, 
     marginRight: 90,
     marginBottom: 120,
-    alignItems: 'center', // Center the text horizontally
-    justifyContent: 'center', // Center the text vertically
+    alignItems: 'center', 
+    justifyContent: 'center',
   },
   confirmMealText: {
-    fontSize: 16, // Text size
-    color: 'white', // Text color
-    fontWeight: 'bold', // Text weight
+    fontSize: 16, 
+    color: 'white',
+    fontWeight: 'bold',
   },
 
   bottomContainer: {
-    position: 'absolute',  // Positioning it over the bottom SafeAreaView
-    bottom: 5,             // Aligns it to the bottom
+    position: 'absolute', 
+    bottom: 5,
     left: 0,
     right: 0,
-    backgroundColor: 'white', // This is the background color of the bottom platform
-    paddingVertical: 20, // Adjust the padding as needed
-    paddingHorizontal: 10, // Adjust the padding as needed
-    // Add a large border radius for rounded corners
+    backgroundColor: 'white',
+    paddingVertical: 20, 
+    paddingHorizontal: 10,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    // Shadows can be adjusted as per your design to give depth
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
@@ -269,42 +264,42 @@ const styles = StyleSheet.create({
   },
   tabBar: {
     flexDirection: 'row',
-    justifyContent: 'space-around', // This spaces out the icons evenly
-    alignItems: 'center', // This centers the icons vertically
-    height: 50, // Adjust as needed
+    justifyContent: 'space-around',
+    alignItems: 'center', 
+    height: 50, 
   },
   tabItemCalories: {
     alignItems: 'center',
-    marginRight: 20, // Adjust this value as needed to push away from the scanner button
+    marginRight: 20,
   },
   
   tabItemProfile: {
     alignItems: 'center',
-    marginLeft: 20, // Adjust this value as needed to push away from the scanner button
+    marginLeft: 20,
   },
   tabItem: {
-    alignItems: 'center', // This centers the icon and label
+    alignItems: 'center', 
   },
   scannerButton: {
-    backgroundColor: '#ccc', // Grey background
-    height: 75, // Set height for the circle
-    width: 75, // Set width for the circle
+    backgroundColor: '#ccc', 
+    height: 75, 
+    width: 75, 
     borderRadius: 37.5, // Half the size of width to make it a circle
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: -37.5,
     marginRight: -27.5,
-    top: -10, // Half the size of the button to move it up above the tab bar
-    elevation: 4, // Optional: adds shadow on Android
+    top: -10,
+    elevation: 4, 
     shadowColor: '#000', // Optional: adds shadow on iOS
     shadowOffset: { width: 0, height: 2 }, // Optional: adds shadow on iOS
     shadowOpacity: 0.25, // Optional: adds shadow on iOS
     shadowRadius: 3.84, // Optional: adds shadow on iOS
   },
   tabTitle: {
-    color: '#4CAF50', // This sets the label color
-    fontSize: 15, // Adjust the size as needed
-    marginTop: 4, // This adds space between the icon and label
+    color: '#4CAF50', 
+    fontSize: 15, 
+    marginTop: 4,
   },
 
 });
