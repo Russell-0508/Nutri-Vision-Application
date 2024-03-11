@@ -9,14 +9,10 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
-// import { LandingUIStyle } from './StyleSheets/LandingUIStyle';
+import { useNavigation } from "@react-navigation/native"
 
-function LandingUI(props) {
+function LandingUI({navigation}) {
 
-    const buttonClickHandler = () =>{
-        console.log('Button pressed');
-        // do something
-    }
     return (
         <View style={styles.container}>  
             <View style={styles.logoContainer}>
@@ -31,7 +27,7 @@ function LandingUI(props) {
                 <Text style={styles.tagline}>Scan, Know, Nourish: Your Pocket Nutritionist!</Text>
             </View>
             <TouchableOpacity 
-                onPress={buttonClickHandler}
+                onPress={()=>navigation.navigate("Login")}
                 style={styles.buttonContainer}>
                 <Text style = {{
                     fontSize: 20,

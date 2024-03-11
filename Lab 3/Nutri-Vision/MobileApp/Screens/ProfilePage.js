@@ -46,6 +46,7 @@ const ProfileScreen = () => {
         </View>
         <Text style={styles.headerText}>Account</Text>
         <View style={styles.actionsContainer}>
+
           <TouchableOpacity onPress={() => handlePress('Edit Profile')} style={styles.actionItem}>
             <MaterialIcons name="edit" size={20} color="#4CAF50" style={styles.iconStyle}/>
             <Text style={styles.actionText}>Edit Profile</Text>
@@ -96,6 +97,7 @@ const ProfileScreen = () => {
           <TouchableOpacity style={styles.tabItem} onPress={() => handlePress('History')}>
             <MaterialIcons name="manage-search" size={24} color="#4CAF50" />
             <Text style={styles.tabTitle}>History</Text>
+
           </TouchableOpacity>
             {/* Repeat for other tab items: Calories, Profile, More */}
             {/* ... */}

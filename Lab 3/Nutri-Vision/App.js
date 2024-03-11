@@ -14,72 +14,57 @@ import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LandingUI from './MobileApp/Screens/LandingUI';
-import ProfilePage from './MobileApp/Screens/ProfilePage';
+
 import ScannerPage from './MobileApp/Screens/ScannerPage';
+import ProfilePage from './MobileApp/Screens/ProfilePage'
+import Login from './MobileApp/Screens/Login';
+import History from './MobileApp/Screens/History';
+import IndiMeal from './MobileApp/Screens/IndiMeal'
+
+
+import { createNativeStackNavigator } from '@react-navigation/native-stack'; 
+import { NavigationContainer } from '@react-navigation/native'; 
+
+const Stack = createNativeStackNavigator();
 
 
 const Stack = createNativeStackNavigator();
 
-/*export default function App() {
-  return <LandingUI/>;
-}*/
 
-function App() {
+export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="LandingUI">
-        <Stack.Screen name="LandingUI" component={LandingUI} options={{ title: 'Welcome' }}/>
-        <Stack.Screen name="ProfilePage" component={ProfilePage} />
-        <Stack.Screen name="ScannerPage" component={ScannerPage} />
+      <Stack.Navigator>
+
+      <Stack.Screen
+        name='IndiMeal'
+        component={IndiMeal}
+      />
+
+      <Stack.Screen
+        name='History'
+        component={History}
+      />
+      
+      <Stack.Screen
+        name='Landing'
+        component={LandingUI}
+      />
+      <Stack.Screen
+        name='Login'
+        component={Login}
+      />
+      <Stack.Screen
+        name='Profile'
+        component={ProfilePage}
+      />
+      <Stack.Screen 
+      name="ScannerPage" 
+      component={ScannerPage} 
+      />
       </Stack.Navigator>
     </NavigationContainer>
   );
+  
 }
-
-export default App;
-
-  /*const handlePress = () => console.log("Text pressed");
-  //console.log(useImageDimensions());
-
-  return (
-    <View style={styles.container}>
-      <Text numberOfLines={1} onPress={handlePress} >
-        Is this a cute cat?
-        </Text>
-        <TouchableHighlight 
-        onPress={() => Alert.alert("My button", "My message",[
-          {text: 'Yes', onPress: () => console.log('Yes pressed')},
-          {text: 'No', onPress: () => console.log('No pressed')}
-        ])
-      }
-        >
-
-        <Image 
-        source = {require('./assets/kitty.png')}
-        style = {styles.button}
-        />
-
-        </TouchableHighlight>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    backgroundColor: '#fff',
-    alignContent: 'center',
-    alignItems: 'center',
-  },
-  button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#fff',
-    padding: 10,
-    width: 200,
-    height: 200,
-  },
-});*/
+/*  */  
