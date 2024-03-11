@@ -1,10 +1,9 @@
 import React from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { useNavigation } from '@react-navigation/native';
 
 
-function ProfileScreen({navigation}){
+const ProfileScreen = () => {
   // Placeholder for profile data
   const profileData = {
     name: 'Russell Tan',
@@ -24,7 +23,7 @@ function ProfileScreen({navigation}){
       <ScrollView style={styles.container}>
         <View style={styles.profileHeader}>
           <Image
-            source={require('../assets/profile_image.png')}
+            source={require('./assets/profile_image.png')}
             style={styles.profileImage}
           />
           <Text style={styles.profileName}>{profileData.name}</Text>
@@ -47,7 +46,6 @@ function ProfileScreen({navigation}){
         </View>
         <Text style={styles.headerText}>Account</Text>
         <View style={styles.actionsContainer}>
-
           <TouchableOpacity onPress={() => handlePress('Edit Profile')} style={styles.actionItem}>
             <MaterialIcons name="edit" size={20} color="#4CAF50" style={styles.iconStyle}/>
             <Text style={styles.actionText}>Edit Profile</Text>
@@ -88,17 +86,16 @@ function ProfileScreen({navigation}){
             <MaterialIcons name="fastfood" size={24} color="#4CAF50" />
             <Text style={styles.tabTitle}>Calories</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.scannerButton} onPress={() => navigation.navigate('ScannerPage')}>
+          <TouchableOpacity style={styles.scannerButton} onPress={() => handlePress('Scanner')}>
             <MaterialIcons name="center-focus-strong" size={40} color="#4CAF50" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.tabItemProfile} onPress={() => handlePress('Profile')}>
             <MaterialIcons name="person" size={24} color="#4CAF50" />
             <Text style={styles.tabTitle}>Profile</Text>
           </TouchableOpacity>   
-          <TouchableOpacity style={styles.tabItem} onPress={()=>navigation.navigate("History")}>
+          <TouchableOpacity style={styles.tabItem} onPress={() => handlePress('History')}>
             <MaterialIcons name="manage-search" size={24} color="#4CAF50" />
             <Text style={styles.tabTitle}>History</Text>
-
           </TouchableOpacity>
             {/* Repeat for other tab items: Calories, Profile, More */}
             {/* ... */}
