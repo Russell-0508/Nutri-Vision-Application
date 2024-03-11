@@ -13,6 +13,7 @@ import LandingUI from './MobileApp/Screens/LandingUI';
 import ProfilePage from './MobileApp/Screens/ProfilePage'
 import Login from './MobileApp/Screens/Login';
 import History from './MobileApp/Screens/History';
+import IndiMeal from './MobileApp/Screens/IndiMeal'
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack'; 
 import { NavigationContainer } from '@react-navigation/native'; 
@@ -24,6 +25,12 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+
+      <Stack.Screen
+        name='IndiMeal'
+        component={IndiMeal}
+      />
+
       <Stack.Screen
         name='History'
         component={History}
@@ -41,9 +48,10 @@ export default function App() {
         name='Profile'
         component={ProfilePage}
       />
+      
       </Stack.Navigator>
     </NavigationContainer>
   );
   
 }
-/* */  
+/*  */  
