@@ -3,11 +3,11 @@ import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, 
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
+import { useNavigation } from '@react-navigation/native';
 
 <MaterialIcons name="photo-library" size={30} color="black" />
 
-export default function CameraComponent() {
+function ScannerPage({navigation}) {
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [galleryPermission, setGalleryPermission] = useState(null);
@@ -184,3 +184,5 @@ const styles = StyleSheet.create({
 function handleArrowPress() {
   // Handle the arrow button press event
 }
+
+export default ScannerPage;

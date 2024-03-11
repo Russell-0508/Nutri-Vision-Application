@@ -3,9 +3,10 @@ import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, 
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useNavigation } from '@react-navigation/native';
 
 
-function NutritionalInfoPage() {
+function IndividualMeal({navigation}) {
   // State to hold the image URI
   const [imageUri, setImageUri] = useState(null); // Initial state is null
 
@@ -165,7 +166,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     fontStyle: 'italic',
-    textAlign: 'flex-start', 
     margin: 16,
   },
   nutritionalDetailsContainer: {
@@ -304,4 +304,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default NutritionalInfoPage;
+export default IndividualMeal;

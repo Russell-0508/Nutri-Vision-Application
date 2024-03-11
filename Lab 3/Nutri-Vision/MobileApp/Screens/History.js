@@ -21,7 +21,7 @@ import Collapsible from 'react-native-collapsible'
 curveHeight = 100
 screenWidth = 500
 
-function Entry({title, date, navgiation}){
+function Entry({title, date, navigation}){
     return(
         <View style={styles.entry}>
             <View style={styles.entryContainer}> 
@@ -29,8 +29,7 @@ function Entry({title, date, navgiation}){
                 <Text style={styles.entryDate}> {date} </Text>
             </View>
             <View> 
-                <TouchableOpacity 
-                onPress={()=>navigation.navigate("IndiMeal")}>
+                <TouchableOpacity> 
                 <Image
                     style={styles.arrowlogo}
                     source={require('../assets/right_pointing_arrow.png')}
@@ -69,7 +68,8 @@ function History({navigation}) {
                             resizeMode='contain'
                         />
                     </TouchableOpacity>
-                    <TouchableOpacity>
+                    <TouchableOpacity
+                    onPress={()=>navigation.navigate("IndividualMeal")}>
                         <Image
                             style={styles.morelogo}
                             source={require('../assets/threedots.png')}

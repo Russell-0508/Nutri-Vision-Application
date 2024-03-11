@@ -1,9 +1,10 @@
 import React from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useNavigation } from '@react-navigation/native';
 
 
-const ProfileScreen = () => {
+function ProfileScreen({navigation}){
   // Placeholder for profile data
   const profileData = {
     name: 'Russell Tan',
@@ -87,14 +88,14 @@ const ProfileScreen = () => {
             <MaterialIcons name="fastfood" size={24} color="#4CAF50" />
             <Text style={styles.tabTitle}>Calories</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.scannerButton} onPress={() => handlePress('Scanner')}>
+          <TouchableOpacity style={styles.scannerButton} onPress={() => navigation.navigate('ScannerPage')}>
             <MaterialIcons name="center-focus-strong" size={40} color="#4CAF50" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.tabItemProfile} onPress={() => handlePress('Profile')}>
             <MaterialIcons name="person" size={24} color="#4CAF50" />
             <Text style={styles.tabTitle}>Profile</Text>
           </TouchableOpacity>   
-          <TouchableOpacity style={styles.tabItem} onPress={() => handlePress('History')}>
+          <TouchableOpacity style={styles.tabItem} onPress={()=>navigation.navigate("History")}>
             <MaterialIcons name="manage-search" size={24} color="#4CAF50" />
             <Text style={styles.tabTitle}>History</Text>
 
