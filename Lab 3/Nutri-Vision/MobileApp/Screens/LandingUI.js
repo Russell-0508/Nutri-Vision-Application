@@ -15,7 +15,6 @@ function LandingUI(props) {
 
     const buttonClickHandler = () =>{
         console.log('Button pressed');
-        // do something
     }
     return (
         <View style={styles.container}>  

@@ -10,11 +10,13 @@ import {  Platform,
           Alert,
           Dimensions, } from 'react-native';
 import LandingUI from './MobileApp/Screens/LandingUI';
+import AccountReg from './MobileApp/Screens/AccountReg';
+import HomePage from './MobileApp/Screens/HomePage';
 
 
 
 export default function App() {
-  return <LandingUI/>;
+  return <HomePage/>;
 }
   /*const handlePress = () => console.log("Text pressed");
   //console.log(useImageDimensions());
