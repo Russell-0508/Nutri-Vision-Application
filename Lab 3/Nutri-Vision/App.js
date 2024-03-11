@@ -9,17 +9,27 @@ import {  Platform,
           SafeAreaView, 
           Alert,
           Dimensions, } from 'react-native';
+//import LandingUI from './MobileApp/Screens/LandingUI';
+import * as React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LandingUI from './MobileApp/Screens/LandingUI';
+
+import ScannerPage from './MobileApp/Screens/ScannerPage';
 import ProfilePage from './MobileApp/Screens/ProfilePage'
 import Login from './MobileApp/Screens/Login';
 import History from './MobileApp/Screens/History';
 import IndiMeal from './MobileApp/Screens/IndiMeal'
 
+
 import { createNativeStackNavigator } from '@react-navigation/native-stack'; 
 import { NavigationContainer } from '@react-navigation/native'; 
 
+const Stack = createNativeStackNavigator();
+
 
 const Stack = createNativeStackNavigator();
+
 
 export default function App() {
   return (
@@ -48,7 +58,10 @@ export default function App() {
         name='Profile'
         component={ProfilePage}
       />
-      
+      <Stack.Screen 
+      name="ScannerPage" 
+      component={ScannerPage} 
+      />
       </Stack.Navigator>
     </NavigationContainer>
   );
