@@ -43,6 +43,7 @@ export default function App() {
       <Stack.Screen name='NutritionalInformationpage' component={NutritionalInfoPage} />
       <Stack.Screen name='IndividualMeal' component={IndividualMeal} />
       <Stack.Screen name='History' component={History}/>
+      <Stack.Screen name='AccountRegistration' component={AccountReg}/>
 
       </Stack.Navigator>
     </NavigationContainer>

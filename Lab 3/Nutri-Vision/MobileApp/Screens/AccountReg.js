@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, Image, SafeAreaView, ScrollView, TouchableOpacity, Linking} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useNavigation } from '@react-navigation/native';
 
-export default function App() {
+function AccountRegistration({navigation}) {
     const handleChoosePhoto = () => {
         // implement the functionality to choose a photo
         console.log('Choose photo button pressed!');
@@ -418,3 +419,5 @@ const styles = StyleSheet.create({
 
 
   });
+
+  export default AccountRegistration;
