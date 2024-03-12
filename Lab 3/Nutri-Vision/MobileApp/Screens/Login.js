@@ -117,7 +117,7 @@ function Login({navigation}) {
                         fontSize: 18,
                     }}> Don't have an account? </Text>
                     <TouchableOpacity 
-                        onPress={buttonClickHandler}
+                        onPress={()=>navigation.navigate("AccountRegistration")}
                         style={styles.buttonContainer}>
                         <Text style = {{
                             fontSize: 18,
