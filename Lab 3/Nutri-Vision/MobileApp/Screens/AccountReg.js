@@ -1,52 +1,9 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, Image, SafeAreaView, ScrollView, TouchableOpacity, Linking} from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { useNavigation } from '@react-navigation/native';
 
-function AccountRegistration({navigation}) {
-    const handleChoosePhoto = () => {
-        // implement the functionality to choose a photo
-        console.log('Choose photo button pressed!');
-    };
 
-    const handleAvatarPress = () => {
-        console.log('Avatar pressed');
-    };
-
-    //navigate back or dismiss the current screen
-    const handleBackPress = () => {
-        console.log('Back pressed');
-        
-    };
-
-    const handleCreateAccountPress = () => {
-        const passwordsDoMatch = checkPasswordsMatch(); // Check if passwords match
-        if (!termsAccepted) {
-            alert('Please read and accept the Terms and Conditions to proceed.');
-            return;
-        } else if (passwordsDoMatch) {
-            console.log("Creating account...");
-        } else {
-            // If passwords don't match, the error message is already set by checkPasswordsMatch,
-            console.log("Passwords do not match.");
-        }
-    };
-
-    // Defining State for Gender Selection
-    const [selectedGender, setSelectedGender] = useState(null);
-
-    // Defining state for Date Picker Method
-    const [date, setDate] = useState(new Date());
-    const [showDatePicker, setShowDatePicker] = useState(false);
-    const [isDateSelected, setIsDateSelected] = useState(false); // Track if a date has been selected
-    
-    const onChangeDate = (event, selectedDate) => {
-        const currentDate = selectedDate || date;
-        setDate(currentDate);
-        setIsDateSelected(true); // Optionally hide picker after selection
-        setShowDatePicker(false);
-    };
+const AccountReg = ({ navigation}) => {
 
     // Defining state for Password Checker
     const [password, setPassword] = useState('');
@@ -54,15 +11,6 @@ function AccountRegistration({navigation}) {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
     const [passwordMismatchError, setPasswordMismatchError] = useState('');
-    
-    /*const togglePasswordVisibility = () => {
-        setPasswordVisible(!passwordVisible);
-    };
-    
-    const toggleConfirmPasswordVisibility = () => {
-        setConfirmPasswordVisible(!confirmPasswordVisible);
-    };
-    */
 
     const checkPasswordsMatch = () => {
         if (password !== confirmPassword) {
@@ -73,6 +21,21 @@ function AccountRegistration({navigation}) {
         return true;
     };
 
+    const handleCreateAccountPress = () => {
+        const passwordsDoMatch = checkPasswordsMatch(); // Check if passwords match
+        if (!termsAccepted) {
+            alert('Please read and accept the Terms and Conditions to proceed.');
+            return;
+        } else if (passwordsDoMatch) {
+            console.log("Creating account...");
+            navigation.navigate('Login');
+        } else {
+            //the error message is set by checkPasswordsMatch,
+            console.log("Passwords do not match.");
+        }
+    };
+
+    
     const handlePressTerms = () => {
         // URL
         const url = 'https://www.google.com.sg/';
@@ -87,76 +50,13 @@ function AccountRegistration({navigation}) {
         <SafeAreaView style={styles.safeArea}>
             <ScrollView style={styles.scrollView}>
                 <View style={styles.container}>
+
                     <View style = {styles.headerContainer}>
-                        {/* Left Segment for the Back Button */}
-                        <View style={{ flex: 1 }}>
-                            <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
-                                <Icon name="arrow-left" size={40} color="#000" />
-                            </TouchableOpacity>
-                        </View>
-
-                        {/* Center Segment for the Title */}
-                        <View style={{ flex: 2, alignItems: 'center', justifyContent: 'center' }}>
-                            <Text 
-                                style={styles.header} 
-                                numberOfLines={1} // Correct placement of the prop
-                            >
-                                 Create Account
-                            </Text>
-                        </View>
-
-                    </View>
-
-                    <Text style = {styles.chooseAvatar}>Choose Your Photo</Text>
-
-                    <View style={styles.photoContainer}>
-                        <View style = {styles.avatarContainer}>
-                            <TouchableOpacity onPress={handleAvatarPress}>
-                                <Image
-                                    source={require('../assets/hacker.png')} 
-                                    style={styles.avatar}
-                                />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-
-
-                    {/* Gender Selection */}
-                    <Text style={styles.genderLabel}>Gender: </Text>
-                    <View style={styles.genderContainer}>
-                        {['Male', 'Female', 'Prefer Not to Say'].map((gender) => (
-                            <TouchableOpacity
-                                key={gender}
-                                style={[
-                                    styles.genderButton,
-                                    selectedGender === gender && styles.genderButtonSelected
-                                ]}
-                                onPress={() => setSelectedGender(gender)}
-                            >
-                                <Text style={[
-                                    styles.genderButtonText,
-                                    selectedGender === gender && styles.genderButtonTextSelected
-                                ]}>
-                                    {gender}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-
-                    {/* Name Input */}
-                    <Text style={styles.label}>Your Name</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Enter Your Name"
-                    />
-
-                    {/* DOB Selection */}
-                    <Text style = {styles.label} >Date of Birth</Text>
-                    <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePickerToggle}>
-                        <Text style={styles.datePickerText}>
-                            {isDateSelected ? date.toLocaleDateString() : "DD/MM/YYYY"}
+                        <Text style={styles.headerText}>
+                            Create Account
                         </Text>
-                    </TouchableOpacity>
+                    </View>
+
 
                     {/* Email Input */}
                     <Text style={styles.label}>Email</Text>
@@ -166,15 +66,6 @@ function AccountRegistration({navigation}) {
                         keyboardType="email-address"
                     />
 
-                    {showDatePicker && (
-                        <DateTimePicker
-                            testID="dateTimePicker"
-                            value={date}
-                            mode="date"
-                            display="default"
-                            onChange={onChangeDate}
-                        />
-                    )}
 
                     {/* Password Input */}
                     <Text style={styles.label}>Password</Text>
@@ -183,7 +74,7 @@ function AccountRegistration({navigation}) {
                             style = {styles.input}
                             placeholder='Enter Your Password'
                             secureTextEntry={!passwordVisible} // Hide password by default
-                            value={password} // Make sure to define and update this state
+                            value={password} 
                             onChangeText={setPassword} // Update password state
                         />
                         {/* Toggle Password Visibility Button for Password */}
@@ -199,7 +90,7 @@ function AccountRegistration({navigation}) {
                             style = {styles.input}
                             placeholder='Re-Enter Your Password'
                             secureTextEntry={!confirmPasswordVisible} // Hide confirm password by default
-                            value={confirmPassword} // Make sure to define and update this state
+                            value={confirmPassword} 
                             onChangeText={setConfirmPassword} // Update confirm password state
                         />
 
@@ -237,39 +128,9 @@ function AccountRegistration({navigation}) {
 }
 
 const styles = StyleSheet.create({
-    //Safe Area for IOS devices
     safeArea: {
         flex: 1,
         backgroundColor: '#36622B', 
-    },
-
-    headerContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        position : 'relative',
-        justifyContent: 'space-between', // Ensures alignment
-        padding: 10,
-    },
-    
-    header: {
-        fontSize: 30, 
-        fontWeight: 'bold',
-        marginLeft : -98,
-        marginBottom : -12,
-    },
-    
-    backButton: {
-        position: 'absolute',
-        left: -20, 
-        flexDirection: 'row',
-    },
-    
-    chooseAvatar : {
-        fontSize : 15,
-        marginTop : 17,
-        marginBottom : -22,
-        fontWeight : 'bold',
-        textAlign : 'center',
     },
 
     container: {
@@ -277,103 +138,49 @@ const styles = StyleSheet.create({
         padding: 20,
     },
 
+    headerContainer: {
+        flex : 1,
+        alignItems: 'center',
+        position : 'relative',
+        justifyContent: 'center', 
+        padding: 10,
+    },
+    
+    headerText: {
+        fontSize: 30, 
+        fontWeight: 'bold',
+    },
+    
+
     label: {
         fontSize: 14, 
         color: '#000', 
-        fontWeight: 'bold', // Make the label text stand out
-        marginBottom: 3, // Space between label and input field
+        fontWeight: 'bold', 
+        marginBottom: 3,
         marginTop: 8,
     },
 
     //--------------------------------------------------------------------------------
-    genderContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        margin: 10,
-    },
-    genderButton: {
-        borderWidth: 1,
-        borderColor: '#aaa',
-        borderRadius: 20,
-        paddingVertical: 10,
-        paddingHorizontal: 17,
-        backgroundColor: '#fff',
-    },
-    genderButtonSelected: {
-        backgroundColor: '#007bff', 
-    },
-    genderButtonText: {
-        textAlign: 'center',
-        color: '#000',
-        fontWeight : 'bold',
-    },
-    genderButtonTextSelected: {
-        color: '#fff', 
-    },
 
-    //--------------------------------------------------------------------------------
-
-    photoContainer: {
-        alignItems: 'center',
-        marginVertical: 20, 
-    },
-
-    avatarContainer: {
-      marginVertical: 20,
-      height: 120, // Adjust the size
-      width: 120, // Ensure width and height are equal for a circle
-      borderRadius: 60, // Half the size of width/height to make it circular
-      borderWidth: 3, // Adjust the border thickness
-      borderColor: '#ffffff', // Adjust the border color
-      justifyContent: 'center',
-      alignItems: 'center',
-      overflow: 'hidden', // Ensures the image doesn't bleed outside the border
-    },
-    avatar: {
-      width: 110,
-      height: 110,
-      borderRadius: 55,
-    },
-    //--------------------------------------------------------------------------------
-
-    inputContainer: {
-        
-    },
     input: {
       flex: 1,
       paddingVertical: 10,
       paddingLeft : 10,
       backgroundColor: '#FFF',
+      borderRadius : 15,
     },
 
     inputWrapper: {
-        flexDirection: 'row', // Arrange items in a row
-        alignItems: 'center', // Center items vertically
+        flexDirection: 'row', 
+        alignItems: 'center', 
         borderWidth: 1,
         borderColor: 'gray',
         backgroundColor: '#FFF',
-        borderRadius : 10,
+        borderRadius : 15,
     },
 
     //--------------------------------------------------------------------------------
 
-    datePickerToggle: {
-        borderWidth: 1,
-        borderColor: 'gray',
-        padding: 10,
-        marginBottom: 10,
-        borderRadius: 5, // Match input styles for consistency
-        backgroundColor: '#FFF', // Keeping it white to resemble an input field
-        alignItems: 'center', // Center the text horizontally
-    },
-
-    // Additional styling for the date display text
-    datePickerText: {
-        fontSize: 17,
-        color: '#000', 
-    },
-
-    //--------------------------------------------------------------------------------
 
     linkText: {
         color: 'blue',
@@ -407,7 +214,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         paddingVertical: 10,
         paddingHorizontal: 20,
-        alignItems: 'center', // Center the text inside the button
+        alignItems: 'center', 
         justifyContent: 'center', 
     },
     
@@ -416,8 +223,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
-
-
   });
 
-  export default AccountRegistration;
+  export default AccountReg;
