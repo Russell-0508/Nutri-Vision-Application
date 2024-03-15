@@ -166,14 +166,10 @@ const styles = StyleSheet.create({
         width: 170,
         marginRight: 10
     },
-
-    /*textinput: {
-
-    },*/
         
     textinputcontainer: {
         borderWidth: 1,
-        width: 310,
+        width: 330,
         height: 40,
         marginLeft: 35
     },
