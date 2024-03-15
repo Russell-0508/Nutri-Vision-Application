@@ -25,6 +25,23 @@ const screenWidth = Dimensions.get('window').width;
 const curveHeight = Dimensions.get('window').height * 0.4;
 
 function Login({navigation}) {
+
+    //Ke Yuan
+    // State to check if user is new or not.
+
+    const [isNewUser, setIsNewUser] = useState(false);
+
+    const onSuccessfulLogin = (response) => {
+        const userIsNew = response.isNewUser;
+        setIsNewUser(userIsNew);
+
+        if (userIsNew) {
+            navigation.navigate('CreateProfile');
+        } else {
+            navigation.navigate('HomePage');
+        }
+    }
+
     const buttonClickHandler = () =>{
         console.log('Pressed create an account');
         // do something
@@ -100,7 +117,7 @@ function Login({navigation}) {
                 </TouchableOpacity>
             <View style={{marginTop: 50}}>
                 <TouchableOpacity 
-                    onPress={()=>navigation.navigate("Tabs")}
+                    onPress={()=>navigation.navigate("CreateProfile")}
                     style={styles.buttonContainer}>
                     <Text style = {{
                         fontSize: 18,

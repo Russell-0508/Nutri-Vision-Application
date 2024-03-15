@@ -1,8 +1,9 @@
 import * as React from 'react';
-
 import LandingUI from './MobileApp/Screens/LandingUI';
 import Login from './MobileApp/Screens/Login';
 import AccountReg from './MobileApp/Screens/AccountReg';
+import CreateProfile from './MobileApp/Screens/CreateProfile';
+import GoalsReg from './MobileApp/Screens/GoalsReg';
 
 
 /*import ScannerPage from './MobileApp/Screens/ScannerPage';
@@ -27,6 +28,8 @@ export default function App() {
       <Stack.Screen name='Landing' component={LandingUI} />
       <Stack.Screen name='Login' component={Login} />
       <Stack.Screen name='AccountRegistration' component={AccountReg}/>
+      <Stack.Screen name='CreateProfile' component = { CreateProfile } />
+      <Stack.Screen name='GoalsReg' component={GoalsReg} />
       <Stack.Screen name='Tabs' component={Tabs} options={{headerShown: false}}/>
 
       </Stack.Navigator>
