@@ -53,7 +53,6 @@ function Tabs() {
             }}/>
 
             <Tab.Screen 
-            name='Scanner' 
             component={ScannerPage} 
             options={{
                 tabBarIcon:({color,size})=>(
