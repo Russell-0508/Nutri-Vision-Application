@@ -3,10 +3,10 @@ import { StyleSheet, View, Text, TextInput, Platform, Button, Image, SafeAreaVie
 import DateTimePicker from '@react-native-community/datetimepicker';
 //import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import { useNavigation } from '@react-navigation/native';
 
 
-
-export default function HomePage() {
+export default function HomePage({navigation}) {
 
     const [date, setDate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);

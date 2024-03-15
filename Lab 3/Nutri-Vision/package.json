@@ -11,8 +11,8 @@
   "dependencies": {
     "@react-native-community/datetimepicker": "^7.6.1",
     "@react-native-community/hooks": "^3.0.0",
-    "@react-navigation/bottom-tabs": "^6.5.16",
-    "@react-navigation/native": "^6.1.14",
+    "@react-navigation/bottom-tabs": "^6.5.19",
+    "@react-navigation/native": "^6.1.16",
     "@react-navigation/native-stack": "^6.9.22",
     "@react-navigation/stack": "^6.3.25",
     "axios": "^1.6.7",

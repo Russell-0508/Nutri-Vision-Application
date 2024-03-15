@@ -100,7 +100,7 @@ function Login({navigation}) {
                 </TouchableOpacity>
             <View style={{marginTop: 50}}>
                 <TouchableOpacity 
-                    onPress={()=>navigation.navigate("Profile")}
+                    onPress={()=>navigation.navigate("Tabs")}
                     style={styles.buttonContainer}>
                     <Text style = {{
                         fontSize: 18,
