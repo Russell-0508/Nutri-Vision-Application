@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import HomePage from '../Screens/HomePage';
@@ -26,9 +27,8 @@ const historyName = 'History';
 
 const Tab = createBottomTabNavigator();
 
-function Tabs() {
-    
-    return (
+
+const Tabs = () => (
         <Tab.Navigator 
         screenOptions={{
             
@@ -81,9 +81,11 @@ function Tabs() {
                 )
             }}
             />
+
         </Tab.Navigator>
     );
-}
+
+
 
 const styles = StyleSheet.create({
     buttons: {

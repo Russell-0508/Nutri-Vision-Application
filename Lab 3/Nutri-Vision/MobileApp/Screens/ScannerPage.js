@@ -78,9 +78,9 @@ function ScannerPage({navigation}) {
       {/* Text and arrow button for the food item name and calorie count */}
       <View style={styles.infoContainer}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={styles.foodItemText}>{foodItem}</Text>
+          <Text style={styles.foodItemText}>{foodItem}Hello</Text>
           <TouchableOpacity onPress={() => navigation.navigate('NutritionalInfoPage')} style={styles.arrowButton}>
-            <MaterialIcons name="keyboard-arrow-right" size={60} color="black" />
+            <MaterialIcons name="keyboard-arrow-right" size={60} color="pink" />
           </TouchableOpacity>
         </View>
         <Text style={styles.calorieCountText}>{calorieCount}</Text>
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     
   },
   foodItemText: {
-    color: 'black',
+    color: 'pink',
     fontSize: 20, 
     fontWeight: 'bold',
     marginTop: 0,

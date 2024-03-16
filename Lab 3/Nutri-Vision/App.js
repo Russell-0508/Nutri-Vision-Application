@@ -15,7 +15,7 @@ import IndividualMeal from './MobileApp/Screens/IndividualMeal'*/
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack'; 
 import { NavigationContainer } from '@react-navigation/native'; 
-import Tabs from './MobileApp/Navigation/tabs';
+import Tabs from './MobileApp/Navigation/Tabs';
 
 const Stack = createNativeStackNavigator();
 
