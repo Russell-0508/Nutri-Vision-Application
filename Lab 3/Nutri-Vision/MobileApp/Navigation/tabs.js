@@ -11,11 +11,12 @@ import {
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-import HomePage from '../Screens/HomePage'
-import CaloriePage from '../Screens/Calories'
-import ScannerPage from '../Screens/ScannerPage'
-import ProfilePage from '../Screens/ProfilePage'
-import HistoryPage from '../Screens/HistoryPage'
+import HomePage from '../Screens/HomePage';
+import CaloriePage from '../Screens/Calories';
+import ScannerPage from '../Screens/ScannerPage';
+import ProfilePage from '../Screens/ProfilePage';
+import HistoryPage from '../Screens/HistoryPage';
+import NutritionalInfoPage from '../Screens/NutritionInfoPage2';
 
 
 const homeName = 'Home';

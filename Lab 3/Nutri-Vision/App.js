@@ -4,7 +4,7 @@ import Login from './MobileApp/Screens/Login';
 import AccountReg from './MobileApp/Screens/AccountReg';
 import CreateProfile from './MobileApp/Screens/CreateProfile';
 import GoalsReg from './MobileApp/Screens/GoalsReg';
-
+import NutritionalInfoPage from './MobileApp/Screens/NutritionInfoPage2';
 
 /*import ScannerPage from './MobileApp/Screens/ScannerPage';
 import ProfilePage from './MobileApp/Screens/ProfilePage'
@@ -15,7 +15,7 @@ import IndividualMeal from './MobileApp/Screens/IndividualMeal'*/
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack'; 
 import { NavigationContainer } from '@react-navigation/native'; 
-import Tabs from './MobileApp/Navigation/Tabs';
+import Tabs from './MobileApp/Navigation/tabs';
 
 const Stack = createNativeStackNavigator();
 
@@ -31,6 +31,7 @@ export default function App() {
       <Stack.Screen name='CreateProfile' component = { CreateProfile } />
       <Stack.Screen name='GoalsReg' component={GoalsReg} />
       <Stack.Screen name='Tabs' component={Tabs} options={{headerShown: false}}/>
+      <Stack.Screen name='NutritionalInfoPage' component={NutritionalInfoPage} />
 
       </Stack.Navigator>
     </NavigationContainer>
