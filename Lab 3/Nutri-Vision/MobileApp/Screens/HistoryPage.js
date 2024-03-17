@@ -21,12 +21,13 @@ import Collapsible from 'react-native-collapsible'
 curveHeight = 100
 screenWidth = 500
 
-function Entry({title, date, navigation}){
+{/* This is the Entry element, which takes in title, description, and displays it all */}
+function Entry({title, description, navigation}){
     return(
         <View style={styles.entry}>
             <View style={styles.entryContainer}> 
                 <Text style={styles.entryTitle}> {title} </Text> 
-                <Text style={styles.entryDate}> {date} </Text>
+                <Text style={styles.entryDescription}> {description}</Text>
             </View>
             <View> 
                 <TouchableOpacity> 
@@ -37,13 +38,13 @@ function Entry({title, date, navigation}){
                 />
                 </TouchableOpacity>
             </View>
-            
-            
         </View>
     );
 }
 
 function History({navigation}) {
+
+
     const [isCollapsed, setIsCollapsed] = useState(true);
 
     const toggleCollapse = () => {
@@ -78,8 +79,12 @@ function History({navigation}) {
                     </TouchableOpacity>
                 </View>
             </View>
+           
             <View style={styles.header}>
                 <View style={styles.headerContainer}>
+                    {/* 1 Jan 2024 is a placeholder, should read the current date and be dynamic 
+                        Work in progress
+                    */}
                     <Text style={styles.headerText}> 1 JAN 2024</Text>
                 </View>
                 <View>
@@ -89,13 +94,17 @@ function History({navigation}) {
                         <Text style={styles.buttonCollapse}>View All</Text>
                     </TouchableOpacity>                                             
                 </View> 
-                
             </View>
             
             <Collapsible collapsed={isCollapsed}>
-                <Entry title='Breakfast' date='Toast with egg'/>
-                <Entry title='Lunch' date='Chicken rice'/>
+                {/* This is where we should read the database to display the meal entries
+                I'm still trying to figure out how to get the description to show multiple lines
+                The <Entry/> element is at the top
+                */}
+                <Entry title='Breakfast' description='Toast with egg\ncoffee\napple'/>
+                <Entry title='Lunch' description='Chicken rice'/>
             </Collapsible>
+
             {!isCollapsed && (
                         <TouchableOpacity onPress={toggleCollapse} style={styles.viewLessButton}>
                             <Text style={styles.viewLessText}>View Less</Text>
@@ -162,15 +171,17 @@ const styles = StyleSheet.create({
         flex: 1
     },
 
+    entryDescription: {
+        fontSize: 14,
+        color: '#666',
+    },
+
     entryTitle: {
         fontSize: 16,
         fontWeight: 'bold',
     },
 
-    entryDate: {
-        fontSize: 14,
-        color: '#666',
-    },
+    
 
     header: {
         flexDirection: 'row',
@@ -236,3 +247,41 @@ const styles = StyleSheet.create({
 })
 
 export default History;
+
+// KIV datetimepicker
+/*
+
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import DateTimePicker from '@react-native-community/datetimepicker';
+
+ const [date, setDate] = useState(new Date());
+    const [showDatePicker, setShowDatePicker] = useState(false);
+  
+    const onChange = (event, selectedDate) => {
+      const currentDate = selectedDate || date;
+      setShowDatePicker(Platform.OS === 'ios');
+      setDate(currentDate);
+    };
+  
+    const formatDate = (date) => {
+      return `${date.getDate()} ${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`;
+    };
+
+    <View style={styles.titleAndDatePicker}>
+        <Text style={styles.headerText}>Home Page</Text>
+        <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePickerRow}>
+            <FontAwesomeIcon name="calendar" size={24} color="#000" />
+            <Text style={styles.datePickerText}>{formatDate(date)}</Text>
+        </TouchableOpacity>
+        {showDatePicker && (
+            <DateTimePicker
+                value={date}
+                mode="date"
+                display="default"
+                onChange={onChange}
+            />
+        )}
+    </View>
+
+    
+*/
