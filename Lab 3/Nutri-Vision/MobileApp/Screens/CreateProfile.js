@@ -30,11 +30,9 @@ const CreateProfile = ({ navigation }) => {
           console.error('Error updating profile:', error);
           // Handle the error as needed
         }
+        navigation.navigate('GoalsReg');
       };
 
-    const handleCreateAccountPress = () => {
-        navigation.navigate('GoalsReg');
-    };
 
     // Defining State for Gender Selection
     const [selectedGender, setSelectedGender] = useState(null);
