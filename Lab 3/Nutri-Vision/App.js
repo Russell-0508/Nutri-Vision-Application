@@ -25,19 +25,18 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-      
-      <Stack.Screen name = 'History' component={HistoryPage}/>
-      
-
+        
+        <Stack.Screen name='Landing' component={LandingUI} />
+        <Stack.Screen name='Login' component={Login} />
+        <Stack.Screen name='AccountRegistration' component={AccountReg}/>
+        <Stack.Screen name='CreateProfile' component = { CreateProfile } />
+        <Stack.Screen name='GoalsReg' component={GoalsReg} />
+        <Stack.Screen name='Tabs' component={Tabs} options={{headerShown: false}}/>
+        <Stack.Screen name='NutritionalInfoPage' component={NutritionalInfoPage} />
+    
       </Stack.Navigator>
     </NavigationContainer>
   );
   
 }
-/* <Stack.Screen name='Landing' component={LandingUI} />
-      <Stack.Screen name='Login' component={Login} />
-      <Stack.Screen name='AccountRegistration' component={AccountReg}/>
-      <Stack.Screen name='CreateProfile' component = { CreateProfile } />
-      <Stack.Screen name='GoalsReg' component={GoalsReg} />
-      <Stack.Screen name='Tabs' component={Tabs} options={{headerShown: false}}/>
-      <Stack.Screen name='NutritionalInfoPage' component={NutritionalInfoPage} /> */  
+/*  */  
