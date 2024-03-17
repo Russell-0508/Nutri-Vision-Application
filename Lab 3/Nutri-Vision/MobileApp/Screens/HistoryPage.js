@@ -1,11 +1,11 @@
-import React, { useRef, useState } from 'react';
-import { 
-    View, 
-    ImageBackground, 
-    StyleSheet, 
-    Image, 
-    Text, 
-    Dimensions, 
+import React, { useEffect, useRef, useState } from 'react';
+import {
+    View,
+    ImageBackground,
+    StyleSheet,
+    Image,
+    Text,
+    Dimensions,
     Button,
     TouchableOpacity,
     SafeAreaView,
@@ -16,34 +16,34 @@ import {
 
 import { useNavigation } from "@react-navigation/native"
 import Collapsible from 'react-native-collapsible'
-
+import { getMealHistoryFromFirestore } from '../../MealHistory';
 
 curveHeight = 100
 screenWidth = 500
 
-function Entry({title, date, navigation}){
-    return(
+function Entry({ title, date, navigation }) {
+    return (
         <View style={styles.entry}>
-            <View style={styles.entryContainer}> 
-                <Text style={styles.entryTitle}> {title} </Text> 
+            <View style={styles.entryContainer}>
+                <Text style={styles.entryTitle}> {title} </Text>
                 <Text style={styles.entryDate}> {date} </Text>
             </View>
-            <View> 
-                <TouchableOpacity> 
-                <Image
-                    style={styles.arrowlogo}
-                    source={require('../assets/right_pointing_arrow.png')}
-                    resizeMode='contain'
-                />
+            <View>
+                <TouchableOpacity>
+                    <Image
+                        style={styles.arrowlogo}
+                        source={require('../assets/right_pointing_arrow.png')}
+                        resizeMode='contain'
+                    />
                 </TouchableOpacity>
             </View>
-            
-            
+
+
         </View>
     );
 }
 
-function History({navigation}) {
+function History({ navigation }) {
     const [isCollapsed, setIsCollapsed] = useState(true);
 
     const toggleCollapse = () => {
@@ -51,59 +51,59 @@ function History({navigation}) {
     }
 
     return (
-    <View style={styles.container}>
-        <StatusBar backgroundColor="#406132" barStyle="light-content" />
-        <SafeAreaView>
-        <ScrollView>
-            <View style={styles.topContainer}> 
-                <View style={styles.topContent}>
-                    <Text style={styles.pmText}>Past Meals</Text>
-                    <Text style={styles.dateText}>Date1 - Date2</Text>
-                </View>
-                <View style={styles.topIcons}>
-                    <TouchableOpacity>
-                        <Image
-                            style={styles.searchlogo}
-                            source={require('../assets/magnifying-glass.png')}
-                            resizeMode='contain'
-                        />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                    onPress={()=>navigation.navigate("IndividualMeal")}>
-                        <Image
-                            style={styles.morelogo}
-                            source={require('../assets/threedots.png')}
-                            resizeMode='contain'
-                        />
-                    </TouchableOpacity>
-                </View>
-            </View>
-            <View style={styles.header}>
-                <View style={styles.headerContainer}>
-                    <Text style={styles.headerText}> 1 JAN 2024</Text>
-                </View>
-                <View>
-                    <TouchableOpacity 
-                    onPress={toggleCollapse}
-                    style={styles.buttonContainer}>
-                        <Text style={styles.buttonCollapse}>View All</Text>
-                    </TouchableOpacity>                                             
-                </View> 
-                
-            </View>
-            
-            <Collapsible collapsed={isCollapsed}>
-                <Entry title='Breakfast' date='Toast with egg'/>
-                <Entry title='Lunch' date='Chicken rice'/>
-            </Collapsible>
-            {!isCollapsed && (
+        <View style={styles.container}>
+            <StatusBar backgroundColor="#406132" barStyle="light-content" />
+            <SafeAreaView>
+                <ScrollView>
+                    <View style={styles.topContainer}>
+                        <View style={styles.topContent}>
+                            <Text style={styles.pmText}>Past Meals</Text>
+                            <Text style={styles.dateText}>Date1 - Date2</Text>
+                        </View>
+                        <View style={styles.topIcons}>
+                            <TouchableOpacity>
+                                <Image
+                                    style={styles.searchlogo}
+                                    source={require('../assets/magnifying-glass.png')}
+                                    resizeMode='contain'
+                                />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => navigation.navigate("IndividualMeal")}>
+                                <Image
+                                    style={styles.morelogo}
+                                    source={require('../assets/threedots.png')}
+                                    resizeMode='contain'
+                                />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    <View style={styles.header}>
+                        <View style={styles.headerContainer}>
+                            <Text style={styles.headerText}> 1 JAN 2024</Text>
+                        </View>
+                        <View>
+                            <TouchableOpacity
+                                onPress={toggleCollapse}
+                                style={styles.buttonContainer}>
+                                <Text style={styles.buttonCollapse}>View All</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                    </View>
+
+                    <Collapsible collapsed={isCollapsed}>
+                        <Entry title='Breakfast' date='Toast with egg' />
+                        <Entry title='Lunch' date='Chicken rice' />
+                    </Collapsible>
+                    {!isCollapsed && (
                         <TouchableOpacity onPress={toggleCollapse} style={styles.viewLessButton}>
                             <Text style={styles.viewLessText}>View Less</Text>
                         </TouchableOpacity>
                     )}
-        </ScrollView>
-        </SafeAreaView>
-    </View>
+                </ScrollView>
+            </SafeAreaView>
+        </View>
     );
 }
 
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
         height: 30,
         width: 30,
     },
-    
+
     pmText: {
         fontSize: 25,
         fontWeight: 'bold',
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
 
     searchlogo: {
         height: 30,
-        width: 30,        
+        width: 30,
     },
 
     topContainer: {
