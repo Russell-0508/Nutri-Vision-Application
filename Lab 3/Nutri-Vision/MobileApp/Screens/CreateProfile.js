@@ -2,9 +2,35 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, Image, SafeAreaView, ScrollView, TouchableOpacity, Linking} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
+import { createProfileToFirestore } from "../../firebase/profile"
+import { firebase, db } from '../../firebase/config'
+import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
 
 const CreateProfile = ({ navigation }) => {
+
+    const handleCreateProfile = async () => {
+        const profileData = {
+          age: 50,
+          email: "jack@gmail.com",
+          gender: "female",
+          height: 133,
+          name: "jack",
+          phoneNumber: 12345678,
+          weight: 6,
+        };
+      
+        try {
+          // Save the profile data to Firebase
+          const profileId = await createProfileToFirestore(profileData);
+      
+          // perform additional actions after the profile is saved
+          console.log('Profile Created and saved with ID:', profileId);
+      
+        } catch (error) {
+          console.error('Error updating profile:', error);
+          // Handle the error as needed
+        }
+      };
 
     const handleCreateAccountPress = () => {
         navigation.navigate('GoalsReg');
@@ -132,9 +158,8 @@ const CreateProfile = ({ navigation }) => {
                         placeholder='Enter Your Weight ( in kg )'
                         keyboardType='number-pad'
                     />
-
-
-                    <TouchableOpacity onPress={handleCreateAccountPress} style={styles.createAccountButton}>
+         
+                    <TouchableOpacity onPress={handleCreateProfile} style={styles.createAccountButton}>
                         <Text style={styles.createAccountButtonText}>Create Profile</Text>
                     </TouchableOpacity>
                 
