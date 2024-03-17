@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, Dimensions, StatusBar, FlatList, ScrollView} from 'react-native';
+import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, Dimensions, StatusBar, FlatList, ScrollView } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -7,7 +7,7 @@ import { saveMealToFirestore } from '../../MealHistory';
 import { useNavigation } from '@react-navigation/native';
 
 
-function NutritionalInfoPage({navigation}) {
+function NutritionalInfoPage({ navigation }) {
   // State to hold the image URI
   const [imageUri, setImageUri] = useState(null); // Initial state is null
 
@@ -50,8 +50,14 @@ function NutritionalInfoPage({navigation}) {
     </View>
   );
 
+  // const ConfirmMealButton = () => (
+  //   <TouchableOpacity style={styles.confirmMealButton} onPress={() => handlePress('Confirm Meal')}>
+  //     <Text style={styles.confirmMealText}>Confirm Meal</Text>
+  //   </TouchableOpacity>
+  // );
+
   const ConfirmMealButton = () => (
-    <TouchableOpacity style={styles.confirmMealButton} onPress={() => handlePress('Confirm Meal')}>
+    <TouchableOpacity style={styles.confirmMealButton} onPress={handleConfirmMeal}>
       <Text style={styles.confirmMealText}>Confirm Meal</Text>
     </TouchableOpacity>
   );
@@ -60,12 +66,18 @@ function NutritionalInfoPage({navigation}) {
     // Prepare the meal data based on your requirements
     const mealData = {
       name: 'Fried Rice with Chicken',
-      ingredients: ingredients.map((ingredient) => ({
-        name: ingredient.name,
-        portion: ingredient.portion,
-        imageUrl: ingredient.imageUrl,
-      })),
-      // Add other relevant data
+      calories: 500, // Example value, replace with actual value
+      carbohydrates: 50, // Example value, replace with actual value
+      cholesterol: 30, // Example value, replace with actual value
+      createdAt: new Date(), // Current timestamp
+      fiber: 10, // Example value, replace with actual value
+      protein: 30, // Example value, replace with actual value
+      saturatedFat: 5, // Example value, replace with actual value
+      servingSize: 1, // Example value, replace with actual value
+      sodium: 20, // Example value, replace with actual value
+      sugar: 15, // Example value, replace with actual value
+      totalFat: 15, // Example value, replace with actual value
+      type: 'lunch', // Example value, replace with actual value
     };
 
     try {
@@ -139,13 +151,13 @@ function NutritionalInfoPage({navigation}) {
           <TouchableOpacity style={styles.tabItemProfile} onPress={() => handlePress('Profile')}>
             <MaterialIcons name="person" size={24} color="#4CAF50" />
             <Text style={styles.tabTitle}>Profile</Text>
-          </TouchableOpacity>   
+          </TouchableOpacity>
           <TouchableOpacity style={styles.tabItem} onPress={() => handlePress('History')}>
             <MaterialIcons name="manage-search" size={24} color="#4CAF50" />
             <Text style={styles.tabTitle}>History</Text>
           </TouchableOpacity>
-          </View>
         </View>
+      </View>
     </SafeAreaView>
   );
 }
@@ -191,7 +203,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     fontStyle: 'italic',
-    textAlign: 'flex-start', 
+    textAlign: 'flex-start',
     margin: 16,
   },
   nutritionalDetailsContainer: {
@@ -273,12 +285,12 @@ const styles = StyleSheet.create({
   },
 
   bottomContainer: {
-    position: 'absolute', 
+    position: 'absolute',
     bottom: 5,
     left: 0,
     right: 0,
     backgroundColor: 'white',
-    paddingVertical: 20, 
+    paddingVertical: 20,
     paddingHorizontal: 10,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
@@ -291,40 +303,40 @@ const styles = StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    alignItems: 'center', 
-    height: 50, 
+    alignItems: 'center',
+    height: 50,
   },
   tabItemCalories: {
     alignItems: 'center',
     marginRight: 20,
   },
-  
+
   tabItemProfile: {
     alignItems: 'center',
     marginLeft: 20,
   },
   tabItem: {
-    alignItems: 'center', 
+    alignItems: 'center',
   },
   scannerButton: {
-    backgroundColor: '#ccc', 
-    height: 75, 
-    width: 75, 
+    backgroundColor: '#ccc',
+    height: 75,
+    width: 75,
     borderRadius: 37.5, // Half the size of width to make it a circle
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: -37.5,
     marginRight: -27.5,
     top: -10,
-    elevation: 4, 
+    elevation: 4,
     shadowColor: '#000', // Optional: adds shadow on iOS
     shadowOffset: { width: 0, height: 2 }, // Optional: adds shadow on iOS
     shadowOpacity: 0.25, // Optional: adds shadow on iOS
     shadowRadius: 3.84, // Optional: adds shadow on iOS
   },
   tabTitle: {
-    color: '#4CAF50', 
-    fontSize: 15, 
+    color: '#4CAF50',
+    fontSize: 15,
     marginTop: 4,
   },
 
