@@ -1,11 +1,11 @@
-import React, { useRef, useState } from 'react';
-import { 
-    View, 
-    ImageBackground, 
-    StyleSheet, 
-    Image, 
-    Text, 
-    Dimensions, 
+import React, { useEffect, useRef, useState } from 'react';
+import {
+    View,
+    ImageBackground,
+    StyleSheet,
+    Image,
+    Text,
+    Dimensions,
     Button,
     TouchableOpacity,
     SafeAreaView,
@@ -16,10 +16,11 @@ import {
 
 import { useNavigation } from "@react-navigation/native"
 import Collapsible from 'react-native-collapsible'
-
+import { getMealHistoryFromFirestore } from '../../MealHistory';
 
 curveHeight = 100
 screenWidth = 500
+
 
 {/* This is the Entry element, which takes in title, description, and displays it all */}
 function Entry({title, description, navigation}){
@@ -28,22 +29,23 @@ function Entry({title, description, navigation}){
             <View style={styles.entryContainer}> 
                 <Text style={styles.entryTitle}> {title} </Text> 
                 <Text style={styles.entryDescription}> {description}</Text>
+
             </View>
-            <View> 
-                <TouchableOpacity> 
-                <Image
-                    style={styles.arrowlogo}
-                    source={require('../assets/right_pointing_arrow.png')}
-                    resizeMode='contain'
-                />
+            <View>
+                <TouchableOpacity>
+                    <Image
+                        style={styles.arrowlogo}
+                        source={require('../assets/right_pointing_arrow.png')}
+                        resizeMode='contain'
+                    />
                 </TouchableOpacity>
             </View>
         </View>
     );
 }
 
-function History({navigation}) {
 
+function History({ navigation }) {
 
     const [isCollapsed, setIsCollapsed] = useState(true);
 
@@ -52,6 +54,7 @@ function History({navigation}) {
     }
 
     return (
+
     <View style={styles.container}>
         <StatusBar backgroundColor="#406132" barStyle="light-content" />
         <SafeAreaView>
@@ -104,15 +107,14 @@ function History({navigation}) {
                 <Entry title='Breakfast' description='Toast with egg\ncoffee\napple'/>
                 <Entry title='Lunch' description='Chicken rice'/>
             </Collapsible>
-
             {!isCollapsed && (
                         <TouchableOpacity onPress={toggleCollapse} style={styles.viewLessButton}>
                             <Text style={styles.viewLessText}>View Less</Text>
                         </TouchableOpacity>
                     )}
-        </ScrollView>
-        </SafeAreaView>
-    </View>
+                </ScrollView>
+            </SafeAreaView>
+        </View>
     );
 }
 
@@ -205,7 +207,7 @@ const styles = StyleSheet.create({
         height: 30,
         width: 30,
     },
-    
+
     pmText: {
         fontSize: 25,
         fontWeight: 'bold',
@@ -213,7 +215,7 @@ const styles = StyleSheet.create({
 
     searchlogo: {
         height: 30,
-        width: 30,        
+        width: 30,
     },
 
     topContainer: {
