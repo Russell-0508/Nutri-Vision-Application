@@ -1,5 +1,5 @@
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore';
-import { firestore } from './config';
+import firestore from './firebase/config';
 
 const mealHistoryCollection = collection(firestore, 'MealHistory');
 
@@ -30,10 +30,10 @@ export const getMealHistoryFromFirestore = async () => {
 
 export const updateMealDataInFirestore = (mealId, updatedData) => {
     // Reference to the specific meal document using its ID
-    const mealRef = firestoreRef.collection('mealHistory').doc(mealId);
+    const mealRef = doc(mealHistoryCollection, mealId);
 
     // Update the data
-    mealRef.update(updatedData)
+    updateDoc(mealRef, updatedData)
         .then(() => {
             console.log('Meal data updated successfully');
         })
@@ -44,10 +44,10 @@ export const updateMealDataInFirestore = (mealId, updatedData) => {
 
 export const deleteMealDataInFirestore = (mealId) => {
     // Reference to the specific meal document using its ID
-    const mealRef = firestoreRef.collection('mealHistory').doc(mealId);
+    const mealRef = doc(mealHistoryCollection, mealId);
 
     // Delete the document
-    mealRef.delete()
+    deleteDoc(mealRef)
         .then(() => {
             console.log('Meal data deleted successfully');
         })
@@ -55,4 +55,3 @@ export const deleteMealDataInFirestore = (mealId) => {
             console.error('Error deleting meal data:', error);
         });
 };
-
