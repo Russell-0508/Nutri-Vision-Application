@@ -1,19 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, Dimensions, StatusBar, FlatList, ScrollView } from 'react-native';
+import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, Dimensions, StatusBar, FlatList } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { saveMealToFirestore } from '../../MealHistory';
 import { useNavigation } from '@react-navigation/native';
 
 
-function NutritionalInfoPage({ navigation }) {
+function IndividualMeal({navigation}) {
   // State to hold the image URI
   const [imageUri, setImageUri] = useState(null); // Initial state is null
 
   // Placeholder image URI
   const placeholderImageUri = 'https://via.placeholder.com/150'; // Placeholder URL
-
+  
 
   // Placeholder ingredients
   const ingredients = [
@@ -50,52 +49,16 @@ function NutritionalInfoPage({ navigation }) {
     </View>
   );
 
-  // const ConfirmMealButton = () => (
-  //   <TouchableOpacity style={styles.confirmMealButton} onPress={() => handlePress('Confirm Meal')}>
-  //     <Text style={styles.confirmMealText}>Confirm Meal</Text>
-  //   </TouchableOpacity>
-  // );
-
   const ConfirmMealButton = () => (
-    <TouchableOpacity style={styles.confirmMealButton} onPress={handleConfirmMeal}>
+    <TouchableOpacity style={styles.confirmMealButton} onPress={() => handlePress('Confirm Meal')}>
       <Text style={styles.confirmMealText}>Confirm Meal</Text>
     </TouchableOpacity>
   );
+  
 
-  const handleConfirmMeal = async () => {
-    // Prepare the meal data based on your requirements
-    const mealData = {
-      name: 'Fried Rice with Chicken',
-      calories: 500, // Example value, replace with actual value
-      carbohydrates: 50, // Example value, replace with actual value
-      cholesterol: 30, // Example value, replace with actual value
-      createdAt: new Date(), // Current timestamp
-      fiber: 10, // Example value, replace with actual value
-      protein: 30, // Example value, replace with actual value
-      saturatedFat: 5, // Example value, replace with actual value
-      servingSize: 1, // Example value, replace with actual value
-      sodium: 20, // Example value, replace with actual value
-      sugar: 15, // Example value, replace with actual value
-      totalFat: 15, // Example value, replace with actual value
-      type: 'lunch', // Example value, replace with actual value
-    };
-
-    try {
-      // Save the meal data to Firebase
-      const mealId = await saveMealToFirestore(mealData);
-
-      // perform additional actions after the meal is saved
-      console.log('Meal confirmed and saved with ID:', mealId);
-
-    } catch (error) {
-      console.error('Error confirming meal:', error);
-      // Handle the error as needed
-    }
-  };
-
-  // Placeholder mass and calories 
-  const foodItemMass = "250g";
-  const foodItemCalories = "450 Calories";
+   // Placeholder mass and calories 
+   const foodItemMass = "250g";
+   const foodItemCalories = "450 Calories";
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -151,13 +114,13 @@ function NutritionalInfoPage({ navigation }) {
           <TouchableOpacity style={styles.tabItemProfile} onPress={() => handlePress('Profile')}>
             <MaterialIcons name="person" size={24} color="#4CAF50" />
             <Text style={styles.tabTitle}>Profile</Text>
-          </TouchableOpacity>
+          </TouchableOpacity>   
           <TouchableOpacity style={styles.tabItem} onPress={() => handlePress('History')}>
             <MaterialIcons name="manage-search" size={24} color="#4CAF50" />
             <Text style={styles.tabTitle}>History</Text>
           </TouchableOpacity>
+          </View>
         </View>
-      </View>
     </SafeAreaView>
   );
 }
@@ -168,9 +131,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(173, 219, 199, 1)',
   },
   imageContainer: {
-    backgroundColor: 'rgba(173, 219, 199, 1)',
-    paddingVertical: 10,
-    alignItems: 'center',
+    backgroundColor: 'rgba(173, 219, 199, 1)', 
+    paddingVertical: 10, 
+    alignItems: 'center', 
     justifyContent: 'center',
     position: 'relative',
   },
@@ -180,30 +143,29 @@ const styles = StyleSheet.create({
     marginTop: 30
   },
   threeDotButton: {
-    position: 'absolute',
+    position: 'absolute', 
     top: 15,
-    right: 30,
+    right: 30, 
   },
   heartButton: {
-    position: 'absolute',
+    position: 'absolute', 
     top: 50,
-    right: 30,
+    right: 30, 
   },
   nutritionalInfoContainer: {
     backgroundColor: 'white',
-    borderRadius: 40,
+    borderRadius: 40, 
     margin: -50,
     marginLeft: 0,
-    marginTop: 40,
-    flex: 1,
-    justifyContent: 'flex-start',
+    marginTop: 40, 
+    flex: 1, 
+    justifyContent: 'flex-start', 
   },
   nutritionalInfoContainerText: {
-    color: 'rgb(127, 127, 127)',
+    color: 'rgb(127, 127, 127)', 
     fontSize: 20,
     fontWeight: 'bold',
     fontStyle: 'italic',
-    textAlign: 'flex-start',
     margin: 16,
   },
   nutritionalDetailsContainer: {
@@ -267,30 +229,30 @@ const styles = StyleSheet.create({
     marginRight: 150,
   },
   confirmMealButton: {
-    backgroundColor: 'grey',
-    borderRadius: 20,
-    paddingVertical: 20,
-    paddingHorizontal: 20,
-    marginVertical: 20,
-    marginHorizontal: 40,
+    backgroundColor: 'grey', 
+    borderRadius: 20, 
+    paddingVertical: 20, 
+    paddingHorizontal: 20, 
+    marginVertical: 20, 
+    marginHorizontal: 40, 
     marginRight: 90,
     marginBottom: 120,
-    alignItems: 'center',
+    alignItems: 'center', 
     justifyContent: 'center',
   },
   confirmMealText: {
-    fontSize: 16,
+    fontSize: 16, 
     color: 'white',
     fontWeight: 'bold',
   },
 
   bottomContainer: {
-    position: 'absolute',
+    position: 'absolute', 
     bottom: 5,
     left: 0,
     right: 0,
     backgroundColor: 'white',
-    paddingVertical: 20,
+    paddingVertical: 20, 
     paddingHorizontal: 10,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
@@ -303,43 +265,43 @@ const styles = StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    alignItems: 'center',
-    height: 50,
+    alignItems: 'center', 
+    height: 50, 
   },
   tabItemCalories: {
     alignItems: 'center',
     marginRight: 20,
   },
-
+  
   tabItemProfile: {
     alignItems: 'center',
     marginLeft: 20,
   },
   tabItem: {
-    alignItems: 'center',
+    alignItems: 'center', 
   },
   scannerButton: {
-    backgroundColor: '#ccc',
-    height: 75,
-    width: 75,
+    backgroundColor: '#ccc', 
+    height: 75, 
+    width: 75, 
     borderRadius: 37.5, // Half the size of width to make it a circle
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: -37.5,
     marginRight: -27.5,
     top: -10,
-    elevation: 4,
+    elevation: 4, 
     shadowColor: '#000', // Optional: adds shadow on iOS
     shadowOffset: { width: 0, height: 2 }, // Optional: adds shadow on iOS
     shadowOpacity: 0.25, // Optional: adds shadow on iOS
     shadowRadius: 3.84, // Optional: adds shadow on iOS
   },
   tabTitle: {
-    color: '#4CAF50',
-    fontSize: 15,
+    color: '#4CAF50', 
+    fontSize: 15, 
     marginTop: 4,
   },
 
 });
 
-export default NutritionalInfoPage;
+export default IndividualMeal;

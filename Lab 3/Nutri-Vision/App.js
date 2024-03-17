@@ -1,32 +1,22 @@
-import { StatusBar } from 'expo-status-bar';
-import {  Platform, 
-          StyleSheet, 
-          Text, 
-          View, 
-          Image, 
-          Button, 
-          TouchableHighlight, 
-          SafeAreaView, 
-          Alert,
-          Dimensions, } from 'react-native';
-//import LandingUI from './MobileApp/Screens/LandingUI';
 import * as React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LandingUI from './MobileApp/Screens/LandingUI';
-
-import ScannerPage from './MobileApp/Screens/ScannerPage';
-import ProfilePage from './MobileApp/Screens/ProfilePage'
 import Login from './MobileApp/Screens/Login';
-import History from './MobileApp/Screens/History';
-import IndiMeal from './MobileApp/Screens/IndiMeal'
+import AccountReg from './MobileApp/Screens/AccountReg';
+import CreateProfile from './MobileApp/Screens/CreateProfile';
+import GoalsReg from './MobileApp/Screens/GoalsReg';
+import NutritionalInfoPage from './MobileApp/Screens/NutritionInfoPage2';
+import HistoryPage from './MobileApp/Screens/HistoryPage';
 
+/*import ScannerPage from './MobileApp/Screens/ScannerPage';
+import ProfilePage from './MobileApp/Screens/ProfilePage'
+import NutritionalInfoPage from './MobileApp/Screens/NutritionInfoPage2';
+import HomePage from './MobileApp/Screens/HomePage';
+
+import IndividualMeal from './MobileApp/Screens/IndividualMeal'*/
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack'; 
 import { NavigationContainer } from '@react-navigation/native'; 
-
-const Stack = createNativeStackNavigator();
-
+import Tabs from './MobileApp/Navigation/tabs';
 
 const Stack = createNativeStackNavigator();
 
@@ -35,36 +25,19 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-
-      <Stack.Screen
-        name='IndiMeal'
-        component={IndiMeal}
-      />
-
-      <Stack.Screen
-        name='History'
-        component={History}
-      />
       
-      <Stack.Screen
-        name='Landing'
-        component={LandingUI}
-      />
-      <Stack.Screen
-        name='Login'
-        component={Login}
-      />
-      <Stack.Screen
-        name='Profile'
-        component={ProfilePage}
-      />
-      <Stack.Screen 
-      name="ScannerPage" 
-      component={ScannerPage} 
-      />
+      <Stack.Screen name = 'History' component={HistoryPage}/>
+      
+
       </Stack.Navigator>
     </NavigationContainer>
   );
   
 }
-/*  */  
+/* <Stack.Screen name='Landing' component={LandingUI} />
+      <Stack.Screen name='Login' component={Login} />
+      <Stack.Screen name='AccountRegistration' component={AccountReg}/>
+      <Stack.Screen name='CreateProfile' component = { CreateProfile } />
+      <Stack.Screen name='GoalsReg' component={GoalsReg} />
+      <Stack.Screen name='Tabs' component={Tabs} options={{headerShown: false}}/>
+      <Stack.Screen name='NutritionalInfoPage' component={NutritionalInfoPage} /> */  

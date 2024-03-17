@@ -1,9 +1,10 @@
 import React from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useNavigation } from '@react-navigation/native';
 
 
-const ProfileScreen = () => {
+function ProfileScreen({navigation}){
   // Placeholder for profile data
   const profileData = {
     name: 'Russell Tan',
@@ -20,7 +21,7 @@ const ProfileScreen = () => {
   return (
     <View style={{flex: 1, backgroundColor: 'rgb(64, 97, 50)'}}>
       <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView style={styles.container}>
+      <ScrollView style={styles.container} contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.profileHeader}>
           <Image
             source={require('../assets/profile_image.png')}
@@ -74,37 +75,6 @@ const ProfileScreen = () => {
         </View>
         {/* Add more sections as needed */}
       </ScrollView>
-      </SafeAreaView>
-      {/* Bottom White Platform */}
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.bottomContainer}>
-        <View style={styles.tabBar}>
-          <TouchableOpacity style={styles.tabItem} onPress={() => handlePress('Home')}>
-            <MaterialIcons name="home" size={24} color="#4CAF50" />
-            <Text style={styles.tabTitle}>Home</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.tabItemCalories} onPress={() => handlePress('Calories')}>
-            <MaterialIcons name="fastfood" size={24} color="#4CAF50" />
-            <Text style={styles.tabTitle}>Calories</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.scannerButton} onPress={() => handlePress('Scanner')}>
-            <MaterialIcons name="center-focus-strong" size={40} color="#4CAF50" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.tabItemProfile} onPress={() => handlePress('Profile')}>
-            <MaterialIcons name="person" size={24} color="#4CAF50" />
-            <Text style={styles.tabTitle}>Profile</Text>
-          </TouchableOpacity>   
-          <TouchableOpacity style={styles.tabItem} onPress={() => handlePress('History')}>
-            <MaterialIcons name="manage-search" size={24} color="#4CAF50" />
-            <Text style={styles.tabTitle}>History</Text>
-
-          </TouchableOpacity>
-            {/* Repeat for other tab items: Calories, Profile, More */}
-            {/* ... */}
-          </View>
-        </View>
-        {/* Bottom SafeAreaView with minimal height to cover the unsafe area */}
-        <SafeAreaView style={{ backgroundColor: 'white', height: 'auto' }} />
       </SafeAreaView>
     </View>
   );
@@ -237,44 +207,8 @@ const styles = StyleSheet.create({
     // Add font weight or other styling as needed
   },
 
-  tabBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around', // This spaces out the icons evenly
-    alignItems: 'center', // This centers the icons vertically
-    height: 50, // Adjust as needed
-  },
-  tabItemCalories: {
-    alignItems: 'center',
-    marginRight: 20, // Adjust this value as needed to push away from the scanner button
-  },
-  
-  tabItemProfile: {
-    alignItems: 'center',
-    marginLeft: 20, // Adjust this value as needed to push away from the scanner button
-  },
-  tabItem: {
-    alignItems: 'center', // This centers the icon and label
-  },
-  scannerButton: {
-    backgroundColor: '#ccc', // Grey background
-    height: 75, // Set height for the circle
-    width: 75, // Set width for the circle
-    borderRadius: 37.5, // Half the size of width to make it a circle
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: -37.5,
-    marginRight: -27.5,
-    top: -10, // Half the size of the button to move it up above the tab bar
-    elevation: 4, // Optional: adds shadow on Android
-    shadowColor: '#000', // Optional: adds shadow on iOS
-    shadowOffset: { width: 0, height: 2 }, // Optional: adds shadow on iOS
-    shadowOpacity: 0.25, // Optional: adds shadow on iOS
-    shadowRadius: 3.84, // Optional: adds shadow on iOS
-  },
-  tabTitle: {
-    color: '#4CAF50', // This sets the label color
-    fontSize: 15, // Adjust the size as needed
-    marginTop: 4, // This adds space between the icon and label
+  scrollViewContent: {
+    paddingBottom: 40, // Adjust this value as needed to accommodate your bottom tab/navigation
   },
 
   // ... (rest of your styles)
