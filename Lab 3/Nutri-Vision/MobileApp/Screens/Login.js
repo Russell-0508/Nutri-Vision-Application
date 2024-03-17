@@ -26,6 +26,7 @@ const curveHeight = Dimensions.get('window').height * 0.4;
 
 function Login({navigation}) {
 
+    /*
     //Ke Yuan
     // State to check if user is new or not.
 
@@ -40,7 +41,7 @@ function Login({navigation}) {
         } else {
             navigation.navigate('HomePage');
         }
-    }
+    }*/
 
     const buttonClickHandler = () =>{
         console.log('Pressed create an account');
@@ -183,14 +184,10 @@ const styles = StyleSheet.create({
         width: 170,
         marginRight: 10
     },
-
-    /*textinput: {
-
-    },*/
         
     textinputcontainer: {
         borderWidth: 1,
-        width: 310,
+        width: 330,
         height: 40,
         marginLeft: 35
     },

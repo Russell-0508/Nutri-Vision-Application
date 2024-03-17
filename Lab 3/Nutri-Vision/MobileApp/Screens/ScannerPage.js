@@ -48,7 +48,7 @@ function ScannerPage({navigation}) {
 
   const windowHeight = Dimensions.get('window').height;
   const windowWidth = Dimensions.get('window').width;
-  const cameraSize = windowWidth + 70; //camera size
+  const cameraSize = windowWidth + 190; //camera size
   const topOffset = (windowHeight - cameraSize) / 2;
 
   const pickImage = async () => {
@@ -65,12 +65,12 @@ function ScannerPage({navigation}) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <Camera style={[styles.camera, { top: topOffset, height: cameraSize, width: windowWidth }]} type={type}>
         {/*camera overlay components like buttons, they can be added here */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
-            <MaterialIcons name="camera" size={40} color="white" />
+            <MaterialIcons name="camera" size={50} color="white" />
           </TouchableOpacity>
         </View>
       </Camera>
@@ -78,9 +78,9 @@ function ScannerPage({navigation}) {
       {/* Text and arrow button for the food item name and calorie count */}
       <View style={styles.infoContainer}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={styles.foodItemText}>{foodItem}</Text>
-          <TouchableOpacity onPress={() => {/* handle the press event */}}>
-            <MaterialIcons name="keyboard-arrow-right" size={60} color="black" />
+          <Text style={styles.foodItemText}>{foodItem}Hello</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('NutritionalInfoPage')} style={styles.arrowButton}>
+            <MaterialIcons name="keyboard-arrow-right" size={60} color="pink" />
           </TouchableOpacity>
         </View>
         <Text style={styles.calorieCountText}>{calorieCount}</Text>
@@ -93,7 +93,7 @@ function ScannerPage({navigation}) {
 
       {/* Overlay view, add scanner label, close button, and other UI components here */}
       <View style={styles.overlay}>
-        <Text style={styles.scannerLabelText}>Scanner</Text>
+        <Text style={styles.scannerLabelText}></Text>
         <Button title="Flip Image" onPress={() => {
           setType(
             type === Camera.Constants.Type.back
@@ -104,26 +104,27 @@ function ScannerPage({navigation}) {
         {/* Add more buttons or information here */}
       </View>
       
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1.0,
     justifyContent: 'center',
     alignItems: 'center',
+    bottom: 120,
   },
   camera: {
     position: 'absolute',
     left: 0,
     right: 10,
-    bottom: 40,
+    bottom: 80,
   },
   buttonContainer: {
     backgroundColor: 'transparent',
     position: 'absolute',
-    bottom: 20,
+    bottom: 10,
     alignSelf: 'center',
     flexDirection: 'row',
   },
@@ -135,46 +136,44 @@ const styles = StyleSheet.create({
   },
   overlay: {
     position: 'absolute',
-    top: 60,
+    top: 0,
     left: 0,
-    right: 225,
-    bottom: 670,
+    right: 290,
+    bottom: 560,
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  scannerLabelText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginTop: 20,
   },
 
   infoContainer: {
     position: 'absolute',
     alignSelf: 'center', // Center the container horizontally
-    bottom: 120, // Adjust this value as needed to position the text above the gallery button
+    bottom: -70, // Adjust this value as needed to position the text above the gallery button
     alignItems: 'center', // Center the text vertically within the container
+    right: 20,
+    width: '85%',
+    
   },
   foodItemText: {
-    color: 'black',
+    color: 'pink',
     fontSize: 20, 
     fontWeight: 'bold',
-    marginTop:-15,
+    marginTop: 0,
   },
   calorieCountText: {
     color: 'grey',
     fontSize: 16, 
-    marginTop: -20, 
-    marginRight:50,
+    marginTop: -30, 
+    marginRight:80,
   },
 
   arrowButton: {
-    padding: 8,
+    padding: 20,
   },
 
   galleryButton: {
     position: 'absolute',
-    right: 30,
-    bottom: 30,
+    right: 20,
+    bottom: -110,
     backgroundColor: 'black',
     padding: 10,
     borderRadius: 30,
