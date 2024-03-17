@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, Dimensions, StatusBar, FlatList } from 'react-native';
+import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, Dimensions, StatusBar, FlatList, ScrollView} from 'react-native';
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { saveMealToFirestore } from '../../MealHistory';
+import { useNavigation } from '@react-navigation/native';
 
 
-function NutritionalInfoPage() {
+function NutritionalInfoPage({navigation}) {
   // State to hold the image URI
   const [imageUri, setImageUri] = useState(null); // Initial state is null
 
@@ -138,13 +139,13 @@ function NutritionalInfoPage() {
           <TouchableOpacity style={styles.tabItemProfile} onPress={() => handlePress('Profile')}>
             <MaterialIcons name="person" size={24} color="#4CAF50" />
             <Text style={styles.tabTitle}>Profile</Text>
-          </TouchableOpacity>
+          </TouchableOpacity>   
           <TouchableOpacity style={styles.tabItem} onPress={() => handlePress('History')}>
             <MaterialIcons name="manage-search" size={24} color="#4CAF50" />
             <Text style={styles.tabTitle}>History</Text>
           </TouchableOpacity>
+          </View>
         </View>
-      </View>
     </SafeAreaView>
   );
 }
@@ -190,7 +191,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     fontStyle: 'italic',
-    textAlign: 'flex-start',
+    textAlign: 'flex-start', 
     margin: 16,
   },
   nutritionalDetailsContainer: {
@@ -272,12 +273,12 @@ const styles = StyleSheet.create({
   },
 
   bottomContainer: {
-    position: 'absolute',
+    position: 'absolute', 
     bottom: 5,
     left: 0,
     right: 0,
     backgroundColor: 'white',
-    paddingVertical: 20,
+    paddingVertical: 20, 
     paddingHorizontal: 10,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
@@ -290,40 +291,40 @@ const styles = StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    alignItems: 'center',
-    height: 50,
+    alignItems: 'center', 
+    height: 50, 
   },
   tabItemCalories: {
     alignItems: 'center',
     marginRight: 20,
   },
-
+  
   tabItemProfile: {
     alignItems: 'center',
     marginLeft: 20,
   },
   tabItem: {
-    alignItems: 'center',
+    alignItems: 'center', 
   },
   scannerButton: {
-    backgroundColor: '#ccc',
-    height: 75,
-    width: 75,
+    backgroundColor: '#ccc', 
+    height: 75, 
+    width: 75, 
     borderRadius: 37.5, // Half the size of width to make it a circle
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: -37.5,
     marginRight: -27.5,
     top: -10,
-    elevation: 4,
+    elevation: 4, 
     shadowColor: '#000', // Optional: adds shadow on iOS
     shadowOffset: { width: 0, height: 2 }, // Optional: adds shadow on iOS
     shadowOpacity: 0.25, // Optional: adds shadow on iOS
     shadowRadius: 3.84, // Optional: adds shadow on iOS
   },
   tabTitle: {
-    color: '#4CAF50',
-    fontSize: 15,
+    color: '#4CAF50', 
+    fontSize: 15, 
     marginTop: 4,
   },
 
