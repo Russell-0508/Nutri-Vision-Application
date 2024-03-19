@@ -1,18 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, Dimensions, StatusBar, FlatList, ScrollView} from 'react-native';
+import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, Dimensions, StatusBar, FlatList, ScrollView } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { saveMealToFirestore } from '../../MealHistory';
 import { useNavigation } from '@react-navigation/native';
 
 
-function NutritionalInfoPage({navigation}) {
+function NutritionalInfoPage({ navigation }) {
   // State to hold the image URI
   const [imageUri, setImageUri] = useState(null); // Initial state is null
 
   // Placeholder image URI
   const placeholderImageUri = 'https://via.placeholder.com/150'; // Placeholder URL
-  
+
 
   // Placeholder ingredients
   const ingredients = [
@@ -49,16 +50,59 @@ function NutritionalInfoPage({navigation}) {
     </View>
   );
 
+  const handleConfirmMeal = async () => {
+    // Prepare the meal data based on your requirements
+    const mealData = {
+      name: 'Fried Rice with Chicken',
+      calories: 500, // Example value, replace with actual value
+      carbohydrates: 50, // Example value, replace with actual value
+      cholesterol: 30, // Example value, replace with actual value
+      createdAt: new Date(), // Current timestamp
+      fiber: 10, // Example value, replace with actual value
+      protein: 30, // Example value, replace with actual value
+      saturatedFat: 5, // Example value, replace with actual value
+      servingSize: 1, // Example value, replace with actual value
+      sodium: 20, // Example value, replace with actual value
+      sugar: 15, // Example value, replace with actual value
+      totalFat: 15, // Example value, replace with actual value
+      type: 'lunch', // Example value, replace with actual value
+    };
+
+    try {
+      // Save the meal data to Firebase
+      const mealId = await saveMealToFirestore(mealData);
+
+      // perform additional actions after the meal is saved
+      console.log('Meal confirmed and saved with ID:', mealId);
+
+    } catch (error) {
+      console.error('Error confirming meal:', error);
+      // Handle the error as needed
+    }
+  };
+
   const ConfirmMealButton = () => (
-    <TouchableOpacity style={styles.confirmMealButton} onPress={() => handlePress('Confirm Meal')}>
+    <TouchableOpacity style={styles.confirmMealButton} onPress={handleButtonPress}>
       <Text style={styles.confirmMealText}>Confirm Meal</Text>
     </TouchableOpacity>
   );
-  
 
-   // Placeholder mass and calories 
-   const foodItemMass = "250g";
-   const foodItemCalories = "450 Calories";
+  // State for heart button
+  const [isHeartActive, setIsHeartActive] = useState(false);
+
+  // Toggle heart state
+  const toggleHeart = () => {
+    setIsHeartActive(!isHeartActive); // Toggle between true and false
+  };
+
+  const handleButtonPress = async () => {
+    await handleConfirmMeal(); // Wait for the meal to be confirmed
+    navigation.navigate('ConfirmMealPage'); // Navigate after confirmation
+  };
+
+  // Placeholder mass and calories 
+  const foodItemMass = "250g";
+  const foodItemCalories = "450 Calories";
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -75,8 +119,12 @@ function NutritionalInfoPage({navigation}) {
           <MaterialIcons name="more-horiz" size={30} color="black" />
         </TouchableOpacity>
         {/* Heart button */}
-        <TouchableOpacity style={styles.heartButton} onPress={() => handlePress('Favorite')}>
-          <MaterialIcons name="favorite-border" size={30} color="black" />
+        <TouchableOpacity style={styles.heartButton} onPress={toggleHeart}>
+          <MaterialIcons
+            name={isHeartActive ? "favorite" : "favorite-border"} // Change icon based on state
+            size={30}
+            color={isHeartActive ? "red" : "black"} // Change color based on state
+          />
         </TouchableOpacity>
       </View>
       <View style={styles.nutritionalInfoContainer}>
@@ -84,7 +132,7 @@ function NutritionalInfoPage({navigation}) {
         {/* Mass and Calories with Icons */}
         <View style={styles.nutritionalDetailsContainer}>
           <MaterialIcons name="fitness-center" size={20} color="rgb(127, 127, 127)" />
-          <Text style={styles.nutritionalDetailsText}> 250g    </Text>
+          <Text style={styles.nutritionalDetailsText}> 350g    </Text>
           <MaterialIcons name="local-fire-department" size={20} color="rgb(127, 127, 127)" />
           <Text style={styles.nutritionalDetailsText}> 550 kcal</Text>
         </View>
@@ -108,9 +156,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(173, 219, 199, 1)',
   },
   imageContainer: {
-    backgroundColor: 'rgba(173, 219, 199, 1)', 
-    paddingVertical: 10, 
-    alignItems: 'center', 
+    backgroundColor: 'rgba(173, 219, 199, 1)',
+    paddingVertical: 10,
+    alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
   },
@@ -120,30 +168,30 @@ const styles = StyleSheet.create({
     marginTop: 30
   },
   threeDotButton: {
-    position: 'absolute', 
+    position: 'absolute',
     top: 15,
-    right: 30, 
+    right: 30,
   },
   heartButton: {
-    position: 'absolute', 
+    position: 'absolute',
     top: 50,
-    right: 30, 
+    right: 30,
   },
   nutritionalInfoContainer: {
     backgroundColor: 'white',
-    borderRadius: 40, 
+    borderRadius: 40,
     margin: -50,
     marginLeft: 0,
-    marginTop: 40, 
-    flex: 1, 
-    justifyContent: 'flex-start', 
+    marginTop: 10,
+    flex: 1,
+    justifyContent: 'flex-start',
   },
   nutritionalInfoContainerText: {
-    color: 'rgb(127, 127, 127)', 
+    color: 'rgb(127, 127, 127)',
     fontSize: 20,
     fontWeight: 'bold',
     fontStyle: 'italic',
-    textAlign: 'auto', 
+    textAlign: 'flex-start',
     margin: 16,
   },
   nutritionalDetailsContainer: {
@@ -207,22 +255,24 @@ const styles = StyleSheet.create({
     marginRight: 150,
   },
   confirmMealButton: {
-    backgroundColor: 'grey', 
-    borderRadius: 20, 
-    paddingVertical: 20, 
-    paddingHorizontal: 20, 
-    marginVertical: 20, 
-    marginHorizontal: 40, 
+    backgroundColor: 'grey',
+    borderRadius: 20,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    marginVertical: 20,
+    marginHorizontal: 40,
     marginRight: 90,
     marginBottom: 120,
-    alignItems: 'center', 
+    alignItems: 'center',
     justifyContent: 'center',
   },
   confirmMealText: {
-    fontSize: 16, 
+    fontSize: 16,
     color: 'white',
     fontWeight: 'bold',
   },
+
+
 
 });
 
