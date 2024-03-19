@@ -22,12 +22,12 @@ curveHeight = 100
 screenWidth = 500
 
 
-{/* This is the Entry element, which takes in title, description, and displays it all */}
-function Entry({title, description, navigation}){
-    return(
+{/* This is the Entry element, which takes in title, description, and displays it all */ }
+function Entry({ title, description, navigation }) {
+    return (
         <View style={styles.entry}>
-            <View style={styles.entryContainer}> 
-                <Text style={styles.entryTitle}> {title} </Text> 
+            <View style={styles.entryContainer}>
+                <Text style={styles.entryTitle}> {title} </Text>
                 <Text style={styles.entryDescription}> {description}</Text>
 
             </View>
@@ -53,61 +53,103 @@ function History({ navigation }) {
         setIsCollapsed(!isCollapsed);
     }
 
+    const [selectedDate, setSelectedDate] = useState('');
+    const [mealEntries, setMealEntries] = useState([]);
+
+    useEffect(() => {
+        const fetchMealEntries = async () => {
+            try {
+                //today's date
+                const today = new Date();
+                const todayString = today.toLocaleDateString('en-US', {
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric',
+                });
+
+                // update selectedDate directly
+                setSelectedDate(todayString);
+
+                const entries = await getMealHistoryFromFirestore(todayString);
+                setMealEntries(entries);
+            } catch (error) {
+                console.error('Error fetching meal entries:', error);
+            }
+        };
+
+        fetchMealEntries();
+    }, []);
+
+    const handleDateSelection = (date) => {
+        setSelectedDate(date);
+    };
+
     return (
 
-    <View style={styles.container}>
-        <StatusBar backgroundColor="#406132" barStyle="light-content" />
-        <SafeAreaView>
-        <ScrollView>
-            <View style={styles.topContainer}> 
-                <View style={styles.topContent}>
-                    <Text style={styles.pmText}>Past Meals</Text>
-                    <Text style={styles.dateText}>Date1 - Date2</Text>
-                </View>
-                <View style={styles.topIcons}>
-                    <TouchableOpacity>
-                        <Image
-                            style={styles.searchlogo}
-                            source={require('../assets/magnifying-glass.png')}
-                            resizeMode='contain'
-                        />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                    onPress={()=>navigation.navigate("IndividualMeal")}>
-                        <Image
-                            style={styles.morelogo}
-                            source={require('../assets/threedots.png')}
-                            resizeMode='contain'
-                        />
-                    </TouchableOpacity>
-                </View>
-            </View>
-           
-            <View style={styles.header}>
-                <View style={styles.headerContainer}>
-                    {/* 1 Jan 2024 is a placeholder, should read the current date and be dynamic 
-                        Work in progress
+        <View style={styles.container}>
+            <StatusBar backgroundColor="#406132" barStyle="light-content" />
+            <SafeAreaView>
+                <ScrollView>
+                    <View style={styles.topContainer}>
+                        <View style={styles.topContent}>
+                            <Text style={styles.pmText}>Past Meals</Text>
+                            <Text style={styles.dateText}>Date1 - Date2</Text>
+                        </View>
+                        <View style={styles.topIcons}>
+                            <TouchableOpacity>
+                                <Image
+                                    style={styles.searchlogo}
+                                    source={require('../assets/magnifying-glass.png')}
+                                    resizeMode='contain'
+                                />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => navigation.navigate("IndividualMeal")}>
+                                <Image
+                                    style={styles.morelogo}
+                                    source={require('../assets/threedots.png')}
+                                    resizeMode='contain'
+                                />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
+                    <View style={styles.header}>
+                        <View style={styles.headerContainer}>
+                            {/* 1 Jan 2024 is a placeholder, should read the current date and be dynamic 
+                        Work in progress JY: i set to today's date to test backend 
                     */}
-                    <Text style={styles.headerText}> 1 JAN 2024</Text>
-                </View>
-                <View>
-                    <TouchableOpacity 
-                    onPress={toggleCollapse}
-                    style={styles.buttonContainer}>
-                        <Text style={styles.buttonCollapse}>View All</Text>
-                    </TouchableOpacity>                                             
-                </View> 
-            </View>
-            
-            <Collapsible collapsed={isCollapsed}>
-                {/* This is where we should read the database to display the meal entries
+                            <Text style={styles.headerText}>{selectedDate}</Text>
+                        </View>
+                        <View>
+                            <TouchableOpacity
+                                onPress={toggleCollapse}
+                                style={styles.buttonContainer}>
+                                <Text style={styles.buttonCollapse}>View All</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
+                    <Collapsible collapsed={isCollapsed}>
+                        {/* This is where we should read the database to display the meal entries
                 I'm still trying to figure out how to get the description to show multiple lines
                 The <Entry/> element is at the top
                 */}
-                <Entry title='Breakfast' description='Toast with egg\ncoffee\napple'/>
-                <Entry title='Lunch' description='Chicken rice'/>
-            </Collapsible>
-            {!isCollapsed && (
+                        {/* <Entry title='Breakfast' description='Toast with egg\ncoffee\napple' />
+                        <Entry title='Lunch' description='Chicken rice' />
+                        {mealEntries
+                            .filter((entry) => entry.date === selectedDate)
+                            .map((entry, index) => (
+                                <Entry title={entry.type} description={entry.name} />
+                            ))} */}
+                        {mealEntries.map((entry, index) => (
+                            <View key={index}>
+                                <Entry title={entry.type}></Entry>
+                                <Entry description={entry.name}></Entry>
+                            </View>
+                        ))}
+                    </Collapsible>
+                    {!isCollapsed && (
                         <TouchableOpacity onPress={toggleCollapse} style={styles.viewLessButton}>
                             <Text style={styles.viewLessText}>View Less</Text>
                         </TouchableOpacity>
@@ -183,7 +225,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 
-    
+
 
     header: {
         flexDirection: 'row',
