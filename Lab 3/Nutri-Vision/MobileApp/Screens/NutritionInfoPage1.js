@@ -92,7 +92,7 @@ function ConfirmMealPage({ navigation }) {
         </TouchableOpacity>
         {/* Heart button */}
         <TouchableOpacity style={styles.heartButton} onPress={toggleHeart}>
-        <MaterialIcons
+          <MaterialIcons
             name={isHeartActive ? "favorite" : "favorite-border"} // Change icon based on state
             size={30}
             color={isHeartActive ? "red" : "black"} // Change color based on state
@@ -109,7 +109,7 @@ function ConfirmMealPage({ navigation }) {
           <Text style={styles.nutritionalDetailsText}> 550 kcal</Text>
         </View>
         {/*Nutritional Information */}
-        <Text style = {styles.ingredientsHeaderText}>Nutritional Information</Text>
+        <Text style={styles.ingredientsHeaderText}>Nutritional Information</Text>
         <View style={styles.innerGreyContainer}>
           <View style={styles.nutritionalInfoRow}>
             <Text style={styles.labelText}>Serving Size:</Text>
@@ -136,19 +136,19 @@ function ConfirmMealPage({ navigation }) {
         <View style={styles.progressCirclesContainer}>
           <View style={styles.progressCircleContainer}>
             <View style={styles.progressCircleCarbs}>
-                <Text style={styles.progressValue}>100 %</Text>
+              <Text style={styles.progressValue}>100 %</Text>
             </View>
             <Text style={styles.progressLabel}>Carbohydrates</Text>
           </View>
           <View style={styles.progressCircleContainer}>
             <View style={styles.progressCircleFats}>
-                <Text style={styles.progressValue}>100 %</Text>
+              <Text style={styles.progressValue}>100 %</Text>
             </View>
             <Text style={styles.progressLabel}>Fats</Text>
           </View>
           <View style={styles.progressCircleContainer}>
             <View style={styles.progressCircleProtein}>
-                <Text style={styles.progressValue}>100 %</Text>
+              <Text style={styles.progressValue}>100 %</Text>
             </View>
             <Text style={styles.progressLabel}>Proteins</Text>
           </View>
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     alignItems: 'center',
   },
-  
+
   // Style for the text of labels
   labelText: {
     fontSize: 20,
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
     textAlign: 'left', // Align the text to the right for the labels
     flex: 1, // Take up as much space as needed
   },
-  
+
   // Style for the text of values
   valueText: {
     fontSize: 18,
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
   progressCircleContainer: {
     alignItems: 'center', // Center-align the progress circle and label
   },
-  
+
   progressLabel: {
     marginTop: 8, // Space between the circle and the label text
     fontSize: 14, // Adjust based on your design needs
