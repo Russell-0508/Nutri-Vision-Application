@@ -5,6 +5,7 @@ import * as ImagePicker from 'expo-image-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { saveMealToFirestore } from '../../MealHistory';
 import { useNavigation } from '@react-navigation/native';
+import Svg, { Circle } from 'react-native-svg';
 
 
 
@@ -71,6 +72,48 @@ function ConfirmMealPage({ navigation }) {
     </TouchableOpacity>
   );
 
+  const [carbsPercentage, setCarbsPercentage] = useState(60); // Example percentage
+  const [fatsPercentage, setFatsPercentage] = useState(55); // Example percentage
+  const [proteinPercentage, setProteinPercentage] = useState(25); // Example percentage
+
+
+  const ProgressCircle = ({ percentage, fillColor, label }) => {
+    const size = 75; // Diameter of the circle
+    const strokeWidth = 5; // Width of the circle border
+    const radius = (size / 2) - (strokeWidth * 2); // Radius of the circle
+    const circumference = 2 * Math.PI * radius;
+    const strokeDashoffset = circumference - (percentage / 100) * circumference;
+  
+    return (
+      <View style={{ alignItems: 'center', margin: 10 }}>
+        <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+          <Circle
+            stroke="#ddd" // This is the color for the "unfilled" part of the circle
+            fill="none"
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            strokeWidth={strokeWidth}
+          />
+          <Circle
+            stroke={fillColor}
+            fill="none"
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            strokeWidth={strokeWidth}
+            strokeDasharray={`${circumference} ${circumference}`}
+            strokeDashoffset={strokeDashoffset}
+            strokeLinecap="round"
+            transform={`rotate(-90, ${size / 2}, ${size / 2})`}
+          />
+        </Svg>
+        <Text style={{ position: 'absolute', fontWeight: 'bold', top: size * 0.35 }}>{percentage}%</Text>
+        <Text style={{ marginTop: 4, fontWeight: 'bold' }}>{label}</Text> 
+      </View>
+    );
+  };
+
 
   // Placeholder mass and calories 
   const foodItemMass = "250g";
@@ -134,24 +177,9 @@ function ConfirmMealPage({ navigation }) {
         </View>
         {/* Nutritional information progress circles */}
         <View style={styles.progressCirclesContainer}>
-          <View style={styles.progressCircleContainer}>
-            <View style={styles.progressCircleCarbs}>
-                <Text style={styles.progressValue}>100 %</Text>
-            </View>
-            <Text style={styles.progressLabel}>Carbohydrates</Text>
-          </View>
-          <View style={styles.progressCircleContainer}>
-            <View style={styles.progressCircleFats}>
-                <Text style={styles.progressValue}>100 %</Text>
-            </View>
-            <Text style={styles.progressLabel}>Fats</Text>
-          </View>
-          <View style={styles.progressCircleContainer}>
-            <View style={styles.progressCircleProtein}>
-                <Text style={styles.progressValue}>100 %</Text>
-            </View>
-            <Text style={styles.progressLabel}>Proteins</Text>
-          </View>
+          <ProgressCircle percentage={carbsPercentage} fillColor="brown" label="Carbohydrates" />
+          <ProgressCircle percentage={fatsPercentage} fillColor="yellow" label="Fats" />
+          <ProgressCircle percentage={proteinPercentage} fillColor="blue" label="Proteins" />
         </View>
         <ConfirmMealButton />
       </View>
@@ -224,11 +252,11 @@ const styles = StyleSheet.create({
   },
 
   innerGreyContainer: {
-    backgroundColor: '#E0E0E0', // A grey color for the container's background
-    borderRadius: 20, // Rounded corners
-    padding: 20, // Space inside the container
-    marginHorizontal: 20, // Horizontal spacing outside the container
-    marginTop: 10, // Spacing from the top of the parent container
+    backgroundColor: '#E0E0E0', 
+    borderRadius: 20, 
+    padding: 20, 
+    marginHorizontal: 20,
+    marginTop: 10, 
     marginRight: 70,
     marginLeft: 20,
     alignSelf: 'stretch',
@@ -251,83 +279,36 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   
-  // Style for the text of labels
   labelText: {
     fontSize: 20,
     color: 'rgb(0, 0 ,0)',
     fontWeight: 'bold',
-    textAlign: 'left', // Align the text to the right for the labels
-    flex: 1, // Take up as much space as needed
+    textAlign: 'left',
+    flex: 1,
   },
   
-  // Style for the text of values
+  
   valueText: {
     fontSize: 18,
     color: 'rgb(0, 0 , 0)',
     fontWeight: 'bold',
-    textAlign: 'right', // Align the text to the left for the values
-    flex: 1, // Take up as much space as needed
+    textAlign: 'right', 
+    flex: 1, 
   },
 
   progressCirclesContainer: {
-    flexDirection: 'row', // Align children (progress circles) in a row
-    justifyContent: 'space-evenly', // Distribute extra space evenly between and around the elements
-    alignItems: 'center', // Align items in the center vertically in the container
+    flexDirection: 'row', 
+    justifyContent: 'space-evenly', 
+    alignItems: 'center', 
     marginTop: 10,
     marginRight: 50,
-  },
-
-  progressCircleContainer: {
-    alignItems: 'center', // Center-align the progress circle and label
-  },
-  
-  progressLabel: {
-    marginTop: 8, // Space between the circle and the label text
-    fontSize: 14, // Adjust based on your design needs
-    color: 'rgb(127, 127, 127)', // Label text color
-    fontWeight: 'bold', // Make the label text bold
-  },
-
-  progressCircleCarbs: {
-    // Placeholder for the progress circle component
-    height: 75,
-    width: 75,
-    borderRadius: 50,
-    borderWidth: 5,
-    borderColor: 'brown',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  progressCircleFats: {
-    // Placeholder for the progress circle component
-    height: 75,
-    width: 75,
-    borderRadius: 50,
-    borderWidth: 5,
-    borderColor: 'yellow',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  progressCircleProtein: {
-    // Placeholder for the progress circle component
-    height: 75,
-    width: 75,
-    borderRadius: 50,
-    borderWidth: 5,
-    borderColor: 'blue',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  progressValue:
-  {
-    fontWeight: 'bold',
   },
 
   confirmMealButton: {
     backgroundColor: 'rgb(96, 190, 61)',
     borderRadius: 20,
     paddingVertical: 20,
-    marginVertical: 25,
+    marginVertical: 10,
     marginRight: 70,
     marginLeft: 20,
     alignItems: 'center',
