@@ -48,7 +48,7 @@ function ProfileScreen({navigation}){
         <Text style={styles.headerText}>Account</Text>
         <View style={styles.actionsContainer}>
 
-          <TouchableOpacity onPress={() => handlePress('Edit Profile')} style={styles.actionItem}>
+          <TouchableOpacity onPress={() => navigation.navigate('EditProfilePage')} style={styles.actionItem}>
             <MaterialIcons name="edit" size={20} color="#4CAF50" style={styles.iconStyle}/>
             <Text style={styles.actionText}>Edit Profile</Text>
           </TouchableOpacity>

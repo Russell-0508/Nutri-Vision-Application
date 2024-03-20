@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, Dimensions, StatusBar, FlatList, ScrollView } from 'react-native';
+import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, Dimensions, StatusBar, FlatList, ScrollView, Modal, TextInput } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -10,6 +10,9 @@ import { useNavigation } from '@react-navigation/native';
 function NutritionalInfoPage({ navigation }) {
   // State to hold the image URI
   const [imageUri, setImageUri] = useState(null); // Initial state is null
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [ingredientName, setIngredientName] = useState('');
+  const [ingredientMass, setIngredientMass] = useState('');
 
   // Placeholder image URI
   const placeholderImageUri = 'https://via.placeholder.com/150'; // Placeholder URL
@@ -42,13 +45,27 @@ function NutritionalInfoPage({ navigation }) {
 
   const AddIngredientButton = () => (
     <View>
-      <TouchableOpacity style={styles.addIngredientButton} onPress={() => handlePress('Add Ingredient')}>
+      <TouchableOpacity style={styles.addIngredientButton} onPress={() => setIsModalVisible(true)}>
         <Text style={styles.addIngredientText}>Add Ingredients</Text>
         <MaterialIcons name="add-circle-outline" size={24} color="black" />
       </TouchableOpacity>
       <View style={styles.separator} />
     </View>
   );
+
+  const handleAddIngredient = () => {
+    console.log("Add button pressed with ingredient name:", ingredientName, "and mass:", ingredientMass);
+    /*const newIngredient = {
+      id: new Date().getTime().toString(),
+      name: ingredientName,
+      portion: ingredientMass + 'g',
+      imageUrl: placeholderImageUri,
+    };
+    setIngredients(currentIngredients => [...currentIngredients, newIngredient]);
+    setIngredientName('');
+    setIngredientMass('');
+    setIsModalVisible(false);*/
+  };
 
   const handleConfirmMeal = async () => {
     // Prepare the meal data based on your requirements
@@ -106,6 +123,37 @@ function NutritionalInfoPage({ navigation }) {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={() => {
+          setIsModalVisible(!isModalVisible);
+        }}
+      >
+        <View style={styles.modalView}>
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => setIsModalVisible(false)}
+          >
+            <Text style={styles.closeButtonText}>X</Text>
+          </TouchableOpacity>
+          <TextInput
+            placeholder="Ingredient Name"
+            style={styles.textInput}
+            onChangeText={setIngredientName}
+            value={ingredientName}
+          />
+          <TextInput
+            placeholder="Mass (g)"
+            style={styles.textInput}
+            onChangeText={setIngredientMass}
+            keyboardType="numeric"
+            value={ingredientMass}
+          />
+          <Button title="Add" onPress={handleAddIngredient} />
+        </View>
+      </Modal>
       <StatusBar backgroundColor="rgba(173, 219, 199, 1)" barStyle="light-content" />
       <View style={styles.imageContainer}>
         {/* Image placeholder */}
@@ -154,6 +202,38 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: 'rgba(173, 219, 199, 1)',
+  },
+  modalView: {
+    marginTop: 200,
+    marginHorizontal: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5
+  },
+  closeButton: {
+    alignSelf: 'flex-end',
+    marginBottom: 20,
+  },
+  closeButtonText: {
+    fontSize: 24,
+    color: '#000',
+  },
+  textInput: {
+    height: 40,
+    width: '80%',
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginTop: 20,
+    padding: 10,
   },
   imageContainer: {
     backgroundColor: 'rgba(173, 219, 199, 1)',

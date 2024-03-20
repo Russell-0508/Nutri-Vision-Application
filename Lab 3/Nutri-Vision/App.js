@@ -6,6 +6,7 @@ import CreateProfile from './MobileApp/Screens/CreateProfile';
 import GoalsReg from './MobileApp/Screens/GoalsReg';
 import NutritionalInfoPage from './MobileApp/Screens/NutritionInfoPage2';
 import ConfirmMealPage from './MobileApp/Screens/NutritionInfoPage1';
+import EditProfilePage from './MobileApp/Screens/EditProfile'
 import HistoryPage from './MobileApp/Screens/HistoryPage';
 
 /*import ScannerPage from './MobileApp/Screens/ScannerPage';
@@ -35,6 +36,7 @@ export default function App() {
       <Stack.Screen name='Tabs' component={Tabs} options={{headerShown: false}}/>
       <Stack.Screen name='NutritionalInfoPage' component={NutritionalInfoPage} />
       <Stack.Screen name='ConfirmMealPage' component={ConfirmMealPage} />
+      <Stack.Screen name='EditProfilePage' component={EditProfilePage} />
       
       
 
