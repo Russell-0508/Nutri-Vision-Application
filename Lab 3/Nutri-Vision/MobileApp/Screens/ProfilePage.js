@@ -28,7 +28,7 @@ function ProfileScreen({navigation}){
     const getProfile = async () => {
       const data = await getDocs(profileCollectionRef);
       const filteredData = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-      //console.log(filteredData);
+      console.log(filteredData);
       setProfile(filteredData);
     };
 
@@ -49,7 +49,8 @@ function ProfileScreen({navigation}){
             source={require('../assets/profile_image.png')}
             style={styles.profileImage}
           />
-          <Text style={styles.profileName}>{profileData.name}</Text>
+          const displayName = useDisplayName("Your ID");
+          <Text style={styles.profileName}>{/*profileData.name*/displayName}</Text>
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
               <Text style={styles.statLabel}>Weight</Text>
