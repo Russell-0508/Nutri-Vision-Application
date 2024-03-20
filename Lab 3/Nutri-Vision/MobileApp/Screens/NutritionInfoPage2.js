@@ -114,7 +114,7 @@ function NutritionalInfoPage({ navigation }) {
 
   const handleButtonPress = async () => {
     await handleConfirmMeal(); // Wait for the meal to be confirmed
-    navigation.navigate('ConfirmMealPage'); // Navigate after confirmation
+    navigation.navigate('Confirm Meal'); // Navigate after confirmation
   };
 
   // Placeholder mass and calories 

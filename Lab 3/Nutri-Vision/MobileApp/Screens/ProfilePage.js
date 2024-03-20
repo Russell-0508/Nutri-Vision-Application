@@ -22,6 +22,12 @@ function ProfileScreen({navigation}){
     <View style={{flex: 1, backgroundColor: 'rgb(64, 97, 50)'}}>
       <SafeAreaView style={{ flex: 1 }}>
       <ScrollView style={styles.container} contentContainerStyle={styles.scrollViewContent}>
+        {/* Logout Button */}
+        <TouchableOpacity
+          style={styles.logoutButton}
+          onPress={() => navigation.navigate('Login')}>
+          <MaterialIcons name="logout" size={24} color="red" />
+        </TouchableOpacity>
         <View style={styles.profileHeader}>
           <Image
             source={require('../assets/profile_image.png')}
@@ -48,7 +54,7 @@ function ProfileScreen({navigation}){
         <Text style={styles.headerText}>Account</Text>
         <View style={styles.actionsContainer}>
 
-          <TouchableOpacity onPress={() => navigation.navigate('EditProfilePage')} style={styles.actionItem}>
+          <TouchableOpacity onPress={() => navigation.navigate('Edit Profile')} style={styles.actionItem}>
             <MaterialIcons name="edit" size={20} color="#4CAF50" style={styles.iconStyle}/>
             <Text style={styles.actionText}>Edit Profile</Text>
           </TouchableOpacity>
@@ -56,7 +62,7 @@ function ProfileScreen({navigation}){
             <MaterialIcons name="notifications" size={20} color="#4CAF50" style={styles.iconStyle} />
             <Text style={styles.actionText}>Notification</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => handlePress('Favourites')} style={styles.actionItem}>
+          <TouchableOpacity onPress={() => navigation.navigate('Favourites')} style={styles.actionItem}>
             <MaterialIcons name="favorite" size={20} color="#4CAF50" style={styles.iconStyle} />
             <Text style={styles.actionText}>Favourites</Text>
             </TouchableOpacity>
@@ -106,6 +112,13 @@ const styles = StyleSheet.create({
   safeArea: {
     backgroundColor: 'white', // The SafeAreaView background color also needs to be white
     flexGrow: 0, // Ensure it doesn't take more space than necessary
+  },
+
+  logoutButton: {
+    position: 'absolute',
+    top: 20, // Adjust based on your SafeAreaView or header's height
+    right: 20, // Adjust the right position as needed
+    zIndex: 10, // Ensure it's above other elements
   },
 
   profileHeader: {
