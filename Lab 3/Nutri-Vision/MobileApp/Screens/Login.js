@@ -43,19 +43,7 @@ function Login({navigation}) {
         }
     }*/
 
-<<<<<<< Updated upstream
     const buttonClickHandler = () =>{
-=======
-            //idk how to integrate onSuccessfulLogin
-            onSuccessfulLogin;
-            //Help me write the page change also, will deal with any backend problems once done
-        } catch (error) {
-            console.log("Sign in failed D:");
-            console.log(error.message);
-        }
-    }
-    const buttonClickHandler = () => {
->>>>>>> Stashed changes
         console.log('Pressed create an account');
         // do something
     }
@@ -82,98 +70,6 @@ function Login({navigation}) {
                 <Svg height={curveHeight} width={screenWidth}>
                 <Path d={`M-200 0 C ${screenWidth} 100 ${curveHeight/5} ${curveHeight} ${screenWidth*2.2} 0 Z`} fill="#afb281" />
                 </Svg>
-<<<<<<< Updated upstream
-=======
-            </View>
-            <SafeAreaView style={{ flex: 1 }}>
-                <ScrollView style={{ paddingTop: 50 }}>
-                    <View style={styles.textcontainer}>
-                        <Text style={styles.titletext}>
-                            Hello, great to see you again!</Text>
-                    </View>
-                    <View>
-                        <Text style={styles.login}> Log in to</Text>
-                    </View>
-                    <View style={{ marginTop: 60 }}>
-                        <Text style={styles.textinputheader}>E-mail</Text>
-                    </View>
-                    <View style={styles.textinputcontainer}>
-                        <TextInput
-                            ref={textInputRef}
-                            //styles={styles.textinput}
-                            placeholder='*******@gmail.com'
-                            keyboardType="email-address"
-                            value={email}
-                            onChangeText={setEmail} //Update email state
-                        />
-                    </View>
-                    <TouchableOpacity onPress={onEmailIconPress}>
-                        <Image
-                            source={isEmailIconActive ? require('../assets/email.png') :
-                                require('../assets/email.png')}
-                            style={{
-                                width: 28, height: 28, position: 'absolute',
-                                right: 60, bottom: 5, alignSelf: 'center'
-                            }}
-                        />
-                    </TouchableOpacity>
-                    <View>
-                        <Text style={styles.textinputheader}> Password </Text>
-                    </View>
-                    <View style={styles.textinputcontainer}>
-                        <TextInput
-                            //styles={styles.textinput}
-                            placeholder='**********'
-                            secureTextEntry={!isPasswordVisible}
-                            value={password}
-                            onChangeText={setPassword} // Update password state
-                        />
-                    </View>
-                    <TouchableOpacity onPress={onEyeIconPress}>
-                        <Image
-                            source={isPasswordVisible ? require('../assets/open_eye.png') :
-                                require('../assets/close_eye.png')}
-                            style={{
-                                width: 30, height: 30, position: 'absolute',
-                                right: 60, bottom: 5, alignSelf: 'center'
-                            }}
-                        />
-                    </TouchableOpacity>
-                    <View style={{ marginTop: 50 }}>
-                        <TouchableOpacity
-                            onPress={() => navigation.navigate("CreateProfile")}
-                            style={styles.buttonContainer}>
-                            <Text style={{
-                                fontSize: 18,
-                                alignSelf: 'center',
-                                color: 'white'
-                            }}>
-                                Confirm and continue
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={{ marginTop: 80 }}>
-                        <Text style={{
-                            alignSelf: 'center',
-                            fontSize: 18,
-                        }}> Don't have an account? </Text>
-                        <TouchableOpacity
-                            onPress={() => navigation.navigate("AccountRegistration")}
-                            style={styles.buttonContainer}>
-                            <Text style={{
-                                fontSize: 18,
-                                alignSelf: 'center',
-                                color: 'white'
-                            }}>
-                                Create an account
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-
-                </ScrollView>
-            </SafeAreaView>
-
->>>>>>> Stashed changes
         </View>
         <SafeAreaView style={{flex:1}}>
         <ScrollView style={{paddingTop:50}}>

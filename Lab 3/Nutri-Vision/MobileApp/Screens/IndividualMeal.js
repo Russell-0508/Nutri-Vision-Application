@@ -1,64 +1,121 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, Dimensions, StatusBar, FlatList } from 'react-native';
+import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, Dimensions, StatusBar, FlatList, ScrollView, Platform } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { saveMealToFirestore } from '../../MealHistory';
 import { useNavigation } from '@react-navigation/native';
+import Svg, { Circle } from 'react-native-svg';
 
 
-function IndividualMeal({navigation}) {
+
+
+
+function IndividualMeal({ navigation }) {
   // State to hold the image URI
   const [imageUri, setImageUri] = useState(null); // Initial state is null
 
   // Placeholder image URI
   const placeholderImageUri = 'https://via.placeholder.com/150'; // Placeholder URL
-  
 
-  // Placeholder ingredients
-  const ingredients = [
-    { id: '1', name: 'Rice', portion: '200g', imageUrl: 'https://via.placeholder.com/150' },
-    { id: '2', name: 'Chicken', portion: '150g', imageUrl: 'https://via.placeholder.com/150' },
-  ];
+  // State variables for nutritional information
+  const [servingSize, setServingSize] = useState('Loading...');
+  const [calories, setCalories] = useState('Loading...');
+  const [carbohydrates, setCarbohydrates] = useState('Loading...');
+  const [fats, setFats] = useState('Loading...');
+  const [protein, setProtein] = useState('Loading...');
+
+  const fetchNutritionalInfo = async () => {
+    try {
+    {/*
+      // Simulate fetching data from an API
+      // This is where you would make your actual API call
+      @JengYee, read the firebase database from here
+    */}
+
+      const apiResponse = {
+        servingSize: '1 portion',
+        calories: '550 kcal',
+        carbohydrates: '200 g',
+        fats: '50 g',
+        protein: '100 g',
+      };
+      // Update state variables with the API response
+      setServingSize(apiResponse.servingSize);
+      setCalories(apiResponse.calories);
+      setCarbohydrates(apiResponse.carbohydrates);
+      setFats(apiResponse.fats);
+      setProtein(apiResponse.protein);
+    } catch (error) {
+      console.error('Error fetching nutritional info:', error);
+      // Handle error or set default error values here
+    }
+  };
+
+  // Trigger the API call on component mount
+  useEffect(() => {
+    fetchNutritionalInfo();
+  }, []); // Empty dependency array means this runs once on mount
+
+  // State for heart button
+  const [isHeartActive, setIsHeartActive] = useState(false);
+
+  // Toggle heart state
+  const toggleHeart = () => {
+    setIsHeartActive(!isHeartActive); // Toggle between true and false
+  };
 
   // Placeholder function for button presses
   const handlePress = (action) => {
     console.log(`Pressed ${action}`);
   };
 
-  const renderIngredientItem = ({ item }) => (
-    <View>
-      <View style={styles.ingredientItem}>
-        <Image
-          source={{ uri: item.imageUrl || placeholderImageUri }} // Fallback to the placeholder URI
-          style={styles.ingredientImage}
-        />
-        <Text style={styles.ingredientName}>{item.name}</Text>
-        <Text style={styles.ingredientPortion}>{item.portion}</Text>
-      </View>
-      <View style={styles.separator} />
-    </View>
-  );
+  const [carbsPercentage, setCarbsPercentage] = useState(60); // Example percentage
+  const [fatsPercentage, setFatsPercentage] = useState(55); // Example percentage
+  const [proteinPercentage, setProteinPercentage] = useState(25); // Example percentage
 
-  const AddIngredientButton = () => (
-    <View>
-      <TouchableOpacity style={styles.addIngredientButton} onPress={() => handlePress('Add Ingredient')}>
-        <Text style={styles.addIngredientText}>Add Ingredients</Text>
-        <MaterialIcons name="add-circle-outline" size={24} color="black" />
-      </TouchableOpacity>
-      <View style={styles.separator} />
-    </View>
-  );
 
-  const ConfirmMealButton = () => (
-    <TouchableOpacity style={styles.confirmMealButton} onPress={() => handlePress('Confirm Meal')}>
-      <Text style={styles.confirmMealText}>Confirm Meal</Text>
-    </TouchableOpacity>
-  );
+  const ProgressCircle = ({ percentage, fillColor, label }) => {
+    const size = 75; // Diameter of the circle
+    const strokeWidth = 5; // Width of the circle border
+    const radius = (size / 2) - (strokeWidth * 2); // Radius of the circle
+    const circumference = 2 * Math.PI * radius;
+    const strokeDashoffset = circumference - (percentage / 100) * circumference;
   
+    return (
+      <View style={{ alignItems: 'center', margin: 10 }}>
+        <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+          <Circle
+            stroke="#ddd" // This is the color for the "unfilled" part of the circle
+            fill="none"
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            strokeWidth={strokeWidth}
+          />
+          <Circle
+            stroke={fillColor}
+            fill="none"
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            strokeWidth={strokeWidth}
+            strokeDasharray={`${circumference} ${circumference}`}
+            strokeDashoffset={strokeDashoffset}
+            strokeLinecap="round"
+            transform={`rotate(-90, ${size / 2}, ${size / 2})`}
+          />
+        </Svg>
+        <Text style={{ position: 'absolute', fontWeight: 'bold', top: size * 0.35 }}>{percentage}%</Text>
+        <Text style={{ marginTop: 4, fontWeight: 'bold' }}>{label}</Text> 
+      </View>
+    );
+  };
 
-   // Placeholder mass and calories 
-   const foodItemMass = "250g";
-   const foodItemCalories = "450 Calories";
+
+  // Placeholder mass and calories 
+  const foodItemMass = "250g";
+  const foodItemCalories = "450 Calories";
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -75,8 +132,12 @@ function IndividualMeal({navigation}) {
           <MaterialIcons name="more-horiz" size={30} color="black" />
         </TouchableOpacity>
         {/* Heart button */}
-        <TouchableOpacity style={styles.heartButton} onPress={() => handlePress('Favorite')}>
-          <MaterialIcons name="favorite-border" size={30} color="black" />
+        <TouchableOpacity style={styles.heartButton} onPress={toggleHeart}>
+          <MaterialIcons
+            name={isHeartActive ? "favorite" : "favorite-border"} // Change icon based on state
+            size={30}
+            color={isHeartActive ? "red" : "black"} // Change color based on state
+          />
         </TouchableOpacity>
       </View>
       <View style={styles.nutritionalInfoContainer}>
@@ -84,43 +145,39 @@ function IndividualMeal({navigation}) {
         {/* Mass and Calories with Icons */}
         <View style={styles.nutritionalDetailsContainer}>
           <MaterialIcons name="fitness-center" size={20} color="rgb(127, 127, 127)" />
-          <Text style={styles.nutritionalDetailsText}> 250g    </Text>
+          <Text style={styles.nutritionalDetailsText}> 350g    </Text>
           <MaterialIcons name="local-fire-department" size={20} color="rgb(127, 127, 127)" />
           <Text style={styles.nutritionalDetailsText}> 550 kcal</Text>
         </View>
-        <Text style={styles.ingredientsHeaderText}>Ingredients</Text>
-        <FlatList
-          data={ingredients}
-          renderItem={renderIngredientItem}
-          keyExtractor={item => item.id}
-          ListFooterComponent={AddIngredientButton}
-          style={styles.ingredientsList}
-        />
-        <ConfirmMealButton />
-      </View>
-      <View style={styles.bottomContainer}>
-        <View style={styles.tabBar}>
-          <TouchableOpacity style={styles.tabItem} onPress={() => handlePress('Home')}>
-            <MaterialIcons name="home" size={24} color="#4CAF50" />
-            <Text style={styles.tabTitle}>Home</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.tabItemCalories} onPress={() => handlePress('Calories')}>
-            <MaterialIcons name="fastfood" size={24} color="#4CAF50" />
-            <Text style={styles.tabTitle}>Calories</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.scannerButton} onPress={() => handlePress('Scanner')}>
-            <MaterialIcons name="center-focus-strong" size={40} color="#4CAF50" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.tabItemProfile} onPress={() => handlePress('Profile')}>
-            <MaterialIcons name="person" size={24} color="#4CAF50" />
-            <Text style={styles.tabTitle}>Profile</Text>
-          </TouchableOpacity>   
-          <TouchableOpacity style={styles.tabItem} onPress={() => handlePress('History')}>
-            <MaterialIcons name="manage-search" size={24} color="#4CAF50" />
-            <Text style={styles.tabTitle}>History</Text>
-          </TouchableOpacity>
+        {/*Nutritional Information */}
+        <Text style={styles.ingredientsHeaderText}>Nutritional Information</Text>
+        <View style={styles.innerGreyContainer}>
+          
+          <View style={styles.nutritionalInfoRow}>
+            <Text style={styles.labelText}>Calories:</Text>
+            <Text style={styles.valueText}>{calories}</Text>
+          </View>
+          <View style={styles.nutritionalInfoRow}>
+            <Text style={styles.labelText}>Carbohydrates:</Text>
+            <Text style={styles.valueText}>{carbohydrates}</Text>
+          </View>
+          <View style={styles.nutritionalInfoRow}>
+            <Text style={styles.labelText}>Fats:</Text>
+            <Text style={styles.valueText}>{fats}</Text>
+          </View>
+          <View style={styles.nutritionalInfoRow}>
+            <Text style={styles.labelText}>Protein:</Text>
+            <Text style={styles.valueText}>{protein}</Text>
           </View>
         </View>
+        {/* Nutritional information progress circles */}
+        <View style={styles.progressCirclesContainer}>
+          <ProgressCircle percentage={carbsPercentage} fillColor="brown" label="Carbohydrates" />
+          <ProgressCircle percentage={fatsPercentage} fillColor="yellow" label="Fats" />
+          <ProgressCircle percentage={proteinPercentage} fillColor="blue" label="Proteins" />
+        </View>
+        
+      </View>
     </SafeAreaView>
   );
 }
@@ -131,9 +188,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(173, 219, 199, 1)',
   },
   imageContainer: {
-    backgroundColor: 'rgba(173, 219, 199, 1)', 
-    paddingVertical: 10, 
-    alignItems: 'center', 
+    backgroundColor: 'rgba(173, 219, 199, 1)',
+    paddingVertical: 10,
+    alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
   },
@@ -143,29 +200,31 @@ const styles = StyleSheet.create({
     marginTop: 30
   },
   threeDotButton: {
-    position: 'absolute', 
+    position: 'absolute',
     top: 15,
-    right: 30, 
+    right: 30,
   },
   heartButton: {
-    position: 'absolute', 
+    position: 'absolute',
     top: 50,
-    right: 30, 
+    right: 30,
   },
   nutritionalInfoContainer: {
     backgroundColor: 'white',
-    borderRadius: 40, 
+    borderRadius: 40,
+    padding: 16,
     margin: -50,
     marginLeft: 0,
-    marginTop: 40, 
-    flex: 1, 
-    justifyContent: 'flex-start', 
+    marginTop: 10,
+    flex: 1,
+    justifyContent: 'flex-start',
   },
   nutritionalInfoContainerText: {
-    color: 'rgb(127, 127, 127)', 
+    color: 'rgb(127, 127, 127)',
     fontSize: 20,
     fontWeight: 'bold',
     fontStyle: 'italic',
+    textAlign: 'flex-start',
     margin: 16,
   },
   nutritionalDetailsContainer: {
@@ -186,120 +245,112 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginBottom: 8,
   },
-  ingredientItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  ingredientImage: {
-    width: 40,
-    height: 40,
-    marginLeft: 50,
-  },
-  ingredientName: {
-    fontSize: 16,
-    color: 'rgb(127, 127, 127)',
-    marginLeft: 80,
-  },
-  ingredientPortion: {
-    fontSize: 16,
-    color: 'rgb(127, 127, 127)',
-    marginRight: 100,
-    flex: 1,
-    textAlign: 'right',
-  },
-  separator: {
-    height: 1,
-    backgroundColor: 'grey',
-    alignSelf: 'stretch',
-    marginTop: 8,
-    marginLeft: 40,
-    marginRight: 90,
-  },
-  addIngredientButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 15,
-    paddingHorizontal: 10,
-    marginLeft: 40,
-  },
-  addIngredientText: {
-    fontSize: 16,
-    color: 'black',
-    marginRight: 150,
-  },
-  confirmMealButton: {
-    backgroundColor: 'grey', 
+
+  innerGreyContainer: {
+    backgroundColor: '#E0E0E0', 
     borderRadius: 20, 
-    paddingVertical: 20, 
-    paddingHorizontal: 20, 
-    marginVertical: 20, 
-    marginHorizontal: 40, 
-    marginRight: 90,
-    marginBottom: 120,
-    alignItems: 'center', 
+    padding: 20, 
+    marginHorizontal: 20,
+    marginTop: 10, 
+    marginRight: 70,
+    marginLeft: 20,
+    alignSelf: 'stretch',
+    alignItems: 'flex-start',
     justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  confirmMealText: {
-    fontSize: 16, 
-    color: 'white',
+
+  nutritionalInfoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+    alignItems: 'center',
+  },
+  
+  // Style for the text of labels
+  labelText: {
+    fontSize: 20,
+    color: 'rgb(0, 0 ,0)',
+    fontWeight: 'bold',
+    textAlign: 'left',
+    flex: 1,
+  },
+  
+  // Style for the text of values
+  valueText: {
+    fontSize: 18,
+    color: 'rgb(0, 0 , 0)',
+    fontWeight: 'bold',
+    textAlign: 'right', 
+    flex: 1, 
+  },
+
+  progressCirclesContainer: {
+    flexDirection: 'row', 
+    justifyContent: 'space-evenly', 
+    alignItems: 'center', 
+    marginTop: 10,
+    marginRight: 50,
+  },
+
+  progressCircleContainer: {
+    alignItems: 'center', // Center-align the progress circle and label
+  },
+  
+  progressLabel: {
+    marginTop: 8, // Space between the circle and the label text
+    fontSize: 14, // Adjust based on your design needs
+    color: 'rgb(127, 127, 127)', // Label text color
+    fontWeight: 'bold', // Make the label text bold
+  },
+
+  progressCircleCarbs: {
+    // Placeholder for the progress circle component
+    height: 75,
+    width: 75,
+    borderRadius: 50,
+    borderWidth: 5,
+    borderColor: 'brown',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  progressCircleFats: {
+    // Placeholder for the progress circle component
+    height: 75,
+    width: 75,
+    borderRadius: 50,
+    borderWidth: 5,
+    borderColor: 'yellow',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  progressCircleProtein: {
+    // Placeholder for the progress circle component
+    height: 75,
+    width: 75,
+    borderRadius: 50,
+    borderWidth: 5,
+    borderColor: 'blue',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  progressValue:
+  {
     fontWeight: 'bold',
   },
 
-  bottomContainer: {
-    position: 'absolute', 
-    bottom: 5,
-    left: 0,
-    right: 0,
-    backgroundColor: 'white',
-    paddingVertical: 20, 
-    paddingHorizontal: 10,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 10,
-  },
-  tabBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center', 
-    height: 50, 
-  },
-  tabItemCalories: {
-    alignItems: 'center',
-    marginRight: 20,
-  },
   
-  tabItemProfile: {
-    alignItems: 'center',
-    marginLeft: 20,
-  },
-  tabItem: {
-    alignItems: 'center', 
-  },
-  scannerButton: {
-    backgroundColor: '#ccc', 
-    height: 75, 
-    width: 75, 
-    borderRadius: 37.5, // Half the size of width to make it a circle
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: -37.5,
-    marginRight: -27.5,
-    top: -10,
-    elevation: 4, 
-    shadowColor: '#000', // Optional: adds shadow on iOS
-    shadowOffset: { width: 0, height: 2 }, // Optional: adds shadow on iOS
-    shadowOpacity: 0.25, // Optional: adds shadow on iOS
-    shadowRadius: 3.84, // Optional: adds shadow on iOS
-  },
-  tabTitle: {
-    color: '#4CAF50', 
-    fontSize: 15, 
-    marginTop: 4,
+  confirmMealText: {
+    fontSize: 16,
+    color: 'white',
+    fontWeight: 'bold',
   },
 
 });
