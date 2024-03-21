@@ -29,6 +29,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
 
+
       <Stack.Screen name='Landing' component={LandingUI} />
       <Stack.Screen name='Login' component={Login} />
       <Stack.Screen name='AccountRegistration' component={AccountReg}/>
@@ -40,17 +41,9 @@ export default function App() {
       <Stack.Screen name='Edit Profile' component={EditProfilePage} />
       <Stack.Screen name='Favourites' component={FavouritesPage} />
       
-      
-
       </Stack.Navigator>
     </NavigationContainer>
   );
   
 }
-/* <Stack.Screen name='Landing' component={LandingUI} />
-      <Stack.Screen name='Login' component={Login} />
-      <Stack.Screen name='AccountRegistration' component={AccountReg}/>
-      <Stack.Screen name='CreateProfile' component = { CreateProfile } />
-      <Stack.Screen name='GoalsReg' component={GoalsReg} />
-      <Stack.Screen name='Tabs' component={Tabs} options={{headerShown: false}}/>
-      <Stack.Screen name='NutritionalInfoPage' component={NutritionalInfoPage} /> */  
+/*  */  
