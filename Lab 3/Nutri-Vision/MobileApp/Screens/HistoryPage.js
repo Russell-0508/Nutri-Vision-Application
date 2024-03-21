@@ -17,6 +17,7 @@ import {
 import { useNavigation } from "@react-navigation/native"
 import Collapsible from 'react-native-collapsible'
 import { getMealHistoryFromFirestore } from '../../MealHistory';
+import IndividualMeal from './IndividualMeal';
 
 curveHeight = 100
 screenWidth = 500
