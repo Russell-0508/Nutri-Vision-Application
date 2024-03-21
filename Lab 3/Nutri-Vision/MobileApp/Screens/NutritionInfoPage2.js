@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, Dimensions, StatusBar, FlatList, ScrollView } from 'react-native';
+import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, Dimensions, StatusBar, FlatList, ScrollView, Modal, TextInput } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -10,6 +10,9 @@ import { useNavigation } from '@react-navigation/native';
 function NutritionalInfoPage({ navigation }) {
   // State to hold the image URI
   const [imageUri, setImageUri] = useState(null); // Initial state is null
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [ingredientName, setIngredientName] = useState('');
+  const [ingredientMass, setIngredientMass] = useState('');
 
   // Placeholder image URI
   const placeholderImageUri = 'https://via.placeholder.com/150'; // Placeholder URL
@@ -42,7 +45,7 @@ function NutritionalInfoPage({ navigation }) {
 
   const AddIngredientButton = () => (
     <View>
-      <TouchableOpacity style={styles.addIngredientButton} onPress={() => handlePress('Add Ingredient')}>
+      <TouchableOpacity style={styles.addIngredientButton} onPress={() => setIsModalVisible(true)}>
         <Text style={styles.addIngredientText}>Add Ingredients</Text>
         <MaterialIcons name="add-circle-outline" size={24} color="black" />
       </TouchableOpacity>
@@ -50,17 +53,19 @@ function NutritionalInfoPage({ navigation }) {
     </View>
   );
 
-  // const ConfirmMealButton = () => (
-  //   <TouchableOpacity style={styles.confirmMealButton} onPress={() => handlePress('Confirm Meal')}>
-  //     <Text style={styles.confirmMealText}>Confirm Meal</Text>
-  //   </TouchableOpacity>
-  // );
-
-  const ConfirmMealButton = () => (
-    <TouchableOpacity style={styles.confirmMealButton} onPress={handleConfirmMeal}>
-      <Text style={styles.confirmMealText}>Confirm Meal</Text>
-    </TouchableOpacity>
-  );
+  const handleAddIngredient = () => {
+    console.log("Add button pressed with ingredient name:", ingredientName, "and mass:", ingredientMass);
+    /*const newIngredient = {
+      id: new Date().getTime().toString(),
+      name: ingredientName,
+      portion: ingredientMass + 'g',
+      imageUrl: placeholderImageUri,
+    };
+    setIngredients(currentIngredients => [...currentIngredients, newIngredient]);
+    setIngredientName('');
+    setIngredientMass('');
+    setIsModalVisible(false);*/
+  };
 
   const handleConfirmMeal = async () => {
     // Prepare the meal data based on your requirements
@@ -93,12 +98,62 @@ function NutritionalInfoPage({ navigation }) {
     }
   };
 
+  const ConfirmMealButton = () => (
+    <TouchableOpacity style={styles.confirmMealButton} onPress={handleButtonPress}>
+      <Text style={styles.confirmMealText}>Confirm Meal</Text>
+    </TouchableOpacity>
+  );
+
+  // State for heart button
+  const [isHeartActive, setIsHeartActive] = useState(false);
+
+  // Toggle heart state
+  const toggleHeart = () => {
+    setIsHeartActive(!isHeartActive); // Toggle between true and false
+  };
+
+  const handleButtonPress = async () => {
+    await handleConfirmMeal(); // Wait for the meal to be confirmed
+    navigation.navigate('Confirm Meal'); // Navigate after confirmation
+  };
+
   // Placeholder mass and calories 
   const foodItemMass = "250g";
   const foodItemCalories = "450 Calories";
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={() => {
+          setIsModalVisible(!isModalVisible);
+        }}
+      >
+        <View style={styles.modalView}>
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => setIsModalVisible(false)}
+          >
+            <Text style={styles.closeButtonText}>X</Text>
+          </TouchableOpacity>
+          <TextInput
+            placeholder="Ingredient Name"
+            style={styles.textInput}
+            onChangeText={setIngredientName}
+            value={ingredientName}
+          />
+          <TextInput
+            placeholder="Mass (g)"
+            style={styles.textInput}
+            onChangeText={setIngredientMass}
+            keyboardType="numeric"
+            value={ingredientMass}
+          />
+          <Button title="Add" onPress={handleAddIngredient} />
+        </View>
+      </Modal>
       <StatusBar backgroundColor="rgba(173, 219, 199, 1)" barStyle="light-content" />
       <View style={styles.imageContainer}>
         {/* Image placeholder */}
@@ -112,8 +167,12 @@ function NutritionalInfoPage({ navigation }) {
           <MaterialIcons name="more-horiz" size={30} color="black" />
         </TouchableOpacity>
         {/* Heart button */}
-        <TouchableOpacity style={styles.heartButton} onPress={() => handlePress('Favorite')}>
-          <MaterialIcons name="favorite-border" size={30} color="black" />
+        <TouchableOpacity style={styles.heartButton} onPress={toggleHeart}>
+        <MaterialIcons
+            name={isHeartActive ? "favorite" : "favorite-border"} // Change icon based on state
+            size={30}
+            color={isHeartActive ? "red" : "black"} // Change color based on state
+          />
         </TouchableOpacity>
       </View>
       <View style={styles.nutritionalInfoContainer}>
@@ -121,7 +180,7 @@ function NutritionalInfoPage({ navigation }) {
         {/* Mass and Calories with Icons */}
         <View style={styles.nutritionalDetailsContainer}>
           <MaterialIcons name="fitness-center" size={20} color="rgb(127, 127, 127)" />
-          <Text style={styles.nutritionalDetailsText}> 250g    </Text>
+          <Text style={styles.nutritionalDetailsText}> 350g    </Text>
           <MaterialIcons name="local-fire-department" size={20} color="rgb(127, 127, 127)" />
           <Text style={styles.nutritionalDetailsText}> 550 kcal</Text>
         </View>
@@ -135,29 +194,6 @@ function NutritionalInfoPage({ navigation }) {
         />
         <ConfirmMealButton />
       </View>
-      <View style={styles.bottomContainer}>
-        <View style={styles.tabBar}>
-          <TouchableOpacity style={styles.tabItem} onPress={() => handlePress('Home')}>
-            <MaterialIcons name="home" size={24} color="#4CAF50" />
-            <Text style={styles.tabTitle}>Home</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.tabItemCalories} onPress={() => handlePress('Calories')}>
-            <MaterialIcons name="fastfood" size={24} color="#4CAF50" />
-            <Text style={styles.tabTitle}>Calories</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.scannerButton} onPress={() => handlePress('Scanner')}>
-            <MaterialIcons name="center-focus-strong" size={40} color="#4CAF50" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.tabItemProfile} onPress={() => handlePress('Profile')}>
-            <MaterialIcons name="person" size={24} color="#4CAF50" />
-            <Text style={styles.tabTitle}>Profile</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.tabItem} onPress={() => handlePress('History')}>
-            <MaterialIcons name="manage-search" size={24} color="#4CAF50" />
-            <Text style={styles.tabTitle}>History</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
     </SafeAreaView>
   );
 }
@@ -166,6 +202,38 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: 'rgba(173, 219, 199, 1)',
+  },
+  modalView: {
+    marginTop: 200,
+    marginHorizontal: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5
+  },
+  closeButton: {
+    alignSelf: 'flex-end',
+    marginBottom: 20,
+  },
+  closeButtonText: {
+    fontSize: 24,
+    color: '#000',
+  },
+  textInput: {
+    height: 40,
+    width: '80%',
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginTop: 20,
+    padding: 10,
   },
   imageContainer: {
     backgroundColor: 'rgba(173, 219, 199, 1)',
@@ -194,7 +262,7 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     margin: -50,
     marginLeft: 0,
-    marginTop: 40,
+    marginTop: 10,
     flex: 1,
     justifyContent: 'flex-start',
   },
@@ -284,61 +352,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
-  bottomContainer: {
-    position: 'absolute',
-    bottom: 5,
-    left: 0,
-    right: 0,
-    backgroundColor: 'white',
-    paddingVertical: 20,
-    paddingHorizontal: 10,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 10,
-  },
-  tabBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    height: 50,
-  },
-  tabItemCalories: {
-    alignItems: 'center',
-    marginRight: 20,
-  },
 
-  tabItemProfile: {
-    alignItems: 'center',
-    marginLeft: 20,
-  },
-  tabItem: {
-    alignItems: 'center',
-  },
-  scannerButton: {
-    backgroundColor: '#ccc',
-    height: 75,
-    width: 75,
-    borderRadius: 37.5, // Half the size of width to make it a circle
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: -37.5,
-    marginRight: -27.5,
-    top: -10,
-    elevation: 4,
-    shadowColor: '#000', // Optional: adds shadow on iOS
-    shadowOffset: { width: 0, height: 2 }, // Optional: adds shadow on iOS
-    shadowOpacity: 0.25, // Optional: adds shadow on iOS
-    shadowRadius: 3.84, // Optional: adds shadow on iOS
-  },
-  tabTitle: {
-    color: '#4CAF50',
-    fontSize: 15,
-    marginTop: 4,
-  },
 
 });
 
