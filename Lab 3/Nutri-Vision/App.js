@@ -6,6 +6,8 @@ import CreateProfile from './MobileApp/Screens/CreateProfile';
 import GoalsReg from './MobileApp/Screens/GoalsReg';
 import NutritionalInfoPage from './MobileApp/Screens/NutritionInfoPage2';
 import ConfirmMealPage from './MobileApp/Screens/NutritionInfoPage1';
+import EditProfilePage from './MobileApp/Screens/EditProfile';
+import FavouritesPage from './MobileApp/Screens/FavouritesPage';
 import HistoryPage from './MobileApp/Screens/HistoryPage';
 
 /*import ScannerPage from './MobileApp/Screens/ScannerPage';
@@ -27,6 +29,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
 
+
       <Stack.Screen name='Landing' component={LandingUI} />
       <Stack.Screen name='Login' component={Login} />
       <Stack.Screen name='AccountRegistration' component={AccountReg}/>
@@ -38,6 +41,7 @@ export default function App() {
       
       
 
+>>>>>>>>> Temporary merge branch 2
       </Stack.Navigator>
     </NavigationContainer>
   );
