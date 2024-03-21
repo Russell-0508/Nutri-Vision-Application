@@ -17,8 +17,8 @@ import HomePage from './MobileApp/Screens/HomePage';
 
 import IndividualMeal from './MobileApp/Screens/IndividualMeal'*/
 
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack'; 
+import { NavigationContainer } from '@react-navigation/native'; 
 import Tabs from './MobileApp/Navigation/tabs';
 
 const Stack = createNativeStackNavigator();
@@ -36,21 +36,14 @@ export default function App() {
       <Stack.Screen name='CreateProfile' component = { CreateProfile } />
       <Stack.Screen name='GoalsReg' component={GoalsReg} />
       <Stack.Screen name='Tabs' component={Tabs} options={{headerShown: false}}/>
-      <Stack.Screen name='NutritionalInfoPage' component={NutritionalInfoPage} />
-      <Stack.Screen name='ConfirmMealPage' component={ConfirmMealPage} />
+      <Stack.Screen name='Nutritional Info' component={NutritionalInfoPage} />
+      <Stack.Screen name='Confirm Meal' component={ConfirmMealPage} />
+      <Stack.Screen name='Edit Profile' component={EditProfilePage} />
+      <Stack.Screen name='Favourites' component={FavouritesPage} />
       
-      
-
->>>>>>>>> Temporary merge branch 2
       </Stack.Navigator>
     </NavigationContainer>
   );
   
 }
-/* <Stack.Screen name='Landing' component={LandingUI} />
-      <Stack.Screen name='Login' component={Login} />
-      <Stack.Screen name='AccountRegistration' component={AccountReg}/>
-      <Stack.Screen name='CreateProfile' component = { CreateProfile } />
-      <Stack.Screen name='GoalsReg' component={GoalsReg} />
-      <Stack.Screen name='Tabs' component={Tabs} options={{headerShown: false}}/>
-      <Stack.Screen name='NutritionalInfoPage' component={NutritionalInfoPage} /> */  
+/*  */  
