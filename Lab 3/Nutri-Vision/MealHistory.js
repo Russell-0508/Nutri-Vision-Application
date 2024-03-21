@@ -1,4 +1,4 @@
-import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore';
+import { collection, query, where, addDoc, getDocs, updateDoc, deleteDoc, doc, startOfDay, endOfDay } from 'firebase/firestore';
 import firestore from './firebase/config';
 
 const mealHistoryCollection = collection(firestore, 'MealHistory');
@@ -15,12 +15,44 @@ export const saveMealToFirestore = async (mealData) => {
     }
 };
 
-export const getMealHistoryFromFirestore = async () => {
+// export const getMealHistoryFromFirestore = async () => {
+//     try {
+//         // Get all documents from the 'MealHistory' collection
+//         const querySnapshot = await getDocs(mealHistoryCollection);
+//         const mealHistory = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+//         console.log('Meal history:', mealHistory);
+//         return mealHistory;
+//     } catch (error) {
+//         console.error('Error fetching meal history:', error);
+//         throw error;
+//     }
+// };
+
+export const getMealHistoryFromFirestore = async (date) => {
     try {
-        // Get all documents from the 'MealHistory' collection
-        const querySnapshot = await getDocs(mealHistoryCollection);
+        // Convert the date string to a JavaScript Date object
+        const selectedDate = new Date(date);
+
+        // Get the year, month, and day of the selected date
+        const year = selectedDate.getFullYear();
+        const month = selectedDate.getMonth();
+        const day = selectedDate.getDate();
+
+        // Create a new Date object for the start of the selected date
+        const startOfDay = new Date(year, month, day);
+
+        // Get the end of the selected date (one day later)
+        const endOfDay = new Date(year, month, day + 1);
+
+        // Query Firestore for documents within the selected date range
+        const q = query(mealHistoryCollection,
+            where('createdAt', '>=', startOfDay),
+            where('createdAt', '<', endOfDay)
+        );
+
+        const querySnapshot = await getDocs(q);
         const mealHistory = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-        console.log('Meal history:', mealHistory);
+        console.log('Meal history for', date, ':', mealHistory);
         return mealHistory;
     } catch (error) {
         console.error('Error fetching meal history:', error);

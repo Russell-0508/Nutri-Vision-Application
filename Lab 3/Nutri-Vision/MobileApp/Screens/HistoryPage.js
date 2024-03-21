@@ -17,6 +17,7 @@ import {
 import { useNavigation } from "@react-navigation/native"
 import Collapsible from 'react-native-collapsible'
 import { getMealHistoryFromFirestore } from '../../MealHistory';
+import IndividualMeal from './IndividualMeal';
 
 curveHeight = 100
 screenWidth = 500
@@ -59,18 +60,9 @@ function History({ navigation }) {
     useEffect(() => {
         const fetchMealEntries = async () => {
             try {
-                //today's date
-                const today = new Date();
-                const todayString = today.toLocaleDateString('en-US', {
-                    month: 'long',
-                    day: 'numeric',
-                    year: 'numeric',
-                });
-
-                // update selectedDate directly
-                setSelectedDate(todayString);
-
-                const entries = await getMealHistoryFromFirestore(todayString);
+                const today = new Date().toISOString(); // Get today's date, change this to display other dates 
+                setSelectedDate(today); // Update selectedDate directly
+                const entries = await getMealHistoryFromFirestore(today);
                 setMealEntries(entries);
             } catch (error) {
                 console.error('Error fetching meal entries:', error);
@@ -84,6 +76,8 @@ function History({ navigation }) {
         setSelectedDate(date);
     };
 
+    //Get today's date for the header display on history page
+    var dateString = new Date().toDateString();
     return (
 
         <View style={styles.container}>
@@ -119,7 +113,7 @@ function History({ navigation }) {
                             {/* 1 Jan 2024 is a placeholder, should read the current date and be dynamic 
                         Work in progress JY: i set to today's date to test backend 
                     */}
-                            <Text style={styles.headerText}>{selectedDate}</Text>
+                            <Text style={styles.headerText}>{dateString}</Text>
                         </View>
                         <View>
                             <TouchableOpacity
@@ -135,19 +129,14 @@ function History({ navigation }) {
                 I'm still trying to figure out how to get the description to show multiple lines
                 The <Entry/> element is at the top
                 */}
-                        {/* <Entry title='Breakfast' description='Toast with egg\ncoffee\napple' />
-                        <Entry title='Lunch' description='Chicken rice' />
-                        {mealEntries
-                            .filter((entry) => entry.date === selectedDate)
-                            .map((entry, index) => (
-                                <Entry title={entry.type} description={entry.name} />
-                            ))} */}
+
                         {mealEntries.map((entry, index) => (
                             <View key={index}>
                                 <Entry title={entry.type}></Entry>
-                                <Entry description={entry.name}></Entry>
+                                <Text> {entry.name}</Text>
                             </View>
                         ))}
+
                     </Collapsible>
                     {!isCollapsed && (
                         <TouchableOpacity onPress={toggleCollapse} style={styles.viewLessButton}>
@@ -156,7 +145,7 @@ function History({ navigation }) {
                     )}
                 </ScrollView>
             </SafeAreaView>
-        </View>
+        </View >
     );
 }
 
