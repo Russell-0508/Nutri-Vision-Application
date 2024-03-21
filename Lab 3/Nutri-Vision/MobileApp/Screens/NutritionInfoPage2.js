@@ -65,7 +65,8 @@ function NutritionalInfoPage({ navigation }) {
       sodium: 20, // Example value, replace with actual value
       sugar: 15, // Example value, replace with actual value
       totalFat: 15, // Example value, replace with actual value
-      type: 'lunch', // Example value, replace with actual value
+      type: 'Lunch', // Example value, replace with actual value
+      favourite: false
     };
 
     try {
