@@ -84,6 +84,29 @@ export const getMealEntryById = async (mealId) => {
     }
 };
 
+export const getFavouriteMealEntries = async () => {
+    try {
+  
+      // Query to retrieve meal entries where the favorite attribute is true
+      const q = query(mealHistoryCollection, where('favourite', '==', true));
+  
+      // Get the documents that match the query
+      const querySnapshot = await getDocs(q);
+  
+      // Array to store the favorite meal entries
+      const favoriteMealEntries = [];
+  
+      // Iterate over the documents and extract the data
+      querySnapshot.forEach((doc) => {
+        favoriteMealEntries.push({ id: doc.id, ...doc.data() });
+      });
+  
+      return favoriteMealEntries;
+    } catch (error) {
+      console.error('Error retrieving favorite meal entries:', error);
+      throw error;
+    }
+  };
 
 export const updateMealDataInFirestore = (mealId, updatedData) => {
     // Reference to the specific meal document using its ID

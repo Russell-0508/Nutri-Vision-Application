@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, 
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { getMealEntryById } from '../../MealHistory';
+import { getMealEntryById, updateMealDataInFirestore } from '../../MealHistory';
 import { useNavigation } from '@react-navigation/native';
 import Svg, { Circle } from 'react-native-svg';
 import { documentId } from '@firebase/firestore';
@@ -31,8 +31,10 @@ function IndividualMeal({ navigation, route }) {
   const [sugar, setSugar] = useState('Loading...');
   const [totalFat, setTotalFat] = useState('Loading...');
 
+  // For toggling favourites 
+  const [isFavorite, setIsFavorite] = useState(false);
 
-  const documentId = 'PDGdMxSyIaQ8tw4q1c3V'; //set documentId to a random entry in firebase first
+  const documentId = 'N5YEHKioNBm2xUFdzIVw'; //set documentId to a random entry in firebase first
 
   const fetchNutritionalInfo = async (documentId) => {
     try {
@@ -112,6 +114,20 @@ function IndividualMeal({ navigation, route }) {
     }
   }, []); // Empty dependency array to run only on component mount
 
+  // Update favourites attribute in database when heart icon is pressed
+  const toggleFavorite = async () => {
+    try {
+      // Toggle the favorite status locally
+      setIsFavorite(!isFavorite);
+
+      // Update the database to reflect the change
+      await updateMealDataInFirestore(documentId, { favourite: !isFavorite });
+    } catch (error) {
+      console.error('Error toggling favorite status:', error);
+      // Handle error
+    }
+  };
+
   // State for heart button
   const [isHeartActive, setIsHeartActive] = useState(false);
 
@@ -187,11 +203,11 @@ function IndividualMeal({ navigation, route }) {
           <MaterialIcons name="more-horiz" size={30} color="black" />
         </TouchableOpacity>
         {/* Heart button */}
-        <TouchableOpacity style={styles.heartButton} onPress={toggleHeart}>
+        <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
           <MaterialIcons
-            name={isHeartActive ? "favorite" : "favorite-border"} // Change icon based on state
+            name={isFavorite ? "favorite" : "favorite-border"} // Change icon based on state
             size={30}
-            color={isHeartActive ? "red" : "black"} // Change color based on state
+            color={isFavorite ? "red" : "black"} // Change color based on state
           />
         </TouchableOpacity>
       </View>
