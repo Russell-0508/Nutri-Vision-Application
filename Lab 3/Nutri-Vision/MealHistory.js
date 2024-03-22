@@ -1,4 +1,4 @@
-import { collection, query, where, addDoc, getDocs, updateDoc, deleteDoc, doc, startOfDay, endOfDay } from 'firebase/firestore';
+import { collection, query, where, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, startOfDay, endOfDay } from 'firebase/firestore';
 import firestore from './firebase/config';
 
 const mealHistoryCollection = collection(firestore, 'MealHistory');
@@ -59,6 +59,31 @@ export const getMealHistoryFromFirestore = async (date) => {
         throw error;
     }
 };
+
+export const getMealEntryById = async (mealId) => {
+    try {
+        // Get the document reference for the specific meal entry
+        const docRef = doc(mealHistoryCollection, mealId);
+
+        // Get the snapshot of the document
+        const docSnapshot = await getDoc(docRef);
+
+        // Check if the document exists
+        if (docSnapshot.exists()) {
+            // Extract the data from the document
+            const mealEntry = { id: docSnapshot.id, ...docSnapshot.data() };
+            console.log('Meal entry:', mealEntry);
+            return mealEntry;
+        } else {
+            console.log('Meal entry not found');
+            return null; // Return null if the meal entry is not found
+        }
+    } catch (error) {
+        console.error('Error fetching meal entry:', error);
+        throw error;
+    }
+};
+
 
 export const updateMealDataInFirestore = (mealId, updatedData) => {
     // Reference to the specific meal document using its ID
