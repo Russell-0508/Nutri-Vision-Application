@@ -8,9 +8,6 @@ import { useNavigation } from '@react-navigation/native';
 import Svg, { Circle } from 'react-native-svg';
 
 
-
-
-
 function IndividualMeal({ navigation }) {
   // State to hold the image URI
   const [imageUri, setImageUri] = useState(null); // Initial state is null
