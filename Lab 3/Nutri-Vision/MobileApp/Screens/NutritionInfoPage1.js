@@ -72,7 +72,7 @@ function ConfirmMealPage({ navigation }) {
     </TouchableOpacity>
   );
 
-  const [carbsPercentage, setCarbsPercentage] = useState(60); // Example percentage
+  const [carbsPercentage, setCarbsPercentage] = useState(70); // Example percentage
   const [fatsPercentage, setFatsPercentage] = useState(55); // Example percentage
   const [proteinPercentage, setProteinPercentage] = useState(25); // Example percentage
 
