@@ -135,7 +135,7 @@ function ConfirmMealPage({ navigation }) {
         </TouchableOpacity>
         {/* Heart button */}
         <TouchableOpacity style={styles.heartButton} onPress={toggleHeart}>
-        <MaterialIcons
+          <MaterialIcons
             name={isHeartActive ? "favorite" : "favorite-border"} // Change icon based on state
             size={30}
             color={isHeartActive ? "red" : "black"} // Change color based on state
@@ -152,7 +152,7 @@ function ConfirmMealPage({ navigation }) {
           <Text style={styles.nutritionalDetailsText}> 550 kcal</Text>
         </View>
         {/*Nutritional Information */}
-        <Text style = {styles.ingredientsHeaderText}>Nutritional Information</Text>
+        <Text style={styles.ingredientsHeaderText}>Nutritional Information</Text>
         <View style={styles.innerGreyContainer}>
           <View style={styles.nutritionalInfoRow}>
             <Text style={styles.labelText}>Serving Size:</Text>
@@ -279,6 +279,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   
+  // Style for the text of labels
   labelText: {
     fontSize: 20,
     color: 'rgb(0, 0 ,0)',
@@ -287,7 +288,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   
-  
+  // Style for the text of values
   valueText: {
     fontSize: 18,
     color: 'rgb(0, 0 , 0)',
@@ -302,6 +303,52 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     marginTop: 10,
     marginRight: 50,
+  },
+
+  progressCircleContainer: {
+    alignItems: 'center', // Center-align the progress circle and label
+  },
+  
+  progressLabel: {
+    marginTop: 8, // Space between the circle and the label text
+    fontSize: 14, // Adjust based on your design needs
+    color: 'rgb(127, 127, 127)', // Label text color
+    fontWeight: 'bold', // Make the label text bold
+  },
+
+  progressCircleCarbs: {
+    // Placeholder for the progress circle component
+    height: 75,
+    width: 75,
+    borderRadius: 50,
+    borderWidth: 5,
+    borderColor: 'brown',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  progressCircleFats: {
+    // Placeholder for the progress circle component
+    height: 75,
+    width: 75,
+    borderRadius: 50,
+    borderWidth: 5,
+    borderColor: 'yellow',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  progressCircleProtein: {
+    // Placeholder for the progress circle component
+    height: 75,
+    width: 75,
+    borderRadius: 50,
+    borderWidth: 5,
+    borderColor: 'blue',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  progressValue:
+  {
+    fontWeight: 'bold',
   },
 
   confirmMealButton: {
