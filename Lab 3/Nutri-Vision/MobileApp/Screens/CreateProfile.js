@@ -1,28 +1,53 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, Image, SafeAreaView, ScrollView, TouchableOpacity, Linking} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { addDoc, collection } from 'firebase/firestore';
+import firestore from '../../firebase/config';
+import { format } from 'date-fns';
 
 
 const CreateProfile = ({ navigation }) => {
+    const profileCollection = collection(firestore, 'profile');
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [selectedGender, setSelectedGender] = useState(null);
+    const [height, setHeight] = useState('');
+    const [weight, setWeight] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
 
-    const handleCreateAccountPress = () => {
-        navigation.navigate('GoalsReg');
+    // State for date picker
+    const [dateOfBirth, setDateOfBirth] = useState(new Date());
+    const [showDatePicker, setShowDatePicker] = useState(false);
+
+    const handleCreateProfile = async () => {
+        const profileData = {
+            name,
+            email,
+            gender: selectedGender,
+            height: parseFloat(height),
+            weight: parseFloat(weight),
+            phoneNumber: parseInt(phoneNumber, 8),
+            dateOfBirth: dateOfBirth,
+        };
+      
+        try {
+            const docRef = await addDoc(profileCollection, profileData);
+            console.log('Profile created with ID:', docRef.id);
+            navigation.navigate('GoalsReg'); // Navigate to the next screen after profile creation
+        } catch (error) {
+            console.error('Error creating profile:', error);
+        }
+    }
+
+    const onChangeDate = (event, selectedDate) => {
+        const currentDate = selectedDate || dateOfBirth;
+        setShowDatePicker(false);
+        setDateOfBirth(currentDate);
     };
 
-    // Defining State for Gender Selection
-    const [selectedGender, setSelectedGender] = useState(null);
-
-    // Defining state for Date Picker Method
-    const [date, setDate] = useState(new Date());
-    const [showDatePicker, setShowDatePicker] = useState(false);
-    const [isDateSelected, setIsDateSelected] = useState(false); // Track if a date has been selected
-    
-    const onChangeDate = (event, selectedDate) => {
-        const currentDate = selectedDate || date;
-        setDate(currentDate);
-        setIsDateSelected(true); // Optionally hide picker after selection
-        setShowDatePicker(false);
+    const showDatepicker = () => {
+        setShowDatePicker(true);
     };
 
     const [showAvatarSelection, setShowAvatarSelection] = useState(false);
@@ -85,48 +110,65 @@ const CreateProfile = ({ navigation }) => {
                         ))}
                     </View>
 
-                    {/* Name Input */}
+                    {/* Name input */}
                     <Text style={styles.label}>Your Name</Text>
                     <TextInput
                         style={styles.input}
-                        placeholder="Enter Your Name"
+                        placeholder="Enter your name"
+                        value={name}
+                        onChangeText={setName}
                     />
-
 
                     {/* DOB Selection */}
-                    <Text style = {styles.label} >Date of Birth</Text>
-                    <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePickerToggle}>
+                    <Text style={styles.label}>Date of Birth</Text>
+                    <TouchableOpacity onPress={showDatepicker} style={styles.datePickerToggle}>
                         <Text style={styles.datePickerText}>
-                            {isDateSelected ? date.toLocaleDateString() : "DD/MM/YYYY"}
+                            {format(dateOfBirth, 'dd/MM/yyyy')}
                         </Text>
                     </TouchableOpacity>
+
                     {showDatePicker && (
                         <DateTimePicker
-                            testID="dateTimePicker"
-                            value={date}
+                            value={dateOfBirth}
                             mode="date"
+                            is24Hour={true}
                             display="default"
                             onChange={onChangeDate}
+                            //maximumDate={new Date()} // Optional: to prevent future dates
                         />
                     )}
-            
-                    {/* Height and Weight */}
-                    <Text style = {styles.label} >Height</Text>
+
+                    {/* Email input */}
+                    <Text style={styles.label}>Email</Text>
                     <TextInput
-                        style = {styles.input}
-                        placeholder='Enter Your Height ( in cm )'
-                        keyboardType='number-pad'
+                        style={styles.input}
+                        placeholder="Enter your email"
+                        keyboardType="email-address"
+                        value={email}
+                        onChangeText={setEmail}
                     />
 
-                    <Text style = {styles.label} >Weight</Text>
+                    {/* Height input */}
+                    <Text style={styles.label}>Height (cm)</Text>
                     <TextInput
-                        style = {styles.input}
-                        placeholder='Enter Your Weight ( in kg )'
-                        keyboardType='number-pad'
+                        style={styles.input}
+                        placeholder="Enter your height"
+                        keyboardType="numeric"
+                        value={height}
+                        onChangeText={setHeight}
                     />
 
-
-                    <TouchableOpacity onPress={handleCreateAccountPress} style={styles.createAccountButton}>
+                    {/* Weight input */}
+                    <Text style={styles.label}>Weight (kg)</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter your weight"
+                        keyboardType="numeric"
+                        value={weight}
+                        onChangeText={setWeight}
+                    />
+         
+                    <TouchableOpacity onPress={handleCreateProfile} style={styles.createAccountButton}>
                         <Text style={styles.createAccountButtonText}>Create Profile</Text>
                     </TouchableOpacity>
                 
