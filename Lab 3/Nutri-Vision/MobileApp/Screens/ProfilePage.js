@@ -1,20 +1,10 @@
-
 import React, { useState }from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, SafeAreaView, Modal, Switch } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
-import { firebase, db } from '../../firebase/config'
-import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
-import {
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  doc,
-} from "firebase/firestore";
 
 
 function ProfileScreen({navigation}){
-
 
   const [showNotificationsModal, setShowNotificationsModal] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
@@ -30,20 +20,6 @@ function ProfileScreen({navigation}){
     height: '176 cm',
     age: '23',
   };
-  const db = getFirestore();
-  const [profile, setProfile] = useState([]);
-  const profileCollectionRef = collection(db, "profile");
-
-  useEffect(() => {
-    const getProfile = async () => {
-      const data = await getDocs(profileCollectionRef);
-      const filteredData = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-      console.log(filteredData);
-      setProfile(filteredData);
-    };
-
-    getProfile();
-  }, []);
 
   // Placeholder function for button presses
   const handlePress = (action) => {
@@ -65,8 +41,7 @@ function ProfileScreen({navigation}){
             source={require('../assets/profile_image.png')}
             style={styles.profileImage}
           />
-          const displayName = useDisplayName("Your ID");
-          <Text style={styles.profileName}>{/*profileData.name*/displayName}</Text>
+          <Text style={styles.profileName}>{profileData.name}</Text>
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
               <Text style={styles.statLabel}>Weight</Text>
