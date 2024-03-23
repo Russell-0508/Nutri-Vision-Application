@@ -165,7 +165,7 @@ function IndividualMeal({ navigation, route }) {
           />
         </Svg>
         <Text style={{ position: 'absolute', fontWeight: 'bold', top: size * 0.35 }}>{percentage}%</Text>
-        <Text style={{ marginTop: 4, fontWeight: 'bold' }}>{label}</Text>
+        <Text style={{ fontWeight: 'bold',top: size*0.85}}>{label}</Text>
       </View>
     );
   };
@@ -177,6 +177,7 @@ function IndividualMeal({ navigation, route }) {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+    <ScrollView>
       <StatusBar backgroundColor="rgba(173, 219, 199, 1)" barStyle="light-content" />
       <View style={styles.imageContainer}>
         {/* Image placeholder */}
@@ -254,6 +255,7 @@ function IndividualMeal({ navigation, route }) {
         </View>
 
       </View>
+    </ScrollView>
     </SafeAreaView>
   );
 }
