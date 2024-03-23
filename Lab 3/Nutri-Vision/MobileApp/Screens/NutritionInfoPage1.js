@@ -67,7 +67,7 @@ function ConfirmMealPage({ navigation }) {
   };
 
   const ConfirmMealButton = () => (
-    <TouchableOpacity style={styles.confirmMealButton} onPress={handlePress}>
+    <TouchableOpacity style={styles.confirmMealButton} onPress={()=>navigation.navigate('Tabs')}>
       <Text style={styles.confirmMealText}>It fits your target!</Text>
     </TouchableOpacity>
   );
