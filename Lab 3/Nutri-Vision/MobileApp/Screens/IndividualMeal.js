@@ -3,12 +3,14 @@ import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, 
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { saveMealToFirestore } from '../../MealHistory';
+import { getMealEntryById, updateMealDataInFirestore } from '../../MealHistory';
 import { useNavigation } from '@react-navigation/native';
 import Svg, { Circle } from 'react-native-svg';
+import { documentId } from '@firebase/firestore';
 
 
-function IndividualMeal({ navigation }) {
+function IndividualMeal({ navigation, route }) {
+
   // State to hold the image URI
   const [imageUri, setImageUri] = useState(null); // Initial state is null
 
@@ -19,40 +21,110 @@ function IndividualMeal({ navigation }) {
   const [servingSize, setServingSize] = useState('Loading...');
   const [calories, setCalories] = useState('Loading...');
   const [carbohydrates, setCarbohydrates] = useState('Loading...');
-  const [fats, setFats] = useState('Loading...');
   const [protein, setProtein] = useState('Loading...');
+  const [cholesterol, setCholesterol] = useState('Loading...');
+  const [fiber, setFiber] = useState('Loading...');
+  const [saturatedFat, setSaturatedFat] = useState('Loading...');
+  const [sodium, setSodium] = useState('Loading...');
+  const [sugar, setSugar] = useState('Loading...');
+  const [totalFat, setTotalFat] = useState('Loading...');
 
-  const fetchNutritionalInfo = async () => {
+  // For toggling favourites 
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  const documentId = 'N5YEHKioNBm2xUFdzIVw'; //set documentId to a random entry in firebase first
+
+  const fetchNutritionalInfo = async (documentId) => {
     try {
-    {/*
+      {/*
       // Simulate fetching data from an API
       // This is where you would make your actual API call
       @JengYee, read the firebase database from here
     */}
 
-      const apiResponse = {
-        servingSize: '1 portion',
-        calories: '550 kcal',
-        carbohydrates: '200 g',
-        fats: '50 g',
-        protein: '100 g',
-      };
+      // @Randy, may not need API call if we are just reading from firebase, think can delete these?
+      // const apiResponse = {
+      //   servingSize: '1 portion',
+      //   calories: '550 kcal',
+      //   carbohydrates: '200 g',
+      //   fats: '50 g',
+      //   protein: '100 g',
+      // };
       // Update state variables with the API response
-      setServingSize(apiResponse.servingSize);
-      setCalories(apiResponse.calories);
-      setCarbohydrates(apiResponse.carbohydrates);
-      setFats(apiResponse.fats);
-      setProtein(apiResponse.protein);
+      // setServingSize(apiResponse.servingSize);
+      // setCalories(apiResponse.calories);
+      // setCarbohydrates(apiResponse.carbohydrates);
+      // setFats(apiResponse.fats);
+      // setProtein(apiResponse.protein);
+
+      if (!documentId) {
+        throw new Error('Document ID is missing.');
+      }
+
+      // Extract nutritional information from the meal document data
+      const mealEntry = await getMealEntryById(documentId);
+      const attributesToDisplay = ['calories', 'carbohydrates', 'cholesterol', 'fiber', 'protein', 'saturatedFat', 'sodium', 'sugar', 'totalFat'];
+      attributesToDisplay.forEach(attribute => {
+        if (mealEntry[attribute] !== 0) {
+          switch (attribute) {
+            case 'calories':
+              setCalories(mealEntry[attribute]);
+              break;
+            case 'carbohydrates':
+              setCarbohydrates(mealEntry[attribute]);
+              break;
+            case 'cholesterol':
+              setCholesterol(mealEntry[attribute]);
+              break;
+            case 'fiber':
+              setFiber(mealEntry[attribute]);
+              break;
+            case 'protein':
+              setProtein(mealEntry[attribute]);
+              break;
+            case 'saturatedFat':
+              setSaturatedFat(mealEntry[attribute]);
+              break;
+            case 'sodium':
+              setSodium(mealEntry[attribute]);
+              break;
+            case 'sugar':
+              setSugar(mealEntry[attribute]);
+              break;
+            case 'totalFat':
+              setTotalFat(mealEntry[attribute]);
+              break;
+            default:
+              break;
+          }
+        }
+      });
     } catch (error) {
       console.error('Error fetching nutritional info:', error);
       // Handle error or set default error values here
     }
   };
 
-  // Trigger the API call on component mount
+  // Trigger the API call on component mount and when route parameters change
   useEffect(() => {
-    fetchNutritionalInfo();
-  }, []); // Empty dependency array means this runs once on mount
+    if (documentId) {
+      fetchNutritionalInfo(documentId);
+    }
+  }, []); // Empty dependency array to run only on component mount
+
+  // Update favourites attribute in database when heart icon is pressed
+  const toggleFavorite = async () => {
+    try {
+      // Toggle the favorite status locally
+      setIsFavorite(!isFavorite);
+
+      // Update the database to reflect the change
+      await updateMealDataInFirestore(documentId, { favourite: !isFavorite });
+    } catch (error) {
+      console.error('Error toggling favorite status:', error);
+      // Handle error
+    }
+  };
 
   // State for heart button
   const [isHeartActive, setIsHeartActive] = useState(false);
@@ -78,7 +150,7 @@ function IndividualMeal({ navigation }) {
     const radius = (size / 2) - (strokeWidth * 2); // Radius of the circle
     const circumference = 2 * Math.PI * radius;
     const strokeDashoffset = circumference - (percentage / 100) * circumference;
-  
+
     return (
       <View style={{ alignItems: 'center', margin: 10 }}>
         <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
@@ -104,7 +176,7 @@ function IndividualMeal({ navigation }) {
           />
         </Svg>
         <Text style={{ position: 'absolute', fontWeight: 'bold', top: size * 0.35 }}>{percentage}%</Text>
-        <Text style={{ marginTop: 4, fontWeight: 'bold' }}>{label}</Text> 
+        <Text style={{ marginTop: 4, fontWeight: 'bold' }}>{label}</Text>
       </View>
     );
   };
@@ -129,11 +201,11 @@ function IndividualMeal({ navigation }) {
           <MaterialIcons name="more-horiz" size={30} color="black" />
         </TouchableOpacity>
         {/* Heart button */}
-        <TouchableOpacity style={styles.heartButton} onPress={toggleHeart}>
+        <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
           <MaterialIcons
-            name={isHeartActive ? "favorite" : "favorite-border"} // Change icon based on state
+            name={isFavorite ? "favorite" : "favorite-border"} // Change icon based on state
             size={30}
-            color={isHeartActive ? "red" : "black"} // Change color based on state
+            color={isFavorite ? "red" : "black"} // Change color based on state
           />
         </TouchableOpacity>
       </View>
@@ -149,7 +221,7 @@ function IndividualMeal({ navigation }) {
         {/*Nutritional Information */}
         <Text style={styles.ingredientsHeaderText}>Nutritional Information</Text>
         <View style={styles.innerGreyContainer}>
-          
+
           <View style={styles.nutritionalInfoRow}>
             <Text style={styles.labelText}>Calories:</Text>
             <Text style={styles.valueText}>{calories}</Text>
@@ -159,12 +231,32 @@ function IndividualMeal({ navigation }) {
             <Text style={styles.valueText}>{carbohydrates}</Text>
           </View>
           <View style={styles.nutritionalInfoRow}>
-            <Text style={styles.labelText}>Fats:</Text>
-            <Text style={styles.valueText}>{fats}</Text>
-          </View>
-          <View style={styles.nutritionalInfoRow}>
             <Text style={styles.labelText}>Protein:</Text>
             <Text style={styles.valueText}>{protein}</Text>
+          </View>
+          <View style={styles.nutritionalInfoRow}>
+            <Text style={styles.labelText}>Cholesterol:</Text>
+            <Text style={styles.valueText}>{cholesterol}</Text>
+          </View>
+          <View style={styles.nutritionalInfoRow}>
+            <Text style={styles.labelText}>Fiber:</Text>
+            <Text style={styles.valueText}>{fiber}</Text>
+          </View>
+          <View style={styles.nutritionalInfoRow}>
+            <Text style={styles.labelText}>Saturated Fat:</Text>
+            <Text style={styles.valueText}>{saturatedFat}</Text>
+          </View>
+          <View style={styles.nutritionalInfoRow}>
+            <Text style={styles.labelText}>Sodium:</Text>
+            <Text style={styles.valueText}>{sodium}</Text>
+          </View>
+          <View style={styles.nutritionalInfoRow}>
+            <Text style={styles.labelText}>Sugar:</Text>
+            <Text style={styles.valueText}>{sugar}</Text>
+          </View>
+          <View style={styles.nutritionalInfoRow}>
+            <Text style={styles.labelText}>Total Fat:</Text>
+            <Text style={styles.valueText}>{totalFat}</Text>
           </View>
         </View>
         {/* Nutritional information progress circles */}
@@ -173,7 +265,7 @@ function IndividualMeal({ navigation }) {
           <ProgressCircle percentage={fatsPercentage} fillColor="yellow" label="Fats" />
           <ProgressCircle percentage={proteinPercentage} fillColor="blue" label="Proteins" />
         </View>
-        
+
       </View>
     </SafeAreaView>
   );
@@ -244,11 +336,11 @@ const styles = StyleSheet.create({
   },
 
   innerGreyContainer: {
-    backgroundColor: '#E0E0E0', 
-    borderRadius: 20, 
-    padding: 20, 
+    backgroundColor: '#E0E0E0',
+    borderRadius: 20,
+    padding: 20,
     marginHorizontal: 20,
-    marginTop: 10, 
+    marginTop: 10,
     marginRight: 70,
     marginLeft: 20,
     alignSelf: 'stretch',
@@ -270,7 +362,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     alignItems: 'center',
   },
-  
+
   // Style for the text of labels
   labelText: {
     fontSize: 20,
@@ -279,20 +371,20 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     flex: 1,
   },
-  
+
   // Style for the text of values
   valueText: {
     fontSize: 18,
     color: 'rgb(0, 0 , 0)',
     fontWeight: 'bold',
-    textAlign: 'right', 
-    flex: 1, 
+    textAlign: 'right',
+    flex: 1,
   },
 
   progressCirclesContainer: {
-    flexDirection: 'row', 
-    justifyContent: 'space-evenly', 
-    alignItems: 'center', 
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
     marginTop: 10,
     marginRight: 50,
   },
@@ -300,7 +392,7 @@ const styles = StyleSheet.create({
   progressCircleContainer: {
     alignItems: 'center', // Center-align the progress circle and label
   },
-  
+
   progressLabel: {
     marginTop: 8, // Space between the circle and the label text
     fontSize: 14, // Adjust based on your design needs
@@ -343,7 +435,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
-  
+
   confirmMealText: {
     fontSize: 16,
     color: 'white',

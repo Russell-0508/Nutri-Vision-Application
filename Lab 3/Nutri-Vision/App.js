@@ -18,8 +18,8 @@ import HomePage from './MobileApp/Screens/HomePage';*/
 
 
 
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack'; 
+import { NavigationContainer } from '@react-navigation/native'; 
 import Tabs from './MobileApp/Navigation/Tabs';
 
 const Stack = createNativeStackNavigator();
@@ -42,7 +42,6 @@ export default function App() {
       <Stack.Screen name='Edit Profile' component={EditProfilePage} />
       <Stack.Screen name='Favourites' component={FavouritesPage} />
       <Stack.Screen name='IndividualMeal' component={IndividualMeal} />
-
       
       </Stack.Navigator>
     </NavigationContainer>

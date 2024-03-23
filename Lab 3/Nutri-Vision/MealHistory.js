@@ -1,4 +1,4 @@
-import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore';
+import { collection, query, where, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, startOfDay, endOfDay } from 'firebase/firestore';
 import firestore from './firebase/config';
 
 const mealHistoryCollection = collection(firestore, 'MealHistory');
@@ -15,18 +15,98 @@ export const saveMealToFirestore = async (mealData) => {
     }
 };
 
-export const getMealHistoryFromFirestore = async () => {
+// export const getMealHistoryFromFirestore = async () => {
+//     try {
+//         // Get all documents from the 'MealHistory' collection
+//         const querySnapshot = await getDocs(mealHistoryCollection);
+//         const mealHistory = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+//         console.log('Meal history:', mealHistory);
+//         return mealHistory;
+//     } catch (error) {
+//         console.error('Error fetching meal history:', error);
+//         throw error;
+//     }
+// };
+
+export const getMealHistoryFromFirestore = async (date) => {
     try {
-        // Get all documents from the 'MealHistory' collection
-        const querySnapshot = await getDocs(mealHistoryCollection);
+        // Convert the date string to a JavaScript Date object
+        const selectedDate = new Date(date);
+
+        // Get the year, month, and day of the selected date
+        const year = selectedDate.getFullYear();
+        const month = selectedDate.getMonth();
+        const day = selectedDate.getDate();
+
+        // Create a new Date object for the start of the selected date
+        const startOfDay = new Date(year, month, day);
+
+        // Get the end of the selected date (one day later)
+        const endOfDay = new Date(year, month, day + 1);
+
+        // Query Firestore for documents within the selected date range
+        const q = query(mealHistoryCollection,
+            where('createdAt', '>=', startOfDay),
+            where('createdAt', '<', endOfDay)
+        );
+
+        const querySnapshot = await getDocs(q);
         const mealHistory = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-        console.log('Meal history:', mealHistory);
+        console.log('Meal history for', date, ':', mealHistory);
         return mealHistory;
     } catch (error) {
         console.error('Error fetching meal history:', error);
         throw error;
     }
 };
+
+export const getMealEntryById = async (mealId) => {
+    try {
+        // Get the document reference for the specific meal entry
+        const docRef = doc(mealHistoryCollection, mealId);
+
+        // Get the snapshot of the document
+        const docSnapshot = await getDoc(docRef);
+
+        // Check if the document exists
+        if (docSnapshot.exists()) {
+            // Extract the data from the document
+            const mealEntry = { id: docSnapshot.id, ...docSnapshot.data() };
+            console.log('Meal entry:', mealEntry);
+            return mealEntry;
+        } else {
+            console.log('Meal entry not found');
+            return null; // Return null if the meal entry is not found
+        }
+    } catch (error) {
+        console.error('Error fetching meal entry:', error);
+        throw error;
+    }
+};
+
+export const getFavouriteMealEntries = async () => {
+    try {
+  
+      // Query to retrieve meal entries where the favorite attribute is true
+      const q = query(mealHistoryCollection, where('favourite', '==', true));
+  
+      // Get the documents that match the query
+      const querySnapshot = await getDocs(q);
+  
+      // Array to store the favorite meal entries
+      const favoriteMealEntries = [];
+  
+      // Iterate over the documents and extract the data
+      querySnapshot.forEach((doc) => {
+        favoriteMealEntries.push({ id: doc.id, ...doc.data() });
+      });
+  
+      return favoriteMealEntries;
+    } catch (error) {
+      console.error('Error retrieving favorite meal entries:', error);
+      throw error;
+    }
+  };
 
 export const updateMealDataInFirestore = (mealId, updatedData) => {
     // Reference to the specific meal document using its ID
