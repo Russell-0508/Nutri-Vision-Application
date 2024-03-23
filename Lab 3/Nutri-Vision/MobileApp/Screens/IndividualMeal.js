@@ -11,13 +11,24 @@ import { documentId } from '@firebase/firestore';
 
 function IndividualMeal({ navigation, route }) {
 
+  // This will read the data passed from the navigate function in the HistoryPage.js
+  // const { documentId } = route.params;
+
+  const documentId = 'N5YEHKioNBm2xUFdzIVw'; //set documentId to a random entry in firebase first
   // State to hold the image URI
   const [imageUri, setImageUri] = useState(null); // Initial state is null
 
   // Placeholder image URI
   const placeholderImageUri = 'https://via.placeholder.com/150'; // Placeholder URL
 
-  // State variables for nutritional information
+  {/* State variables for nutritional information 
+      I think no need to be so detailed,
+      some of the stuff can remove, because ultimately
+      we will take this data from the API, so we will have to change
+      what is displayed according to what kind of nutritional information
+      is provided by the API
+  */}
+  
   const [servingSize, setServingSize] = useState('Loading...');
   const [calories, setCalories] = useState('Loading...');
   const [carbohydrates, setCarbohydrates] = useState('Loading...');
@@ -32,31 +43,9 @@ function IndividualMeal({ navigation, route }) {
   // For toggling favourites 
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const documentId = 'N5YEHKioNBm2xUFdzIVw'; //set documentId to a random entry in firebase first
-
   const fetchNutritionalInfo = async (documentId) => {
     try {
-      {/*
-      // Simulate fetching data from an API
-      // This is where you would make your actual API call
-      @JengYee, read the firebase database from here
-    */}
-
-      // @Randy, may not need API call if we are just reading from firebase, think can delete these?
-      // const apiResponse = {
-      //   servingSize: '1 portion',
-      //   calories: '550 kcal',
-      //   carbohydrates: '200 g',
-      //   fats: '50 g',
-      //   protein: '100 g',
-      // };
-      // Update state variables with the API response
-      // setServingSize(apiResponse.servingSize);
-      // setCalories(apiResponse.calories);
-      // setCarbohydrates(apiResponse.carbohydrates);
-      // setFats(apiResponse.fats);
-      // setProtein(apiResponse.protein);
-
+    
       if (!documentId) {
         throw new Error('Document ID is missing.');
       }
@@ -213,10 +202,8 @@ function IndividualMeal({ navigation, route }) {
         <Text style={styles.nutritionalInfoContainerText}>Fried Rice with Chicken</Text>
         {/* Mass and Calories with Icons */}
         <View style={styles.nutritionalDetailsContainer}>
-          <MaterialIcons name="fitness-center" size={20} color="rgb(127, 127, 127)" />
-          <Text style={styles.nutritionalDetailsText}> 350g    </Text>
           <MaterialIcons name="local-fire-department" size={20} color="rgb(127, 127, 127)" />
-          <Text style={styles.nutritionalDetailsText}> 550 kcal</Text>
+          <Text style={styles.nutritionalDetailsText}> {calories} </Text>
         </View>
         {/*Nutritional Information */}
         <Text style={styles.ingredientsHeaderText}>Nutritional Information</Text>
@@ -318,9 +305,9 @@ const styles = StyleSheet.create({
   },
   nutritionalDetailsContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'auto',
     marginTop: 8,
-    marginLeft: 150,
+    marginLeft: 250
   },
   nutritionalDetailsText: {
     fontSize: 18,

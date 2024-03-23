@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     fontStyle: 'italic',
-    textAlign: 'flex-start',
+    textAlign: 'auto',
     margin: 16,
   },
   nutritionalDetailsContainer: {
