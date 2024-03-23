@@ -94,7 +94,7 @@ const AccountReg = ({ navigation}) => {
                             onChangeText={setConfirmPassword} // Update confirm password state
                         />
 
-                        {/* Toggle Password Visibility Button for Confirm Password */}
+                    {/* Toggle Password Visibility Button for Confirm Password */}
                         <TouchableOpacity onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)}>
                             <Icon name={confirmPasswordVisible ? 'visibility-off' : 'visibility'} size={24} color="grey" />
                         </TouchableOpacity>

@@ -21,7 +21,7 @@ function ConfirmMealPage({ navigation }) {
 
   const handlePress = () => {
     console.log("Placeholder image and text button pressed!");
-    navigation.navigate('Confirm Meal');
+    navigation.navigate('IndividualMeal');
     // You can navigate to another screen or execute any action here
 
 
