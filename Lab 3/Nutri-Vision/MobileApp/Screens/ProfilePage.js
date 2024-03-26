@@ -1,10 +1,18 @@
-import React from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import React, { useState }from 'react';
+import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, SafeAreaView, Modal, Switch } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 
 
 function ProfileScreen({navigation}){
+
+  const [showNotificationsModal, setShowNotificationsModal] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+
+  const toggleNotifications = () => {
+    setNotificationsEnabled(!notificationsEnabled);
+  };
+
   // Placeholder for profile data
   const profileData = {
     name: 'Russell Tan',
@@ -58,10 +66,37 @@ function ProfileScreen({navigation}){
             <MaterialIcons name="edit" size={20} color="#4CAF50" style={styles.iconStyle}/>
             <Text style={styles.actionText}>Edit Profile</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => handlePress('Notification')} style={styles.actionItem}>
+          <TouchableOpacity onPress={() => setShowNotificationsModal(true)} style={styles.actionItem}>
             <MaterialIcons name="notifications" size={20} color="#4CAF50" style={styles.iconStyle} />
             <Text style={styles.actionText}>Notification</Text>
           </TouchableOpacity>
+          <Modal
+              animationType="slide"
+              transparent={true}
+              visible={showNotificationsModal}
+              onRequestClose={() => {
+                setShowNotificationsModal(false);
+              }}>
+              <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                  <Text style={styles.modalText}>Notifications</Text>
+                  <Switch
+                    trackColor={{ false: "#767577", true: "#81b0ff" }}
+                    thumbColor={notificationsEnabled ? "#f5dd4b" : "#f4f3f4"}
+                    ios_backgroundColor="#3e3e3e"
+                    onValueChange={toggleNotifications}
+                    value={notificationsEnabled}
+                  />
+                  <TouchableOpacity
+                    style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+                    onPress={() => {
+                      setShowNotificationsModal(false);
+                    }}>
+                    <Text style={styles.textStyle}>Close</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </Modal>
           <TouchableOpacity onPress={() => navigation.navigate('Favourites')} style={styles.actionItem}>
             <MaterialIcons name="favorite" size={20} color="#4CAF50" style={styles.iconStyle} />
             <Text style={styles.actionText}>Favourites</Text>
@@ -223,8 +258,46 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     paddingBottom: 40, // Adjust this value as needed to accommodate your bottom tab/navigation
   },
+//--------------
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    height: 200, // Set the height to your desired value
+    width: 300, // Set the width to your desired value
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center"
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  openButton: {
+    backgroundColor: "#F194FF",
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2
+  },
 
-  // ... (rest of your styles)
 });
 
 export default ProfileScreen;
