@@ -92,6 +92,7 @@ const CreateProfile = ({ navigation }) => {
                         placeholder="Enter Your Name"
                     />
 
+
                     {/* DOB Selection */}
                     <Text style = {styles.label} >Date of Birth</Text>
                     <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePickerToggle}>
@@ -99,15 +100,6 @@ const CreateProfile = ({ navigation }) => {
                             {isDateSelected ? date.toLocaleDateString() : "DD/MM/YYYY"}
                         </Text>
                     </TouchableOpacity>
-
-                    {/* Email Input */}
-                    <Text style={styles.label}>Email</Text>
-                    <TextInput
-                        style = {styles.input}
-                        placeholder='Enter Your Email'
-                        keyboardType="email-address"
-                    />
-
                     {showDatePicker && (
                         <DateTimePicker
                             testID="dateTimePicker"

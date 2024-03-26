@@ -67,7 +67,7 @@ function ConfirmMealPage({ navigation }) {
   };
 
   const ConfirmMealButton = () => (
-    <TouchableOpacity style={styles.confirmMealButton} onPress={handlePress}>
+    <TouchableOpacity style={styles.confirmMealButton} onPress={()=>navigation.navigate('Tabs')}>
       <Text style={styles.confirmMealText}>It fits your target!</Text>
     </TouchableOpacity>
   );
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     fontStyle: 'italic',
-    textAlign: 'flex-start',
+    textAlign: 'auto',
     margin: 16,
   },
   nutritionalDetailsContainer: {

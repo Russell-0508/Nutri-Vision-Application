@@ -33,7 +33,7 @@ function Entry({ title, description, navigation }) {
 
             </View>
             <View>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('IndividualMeal')}>
                     <Image
                         style={styles.arrowlogo}
                         source={require('../assets/right_pointing_arrow.png')}
@@ -87,7 +87,6 @@ function History({ navigation }) {
                     <View style={styles.topContainer}>
                         <View style={styles.topContent}>
                             <Text style={styles.pmText}>Past Meals</Text>
-                            <Text style={styles.dateText}>Date1 - Date2</Text>
                         </View>
                         <View style={styles.topIcons}>
                             <TouchableOpacity>
@@ -125,18 +124,11 @@ function History({ navigation }) {
                     </View>
 
                     <Collapsible collapsed={isCollapsed}>
-                        {/* This is where we should read the database to display the meal entries
-                I'm still trying to figure out how to get the description to show multiple lines
-                The <Entry/> element is at the top
-                */}
-
                         {mealEntries.map((entry, index) => (
                             <View key={index}>
-                                <Entry title={entry.type}></Entry>
-                                <Text> {entry.name}</Text>
+                                <Entry title={entry.type} description={entry.name} navigation={navigation} documentId={entry.documentId}/>
                             </View>
                         ))}
-
                     </Collapsible>
                     {!isCollapsed && (
                         <TouchableOpacity onPress={toggleCollapse} style={styles.viewLessButton}>
@@ -259,7 +251,8 @@ const styles = StyleSheet.create({
     topContent: {
         flex: 1,
         marginLeft: 18,
-        marginTop: 10
+        marginTop: 10,
+        paddingBottom: 20,
     },
 
     topIcons: {
@@ -281,40 +274,4 @@ const styles = StyleSheet.create({
 
 export default History;
 
-// KIV datetimepicker
-/*
 
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import DateTimePicker from '@react-native-community/datetimepicker';
-
- const [date, setDate] = useState(new Date());
-    const [showDatePicker, setShowDatePicker] = useState(false);
-  
-    const onChange = (event, selectedDate) => {
-      const currentDate = selectedDate || date;
-      setShowDatePicker(Platform.OS === 'ios');
-      setDate(currentDate);
-    };
-  
-    const formatDate = (date) => {
-      return `${date.getDate()} ${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`;
-    };
-
-    <View style={styles.titleAndDatePicker}>
-        <Text style={styles.headerText}>Home Page</Text>
-        <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePickerRow}>
-            <FontAwesomeIcon name="calendar" size={24} color="#000" />
-            <Text style={styles.datePickerText}>{formatDate(date)}</Text>
-        </TouchableOpacity>
-        {showDatePicker && (
-            <DateTimePicker
-                value={date}
-                mode="date"
-                display="default"
-                onChange={onChange}
-            />
-        )}
-    </View>
-
-    
-*/

@@ -70,8 +70,8 @@ function NutritionalInfoPage({ navigation }) {
   const handleConfirmMeal = async () => {
     // Prepare the meal data based on your requirements
     const mealData = {
-      name: 'Fried Rice with Chicken',
-      calories: 500, // Example value, replace with actual value
+      name: 'Chicken Nuggets',
+      calories: 1000, // Example value, replace with actual value
       carbohydrates: 50, // Example value, replace with actual value
       cholesterol: 30, // Example value, replace with actual value
       createdAt: new Date(), // Current timestamp
