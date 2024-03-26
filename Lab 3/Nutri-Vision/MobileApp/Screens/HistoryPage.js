@@ -33,7 +33,7 @@ function Entry({ title, description, navigation, documentId }) {
 
             </View>
             <View>
-                <TouchableOpacity  onPress={() => navigation.navigate("IndividualMeal", { documentId: entries.documentId})}>
+                <TouchableOpacity  onPress={() => navigation.navigate("IndividualMeal", {documentId})}>
                     <Image
                         style={styles.arrowlogo}
                         source={require('../assets/right_pointing_arrow.png')}
