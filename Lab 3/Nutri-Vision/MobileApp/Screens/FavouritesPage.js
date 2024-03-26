@@ -60,7 +60,7 @@ function ConfirmMealPage({ navigation }) {
               </TouchableOpacity>
             ) : (
               <View key={`container-${index}`} style={styles.imageContainer}>
-                <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
+                {<Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />}
                 {/* Optionally add text for other images similar to the first one */}
               </View>
             )
@@ -69,7 +69,7 @@ function ConfirmMealPage({ navigation }) {
       </ScrollView>
     </SafeAreaView>
   );
-  
+
 
 
 
