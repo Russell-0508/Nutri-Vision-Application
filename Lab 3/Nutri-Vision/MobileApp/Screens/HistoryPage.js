@@ -24,7 +24,7 @@ screenWidth = 500
 
 
 {/* This is the Entry element, which takes in title, description, and displays it all */ }
-function Entry({ title, description, navigation }) {
+function Entry({ title, description, navigation, documentId }) {
     return (
         <View style={styles.entry}>
             <View style={styles.entryContainer}>
@@ -33,7 +33,7 @@ function Entry({ title, description, navigation }) {
 
             </View>
             <View>
-                <TouchableOpacity onPress={() => navigation.navigate('IndividualMeal')}>
+                <TouchableOpacity  onPress={() => navigation.navigate("IndividualMeal", { documentId: entries.documentId})}>
                     <Image
                         style={styles.arrowlogo}
                         source={require('../assets/right_pointing_arrow.png')}
@@ -126,7 +126,7 @@ function History({ navigation }) {
                     <Collapsible collapsed={isCollapsed}>
                         {mealEntries.map((entry, index) => (
                             <View key={index}>
-                                <Entry title={entry.type} description={entry.name} navigation={navigation} documentId={entry.documentId}/>
+                                <Entry title={entry.type} description={entry.name} navigation={navigation} documentId={entry.documentId} />
                             </View>
                         ))}
                     </Collapsible>
