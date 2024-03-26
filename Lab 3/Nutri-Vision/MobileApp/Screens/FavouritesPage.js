@@ -4,6 +4,7 @@ import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { saveMealToFirestore, getFavouriteMealEntries } from '../../MealHistory';
+
 import { useNavigation } from '@react-navigation/native';
 import Svg, { Circle } from 'react-native-svg';
 
@@ -23,6 +24,7 @@ function ConfirmMealPage({ navigation }) {
     navigation.navigate('Confirm Meal');
     // You can navigate to another screen or execute any action here
 
+
   };
 
   const [favoriteMealEntries, setFavoriteMealEntries] = useState([]);
@@ -40,6 +42,7 @@ function ConfirmMealPage({ navigation }) {
 
     fetchFavorites();
   }, []); // Empty dependency array ensures this effect runs only once on mount
+
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'rgba(173, 219, 199, 1)' }}>
@@ -67,6 +70,8 @@ function ConfirmMealPage({ navigation }) {
     </SafeAreaView>
   );
   
+
+
 
 }
 

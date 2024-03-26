@@ -9,10 +9,8 @@ import Svg, { Circle } from 'react-native-svg';
 import { documentId } from '@firebase/firestore';
 
 
-
-
-
 function IndividualMeal({ navigation, route }) {
+
   // State to hold the image URI
   const [imageUri, setImageUri] = useState(null); // Initial state is null
 
