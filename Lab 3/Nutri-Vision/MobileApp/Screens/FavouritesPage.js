@@ -48,10 +48,13 @@ function ConfirmMealPage({ navigation }) {
           {images.map((imageUri, index) => (
             index === 0 ? (
               <TouchableOpacity key={`container-${index}`} style={styles.imageContainer} onPress={handlePress}>
-                <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
-                <Text style={styles.imageText}>{favoriteMealEntries.length > 0 ? favoriteMealEntries[0].name : 'No favorite meal entries'}</Text>
+                {favoriteMealEntries.map((entry, entryIndex) => (
+                  <React.Fragment key={`favorite-${entryIndex}`}>
+                    <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
+                    <Text style={styles.imageText}>{entry.name}</Text>
+                  </React.Fragment>
+                ))}
               </TouchableOpacity>
-
             ) : (
               <View key={`container-${index}`} style={styles.imageContainer}>
                 <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
@@ -63,6 +66,7 @@ function ConfirmMealPage({ navigation }) {
       </ScrollView>
     </SafeAreaView>
   );
+  
 
 }
 
