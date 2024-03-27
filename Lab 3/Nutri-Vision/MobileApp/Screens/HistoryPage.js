@@ -19,6 +19,10 @@ import Collapsible from 'react-native-collapsible'
 import { getMealHistoryFromFirestore } from '../../MealHistory';
 import IndividualMeal from './IndividualMeal';
 
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+
 curveHeight = 100
 screenWidth = 500
 
@@ -49,9 +53,14 @@ function Entry({ title, description, navigation }) {
 function History({ navigation }) {
 
     const [isCollapsed, setIsCollapsed] = useState(true);
+    const [date, setDate] = useState(new Date());
+    const [showDatePicker, setShowDatePicker] = useState(false);
 
     const toggleCollapse = () => {
         setIsCollapsed(!isCollapsed);
+        if(!isCollapsed){
+            setShowDatePicker(false);
+        }
     }
 
     const [selectedDate, setSelectedDate] = useState('');
@@ -75,9 +84,23 @@ function History({ navigation }) {
     const handleDateSelection = (date) => {
         setSelectedDate(date);
     };
+    
+  
+    // changes date based on date user clicked
+    const onChange = (event, selectedDate) => {
+        const currentDate = selectedDate || date;
+        setShowDatePicker(Platform.OS === 'ios');
+        setSelectedDate(currentDate);
+        setDate(currentDate);
+    };
+
+      // Function to format date
+      const formatDate = (date) => {
+        return `${date.getDate()} ${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`;
+    };  
 
     //Get today's date for the header display on history page
-    var dateString = new Date().toDateString();
+    //var dateString = new Date().toDateString();
     return (
 
         <View style={styles.container}>
@@ -112,7 +135,21 @@ function History({ navigation }) {
                             {/* 1 Jan 2024 is a placeholder, should read the current date and be dynamic 
                         Work in progress JY: i set to today's date to test backend 
                     */}
-                            <Text style={styles.headerText}>{dateString}</Text>
+                        <View>
+                        <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePickerRow}>
+                            <FontAwesomeIcon name="calendar" size={24} color="#000" />
+                            <Text style={styles.datePickerText}>{formatDate(date)}</Text>
+                        </TouchableOpacity>
+                        {showDatePicker && (
+                            <DateTimePicker
+                                value={date}
+                                mode="date"
+                                display="default"
+                                onChange={onChange}
+                            />
+                        )}
+                        </View>
+                        
                         </View>
                         <View>
                             <TouchableOpacity
@@ -176,6 +213,23 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         marginBottom: 5,
     },
+
+    datePickerRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 10,
+        padding: 10,
+        backgroundColor: '#f2f2f2',
+        borderRadius: 5,
+    },
+
+    datePickerText: {
+        fontSize: 16,
+        marginLeft: 10,
+        color: '#333',
+    },
+
 
     dateText: {
         fontSize: 16,
