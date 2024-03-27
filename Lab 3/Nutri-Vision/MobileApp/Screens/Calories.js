@@ -10,9 +10,12 @@ import {
     Platform,
 } from 'react-native';
 
+import { getMealHistoryFromFirestore } from '../../MealHistory';
+
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+
 
 function Calories({navigation}) {
 
@@ -24,6 +27,7 @@ function Calories({navigation}) {
     const [date, setDate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [caloriesRemaining,setCaloriesRemaining] = useState(goalCalories - caloriesConsumed);
+    const [mealEntries, setMealEntries] = useState([]);
     const progress = caloriesConsumed / goalCalories;
     
     // Function to update calories count
@@ -32,13 +36,11 @@ function Calories({navigation}) {
         setCaloriesConsumed(newCalories > 0 ? newCalories : 0); // Ensure calories consumed is not negative
     }
 
-    // Function to update remaining calories in each entry
-
     // Function to add meal entries
     const addFood = (food, calories) => {
         const newEntries = [...entries, {name: food, calories, date}];
         updateCalories(calories);
-        setEntries(newEntries);
+        setMealEntries(newEntries);
     }
 
 
@@ -46,6 +48,7 @@ function Calories({navigation}) {
         const currentDate = selectedDate || date;
         setShowDatePicker(false);
         setDate(currentDate);
+        fetchMealEntriesForDate(currentDate)
     };
      
     const formatDate = (date) => {
@@ -55,6 +58,23 @@ function Calories({navigation}) {
 
     // Filter entries based on selected date
     const filteredEntries = entries.filter(entry => entry.date.toDateString() === date.toDateString());
+
+    // Allows the component to interact with external system (Firestore database)
+    useEffect(() => {
+        fetchMealEntriesForDate(date); // Initial fetch for today's entries
+    }, [date]);
+
+    const fetchMealEntriesForDate = async (date) => {
+        try {
+            const dateString = date.toISOString().split('T')[0]; // Convert date to YYYY-MM-DD Format
+            const entries = await getMealHistoryFromFirestore(dateString);
+            setMealEntries(entries);
+        } catch(error) {
+            console.error('Error fetching meal entries', error);
+        }
+    }
+
+
 
     return (
         <View style={styles.container}>

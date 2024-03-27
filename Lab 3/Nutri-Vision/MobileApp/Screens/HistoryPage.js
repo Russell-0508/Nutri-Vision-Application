@@ -1,12 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
     View,
-    ImageBackground,
     StyleSheet,
     Image,
     Text,
-    Dimensions,
-    Button,
     TouchableOpacity,
     SafeAreaView,
     ScrollView,
@@ -15,11 +12,8 @@ import {
 } from 'react-native';
 
 import { useNavigation } from "@react-navigation/native"
-import Collapsible from 'react-native-collapsible'
 import { getMealHistoryFromFirestore } from '../../MealHistory';
-import IndividualMeal from './IndividualMeal';
 
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
@@ -72,8 +66,6 @@ function History({ navigation }) {
     const formatDate = (date) => {
         return `${date.getDate()} ${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`;
     };
-
-    //const [selectedDate, setSelectedDate] = useState('');
     
     useEffect(() => {
         fetchMealEntriesForDate(date); // Initial fetch for today's entries
@@ -89,17 +81,6 @@ function History({ navigation }) {
         }
     };
    
-
-    /*const handleDateSelection = (date) => {
-        setSelectedDate(date);
-    };*/
-    
-  
-    // changes date based on date user clicked
-      
-
-    //Get today's date for the header display on history page
-    //var dateString = new Date().toDateString();
 
     return (
 
