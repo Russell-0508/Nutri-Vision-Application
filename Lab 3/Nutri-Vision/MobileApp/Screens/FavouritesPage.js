@@ -11,8 +11,7 @@ import Svg, { Circle } from 'react-native-svg';
 
 
 
-
-function ConfirmMealPage({ navigation }) {
+function FavouritesPage({ navigation }) {
   // Placeholder image URI
   const headerImageUri = 'https://via.placeholder.com/150'; // Update this to your desired image URL
 
@@ -28,6 +27,9 @@ function ConfirmMealPage({ navigation }) {
   };
 
   const [favoriteMealEntries, setFavoriteMealEntries] = useState([]);
+
+  // Determine if the number of entries is odd
+  const isOddNumberOfEntries = favoriteMealEntries.length % 2 !== 0;
 
   useEffect(() => {
     // Fetch favorite meal entries when the component mounts
@@ -48,28 +50,28 @@ function ConfirmMealPage({ navigation }) {
     <SafeAreaView style={{ flex: 1, backgroundColor: 'rgba(173, 219, 199, 1)' }}>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.gridContainer}>
-          {images.map((imageUri, index) => (
-            index === 0 ? (
-              <TouchableOpacity key={`container-${index}`} style={styles.imageContainer} onPress={handlePress}>
-                <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
-                <Text style={styles.imageText}>{favoriteMealEntries.length > 0 ? favoriteMealEntries[0].name : 'No favorite meal entries'}</Text>
-              </TouchableOpacity>
-
-            ) : (
-              <View key={`container-${index}`} style={styles.imageContainer}>
-                <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
-                {/* Optionally add text for other images similar to the first one */}
-              </View>
-            )
+          {favoriteMealEntries.map((entry, index) => (
+            <TouchableOpacity
+              key={`meal-${index}`}
+              style={styles.imageContainer}
+              onPress={() => handlePress(entry.name)}
+            >
+              <Image source={{ uri: entry.imageUri }} style={styles.image} resizeMode="contain" />
+              <Text style={styles.imageText}>{entry.name}</Text>
+            </TouchableOpacity>
           ))}
+          {/* Conditionally render an invisible view to align the last item to the left if odd number of entries */}
+          {isOddNumberOfEntries && <View style={styles.imageContainer} />}
         </View>
       </ScrollView>
     </SafeAreaView>
   );
-
-
-
 }
+
+
+
+
+
 
 const styles = StyleSheet.create({
   scrollViewContent: {
@@ -101,4 +103,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ConfirmMealPage;
+export default FavouritesPage;
