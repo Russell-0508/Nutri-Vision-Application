@@ -44,7 +44,7 @@ function Calories({navigation}) {
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
-        setShowDatePicker(Platform.OS === 'ios');
+        setShowDatePicker(false);
         setDate(currentDate);
     };
      
