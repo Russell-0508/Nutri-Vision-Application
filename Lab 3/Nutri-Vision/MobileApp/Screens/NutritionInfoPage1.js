@@ -10,7 +10,6 @@ import Svg, { Circle } from 'react-native-svg';
 
 
 
-
 function ConfirmMealPage({ navigation }) {
   // State to hold the image URI
   const [imageUri, setImageUri] = useState(null); // Initial state is null

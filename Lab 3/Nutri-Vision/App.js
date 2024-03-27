@@ -42,7 +42,7 @@ export default function App() {
       <Stack.Screen name='Edit Profile' component={EditProfilePage} />
       <Stack.Screen name='Favourites' component={FavouritesPage} />
       <Stack.Screen name='IndividualMeal' component={IndividualMeal} />
-      
+        
       </Stack.Navigator>
     </NavigationContainer>
   );

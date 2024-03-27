@@ -12,9 +12,10 @@ import { documentId } from '@firebase/firestore';
 function IndividualMeal({ navigation, route }) {
 
   // This will read the data passed from the navigate function in the HistoryPage.js
-  // const { documentId } = route.params;
+  const {documentId} = route.params; 
 
-  const documentId = 'N5YEHKioNBm2xUFdzIVw'; //set documentId to a random entry in firebase first
+  const [mealEntry, setMealEntry] = useState(null);
+  
   // State to hold the image URI
   const [imageUri, setImageUri] = useState(null); // Initial state is null
 
