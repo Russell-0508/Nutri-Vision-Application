@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { addDoc, collection } from 'firebase/firestore';
 import firestore from '../../firebase/config';
 import { format } from 'date-fns';
-
+import { differenceInYears } from 'date-fns';
 
 const CreateProfile = ({ navigation }) => {
     const profileCollection = collection(firestore, 'profile');
@@ -16,11 +16,13 @@ const CreateProfile = ({ navigation }) => {
     const [weight, setWeight] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
 
+
     // State for date picker
     const [dateOfBirth, setDateOfBirth] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
 
     const handleCreateProfile = async () => {
+        const age = differenceInYears(new Date(), dateOfBirth);
         const profileData = {
             name,
             email,
@@ -29,6 +31,7 @@ const CreateProfile = ({ navigation }) => {
             weight: parseFloat(weight),
             phoneNumber: parseInt(phoneNumber, 8),
             dateOfBirth: dateOfBirth,
+            age: age,
         };
       
         try {

@@ -18,18 +18,10 @@ function ProfileScreen({navigation}){
 
   const [profileData, setProfileData] = useState({
     name: 'Loading...', // Default value while loading
-    // You can add other fields here if needed
+    height: '...',
+    weight: '...',
+    age: '...',
   });
-  
-
-
-  // Placeholder for profile data
-  {/*const profileData = {
-    name: 'Russell Tan',
-    weight: '64 kg',
-    height: '176 cm',
-    age: '23',
-  };*/}
 
   // Fetch profile data from Firestore
   useEffect(() => {
@@ -52,10 +44,6 @@ function ProfileScreen({navigation}){
   }, []);
   
   
-
-  
-  
-
   // Placeholder function for button presses
   const handlePress = (action) => {
     console.log(`Pressed ${action}`);
@@ -78,23 +66,20 @@ function ProfileScreen({navigation}){
             style={styles.profileImage}
           />
           <Text style={styles.profileName}>{profileData.name}</Text>
-          {/* Additional profile details can be displayed here */}
-
-        {/* Display other profile details as needed */}
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
               <Text style={styles.statLabel}>Weight</Text>
-              <Text style={styles.statValue}>64 kg</Text>
+              <Text style={styles.statValue}>{profileData.weight}</Text>
             </View>
             <View style={styles.separator} />
             <View style={styles.statItem}>
               <Text style={styles.statLabel}>Height</Text>
-              <Text style={styles.statValue}>176 cm</Text>
+              <Text style={styles.statValue}>{profileData.height}</Text>
             </View>
             <View style={styles.separator} />
             <View style={styles.statItem}>
               <Text style={styles.statLabel}>Age</Text>
-              <Text style={styles.statValue}>23</Text>
+              <Text style={styles.statValue}>{profileData.age}</Text>
             </View>
           </View>
         </View>
