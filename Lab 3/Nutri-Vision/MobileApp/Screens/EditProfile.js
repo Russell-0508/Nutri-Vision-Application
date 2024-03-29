@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, SafeAreaView, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, SafeAreaView, ScrollView, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
-import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { getFirestore, collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { getProfileByEmail } from '../../ProfileHistory';
 
@@ -10,7 +10,7 @@ const EditProfilePage = ({ navigation }) => {
     const db = getFirestore();
 
     const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
+    const [email, setEmail] = useState('PAN@GMAIL.COM'); 
     const [selectedGender, setSelectedGender] = useState('');
     const [height, setHeight] = useState('');
     const [weight, setWeight] = useState('');
@@ -42,31 +42,37 @@ const EditProfilePage = ({ navigation }) => {
 
         fetchProfileByEmail();
     }, []);
+
+
     const handleEditProfile = async () => {
-        // Prepare profile data for update
-        const updatedProfile = {
-            name,
-            email,
-            gender: selectedGender,
-            height: parseFloat(height),
-            weight: parseFloat(weight),
-            dateOfBirth: date, // Firestore accepts JavaScript Date objects
-        };
-
         try {
-            const docRef = doc(db, 'profile', userId);
-            await updateDoc(docRef, updatedProfile);
-            console.log('Profile updated successfully');
-            // Navigate or show success message
-        } catch (error) {
-            console.error("Error updating profile: ", error);
-        }
-    };
+            // Reference to the profiles collection
+            const profilesRef = collection(db, "profile");
 
-    const onChangeDate = (event, selectedDate) => {
-        setShowDatePicker(false);
-        if (selectedDate) {
-            setDate(selectedDate);
+            // Query for the profile with the matching email
+            const q = query(profilesRef, where("email", "==", email));
+
+            const querySnapshot = await getDocs(q);
+            if (querySnapshot.empty) {
+                Alert.alert("No profile found with the given email.");
+                return;
+            }
+
+            const profileDoc = querySnapshot.docs[0];
+            const profileRef = profileDoc.ref;
+
+            // Update the profile
+            await updateDoc(profileRef, {
+                name,
+                gender: selectedGender,
+                height: parseFloat(height), 
+                weight: parseFloat(weight), 
+            });
+
+            Alert.alert("Profile updated successfully.");
+        } catch (error) {
+            console.error("Error updating profile:", error);
+            Alert.alert("Error updating profile. Please try again.");
         }
     };
 
