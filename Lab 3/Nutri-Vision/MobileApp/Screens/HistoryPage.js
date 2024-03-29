@@ -46,9 +46,6 @@ function Entry({ title, description, navigation, documentId }) {
 
 function History({ navigation }) {
 
-    // Defining state for collapsible feature
-    const [isCollapsed, setIsCollapsed] = useState(true);
-
     // Defining state for date picker method
     const [date, setDate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
