@@ -10,38 +10,115 @@ import { useNavigation } from '@react-navigation/native';
 function NutritionalInfoPage({ navigation }) {
   // State to hold the image URI
   const [imageUri, setImageUri] = useState(null); // Initial state is null
+
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [ingredientName, setIngredientName] = useState('');
   const [ingredientMass, setIngredientMass] = useState('');
 
+  const [selectedIngredient, setSelectedIngredient] = useState(null);
+
+
   // Placeholder image URI
   const placeholderImageUri = 'https://via.placeholder.com/150'; // Placeholder URL
+  
 
 
   // Placeholder ingredients
-  const ingredients = [
+  const [ingredients, setIngredients] = useState([
     { id: '1', name: 'Rice', portion: '200g', imageUrl: 'https://via.placeholder.com/150' },
     { id: '2', name: 'Chicken', portion: '150g', imageUrl: 'https://via.placeholder.com/150' },
-  ];
+  ]);
+
+
+
+  const handleAddIngredient = () => {
+    console.log("Add button pressed with ingredient name:", ingredientName, "and mass:", ingredientMass);
+    const newIngredient = {
+      id: new Date().getTime().toString(),
+      name: ingredientName,
+      portion: ingredientMass + 'g',
+      imageUrl: 'https://via.placeholder.com/150',
+    };
+    setIngredients(currentIngredients => [...currentIngredients, newIngredient]);
+    setIngredientName('');
+    setIngredientMass('');
+    setIsModalVisible(false);
+  };
+  
+  
+  const EditIngredientModal = () => (
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={selectedIngredient !== null}
+      onRequestClose={() => setSelectedIngredient(null)}
+    >
+      <View style={styles.modalView}>
+        <TouchableOpacity
+          style={styles.closeButton}
+          onPress={() => setSelectedIngredient(null)}
+        >
+          <Text style={styles.closeButtonText}>X</Text>
+        </TouchableOpacity>
+        <TextInput
+          placeholder="Ingredient Name"
+          style={styles.textInput}
+          onChangeText={(text) => setIngredientName(text)}
+          value={ingredientName}
+        />
+        <TextInput
+          placeholder="Mass (g)"
+          style={styles.textInput}
+          onChangeText={(text) => setIngredientMass(text)}
+          value={ingredientMass}
+          keyboardType="numeric"
+        />
+        <Button title="Update" onPress={handleUpdateIngredient} />
+        <Button title="Delete" onPress={handleDeleteIngredient} color="red" />
+      </View>
+    </Modal>
+  );
+  
 
   // Placeholder function for button presses
-  const handlePress = (action) => {
-    console.log(`Pressed ${action}`);
+  const handlePress = (item) => {
+    setSelectedIngredient(item);
+    setIngredientName(item.name);
+    setIngredientMass(item.portion.replace('g', '')); // Assuming 'portion' is always in grams
   };
 
+  const handleUpdateIngredient = () => {
+    const updatedIngredients = ingredients.map(ing => {
+      if (ing.id === selectedIngredient.id) {
+        return {...ing, name: ingredientName, portion: ingredientMass + 'g'};
+      }
+      return ing;
+    });
+    setIngredients(updatedIngredients);
+    setSelectedIngredient(null);
+  };
+  
+  const handleDeleteIngredient = () => {
+    const filteredIngredients = ingredients.filter(ing => ing.id !== selectedIngredient.id);
+    setIngredients(filteredIngredients);
+    setSelectedIngredient(null);
+  };
+  
+  
   const renderIngredientItem = ({ item }) => (
-    <View>
+    <TouchableOpacity onPress={() => handlePress(item)}>
       <View style={styles.ingredientItem}>
         <Image
-          source={{ uri: item.imageUrl || placeholderImageUri }} // Fallback to the placeholder URI
+          source={{ uri: item.imageUrl || placeholderImageUri }}
           style={styles.ingredientImage}
         />
         <Text style={styles.ingredientName}>{item.name}</Text>
         <Text style={styles.ingredientPortion}>{item.portion}</Text>
       </View>
       <View style={styles.separator} />
-    </View>
+    </TouchableOpacity>
   );
+  
 
   const AddIngredientButton = () => (
     <View>
@@ -53,19 +130,9 @@ function NutritionalInfoPage({ navigation }) {
     </View>
   );
 
-  const handleAddIngredient = () => {
-    console.log("Add button pressed with ingredient name:", ingredientName, "and mass:", ingredientMass);
-    /*const newIngredient = {
-      id: new Date().getTime().toString(),
-      name: ingredientName,
-      portion: ingredientMass + 'g',
-      imageUrl: placeholderImageUri,
-    };
-    setIngredients(currentIngredients => [...currentIngredients, newIngredient]);
-    setIngredientName('');
-    setIngredientMass('');
-    setIsModalVisible(false);*/
-  };
+
+  
+
 
   const handleConfirmMeal = async () => {
     // Prepare the meal data based on your requirements
@@ -124,6 +191,7 @@ function NutritionalInfoPage({ navigation }) {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <EditIngredientModal />
       <Modal
         animationType="slide"
         transparent={true}
