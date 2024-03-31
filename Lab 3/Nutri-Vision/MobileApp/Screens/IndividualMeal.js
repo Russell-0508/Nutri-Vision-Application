@@ -12,10 +12,10 @@ import { documentId } from '@firebase/firestore';
 function IndividualMeal({ route }) {
 
   // This will read the data passed from the navigate function in the HistoryPage.js
-  const {documentId} = route.params; 
+  const { documentId } = route.params;
 
   const [mealEntry, setMealEntry] = useState(null);
-  
+
   // State to hold the image URI
   const [imageUri, setImageUri] = useState(null); // Initial state is null
 
@@ -29,7 +29,7 @@ function IndividualMeal({ route }) {
       what is displayed according to what kind of nutritional information
       is provided by the API
   */}
-  
+
   const [servingSize, setServingSize] = useState('Loading...');
   const [calories, setCalories] = useState('Loading...');
   const [carbohydrates, setCarbohydrates] = useState('Loading...');
@@ -43,18 +43,22 @@ function IndividualMeal({ route }) {
 
   // For toggling favourites 
   const [isFavorite, setIsFavorite] = useState(false);
+  // State for heart button color
+  const [heartColor, setHeartColor] = useState("black");
 
   const fetchNutritionalInfo = async (documentId) => {
     try {
-        if (!documentId) {
-            throw new Error('Document ID is missing.');
-        }
+      if (!documentId) {
+        throw new Error('Document ID is missing.');
+      }
 
-        const mealEntry = await getMealEntryById(documentId);
-        console.log('Fetched meal entry:', mealEntry); // Log the fetched data
+      const mealEntry = await getMealEntryById(documentId);
+      console.log('Fetched meal entry:', mealEntry); // Log the fetched data
 
-        const attributesToDisplay = ['calories', 'carbohydrates', 'cholesterol', 'fiber', 'protein', 'saturatedFat', 'sodium', 'sugar', 'totalFat'];
-        attributesToDisplay.forEach(attribute => {
+      setIsFavorite(mealEntry.favourite); // Set isFavorite state based on fetched data
+      setHeartColor(mealEntry.favourite ? "red" : "black"); // Set heart color based on fetched data
+      const attributesToDisplay = ['calories', 'carbohydrates', 'cholesterol', 'fiber', 'protein', 'saturatedFat', 'sodium', 'sugar', 'totalFat'];
+      attributesToDisplay.forEach(attribute => {
         if (mealEntry[attribute] !== 0) {
           switch (attribute) {
             case 'calories':
@@ -91,7 +95,7 @@ function IndividualMeal({ route }) {
       });
 
     } catch (error) {
-        console.error('Error fetching nutritional info:', error);
+      console.error('Error fetching nutritional info:', error);
     }
   };
 
@@ -109,7 +113,8 @@ function IndividualMeal({ route }) {
       setIsFavorite(!isFavorite);
 
       // Update the database to reflect the change
-      await updateMealDataInFirestore(documentId, { favourite: !isFavorite });
+      updateMealDataInFirestore(documentId, { favourite: !isFavorite });
+      setHeartColor(!isFavorite ? "red" : "black");
     } catch (error) {
       console.error('Error toggling favorite status:', error);
       // Handle error
@@ -166,7 +171,7 @@ function IndividualMeal({ route }) {
           />
         </Svg>
         <Text style={{ position: 'absolute', fontWeight: 'bold', top: size * 0.35 }}>{percentage}%</Text>
-        <Text style={{ fontWeight: 'bold',top: size*0.85}}>{label}</Text>
+        <Text style={{ fontWeight: 'bold', top: size * 0.85 }}>{label}</Text>
       </View>
     );
   };
@@ -178,85 +183,85 @@ function IndividualMeal({ route }) {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-    <ScrollView>
-      <StatusBar backgroundColor="rgba(173, 219, 199, 1)" barStyle="light-content" />
-      <View style={styles.imageContainer}>
-        {/* Image placeholder */}
-        <Image
-          source={{ uri: imageUri || placeholderImageUri }}
-          style={styles.imageStyle}
-          resizeMode="contain"
-        />
-        {/* Three-dot button */}
-        <TouchableOpacity style={styles.threeDotButton} onPress={() => handlePress('More')}>
-          <MaterialIcons name="more-horiz" size={30} color="black" />
-        </TouchableOpacity>
-        {/* Heart button */}
-        <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
-          <MaterialIcons
-            name={isFavorite ? "favorite" : "favorite-border"} // Change icon based on state
-            size={30}
-            color={isFavorite ? "red" : "black"} // Change color based on state
+      <ScrollView>
+        <StatusBar backgroundColor="rgba(173, 219, 199, 1)" barStyle="light-content" />
+        <View style={styles.imageContainer}>
+          {/* Image placeholder */}
+          <Image
+            source={{ uri: imageUri || placeholderImageUri }}
+            style={styles.imageStyle}
+            resizeMode="contain"
           />
-        </TouchableOpacity>
-      </View>
-      <View style={styles.nutritionalInfoContainer}>
-        <Text style={styles.nutritionalInfoContainerText}>Fried Rice with Chicken</Text>
-        {/* Mass and Calories with Icons */}
-        <View style={styles.nutritionalDetailsContainer}>
-          <MaterialIcons name="local-fire-department" size={20} color="rgb(127, 127, 127)" />
-          <Text style={styles.nutritionalDetailsText}> {calories} </Text>
+          {/* Three-dot button */}
+          <TouchableOpacity style={styles.threeDotButton} onPress={() => handlePress('More')}>
+            <MaterialIcons name="more-horiz" size={30} color="black" />
+          </TouchableOpacity>
+          {/* Heart button */}
+          <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
+            <MaterialIcons
+              name={isFavorite ? "favorite" : "favorite-border"} // Change icon based on state
+              size={30}
+              color={heartColor} // Change color based on state
+            />
+          </TouchableOpacity>
         </View>
-        {/*Nutritional Information */}
-        <Text style={styles.ingredientsHeaderText}>Nutritional Information</Text>
-        <View style={styles.innerGreyContainer}>
+        <View style={styles.nutritionalInfoContainer}>
+          <Text style={styles.nutritionalInfoContainerText}>Fried Rice with Chicken</Text>
+          {/* Mass and Calories with Icons */}
+          <View style={styles.nutritionalDetailsContainer}>
+            <MaterialIcons name="local-fire-department" size={20} color="rgb(127, 127, 127)" />
+            <Text style={styles.nutritionalDetailsText}> {calories} </Text>
+          </View>
+          {/*Nutritional Information */}
+          <Text style={styles.ingredientsHeaderText}>Nutritional Information</Text>
+          <View style={styles.innerGreyContainer}>
 
-          <View style={styles.nutritionalInfoRow}>
-            <Text style={styles.labelText}>Calories:</Text>
-            <Text style={styles.valueText}>{calories}</Text>
+            <View style={styles.nutritionalInfoRow}>
+              <Text style={styles.labelText}>Calories:</Text>
+              <Text style={styles.valueText}>{calories}</Text>
+            </View>
+            <View style={styles.nutritionalInfoRow}>
+              <Text style={styles.labelText}>Carbohydrates:</Text>
+              <Text style={styles.valueText}>{carbohydrates}</Text>
+            </View>
+            <View style={styles.nutritionalInfoRow}>
+              <Text style={styles.labelText}>Protein:</Text>
+              <Text style={styles.valueText}>{protein}</Text>
+            </View>
+            <View style={styles.nutritionalInfoRow}>
+              <Text style={styles.labelText}>Cholesterol:</Text>
+              <Text style={styles.valueText}>{cholesterol}</Text>
+            </View>
+            <View style={styles.nutritionalInfoRow}>
+              <Text style={styles.labelText}>Fiber:</Text>
+              <Text style={styles.valueText}>{fiber}</Text>
+            </View>
+            <View style={styles.nutritionalInfoRow}>
+              <Text style={styles.labelText}>Saturated Fat:</Text>
+              <Text style={styles.valueText}>{saturatedFat}</Text>
+            </View>
+            <View style={styles.nutritionalInfoRow}>
+              <Text style={styles.labelText}>Sodium:</Text>
+              <Text style={styles.valueText}>{sodium}</Text>
+            </View>
+            <View style={styles.nutritionalInfoRow}>
+              <Text style={styles.labelText}>Sugar:</Text>
+              <Text style={styles.valueText}>{sugar}</Text>
+            </View>
+            <View style={styles.nutritionalInfoRow}>
+              <Text style={styles.labelText}>Total Fat:</Text>
+              <Text style={styles.valueText}>{totalFat}</Text>
+            </View>
           </View>
-          <View style={styles.nutritionalInfoRow}>
-            <Text style={styles.labelText}>Carbohydrates:</Text>
-            <Text style={styles.valueText}>{carbohydrates}</Text>
+          {/* Nutritional information progress circles */}
+          <View style={styles.progressCirclesContainer}>
+            <ProgressCircle percentage={carbsPercentage} fillColor="brown" label="Carbohydrates" />
+            <ProgressCircle percentage={fatsPercentage} fillColor="yellow" label="Fats" />
+            <ProgressCircle percentage={proteinPercentage} fillColor="blue" label="Proteins" />
           </View>
-          <View style={styles.nutritionalInfoRow}>
-            <Text style={styles.labelText}>Protein:</Text>
-            <Text style={styles.valueText}>{protein}</Text>
-          </View>
-          <View style={styles.nutritionalInfoRow}>
-            <Text style={styles.labelText}>Cholesterol:</Text>
-            <Text style={styles.valueText}>{cholesterol}</Text>
-          </View>
-          <View style={styles.nutritionalInfoRow}>
-            <Text style={styles.labelText}>Fiber:</Text>
-            <Text style={styles.valueText}>{fiber}</Text>
-          </View>
-          <View style={styles.nutritionalInfoRow}>
-            <Text style={styles.labelText}>Saturated Fat:</Text>
-            <Text style={styles.valueText}>{saturatedFat}</Text>
-          </View>
-          <View style={styles.nutritionalInfoRow}>
-            <Text style={styles.labelText}>Sodium:</Text>
-            <Text style={styles.valueText}>{sodium}</Text>
-          </View>
-          <View style={styles.nutritionalInfoRow}>
-            <Text style={styles.labelText}>Sugar:</Text>
-            <Text style={styles.valueText}>{sugar}</Text>
-          </View>
-          <View style={styles.nutritionalInfoRow}>
-            <Text style={styles.labelText}>Total Fat:</Text>
-            <Text style={styles.valueText}>{totalFat}</Text>
-          </View>
-        </View>
-        {/* Nutritional information progress circles */}
-        <View style={styles.progressCirclesContainer}>
-          <ProgressCircle percentage={carbsPercentage} fillColor="brown" label="Carbohydrates" />
-          <ProgressCircle percentage={fatsPercentage} fillColor="yellow" label="Fats" />
-          <ProgressCircle percentage={proteinPercentage} fillColor="blue" label="Proteins" />
-        </View>
 
-      </View>
-    </ScrollView>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
