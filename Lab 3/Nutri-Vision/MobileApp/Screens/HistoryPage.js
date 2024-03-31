@@ -23,6 +23,11 @@ screenWidth = 500
 
 {/* This is the Entry element, which takes in title, description, and displays it all */ }
 function Entry({ title, description, navigation, documentId }) {
+
+    const handleNextEntryPress = () => {
+        navigation.navigate('IndividualMeal', {documentId: documentId})
+        console.log('Navigatiing to documentId: ', {documentId: documentId})
+    }
     return (
         <View style={styles.entry}>
             <View style={styles.entryContainer}>
@@ -31,7 +36,7 @@ function Entry({ title, description, navigation, documentId }) {
 
             </View>
             <View>
-                <TouchableOpacity  onPress={() => navigation.navigate("IndividualMeal", {documentId})}>
+                <TouchableOpacity  onPress={handleNextEntryPress}>
                     <Image
                         style={styles.arrowlogo}
                         source={require('../assets/right_pointing_arrow.png')}
@@ -122,7 +127,7 @@ function History({ navigation }) {
                     <View>
                         {mealEntries.map((entry, index) => (
                             <View key={index}>
-                                <Entry title={entry.type} description={entry.name} navigation={navigation} documentId={entry.documentId} />
+                                <Entry title={entry.type} description={entry.name} navigation={navigation} documentId={entry.id} />
                             </View>
                         ))}
                     </View>

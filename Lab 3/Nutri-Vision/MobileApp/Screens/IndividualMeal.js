@@ -9,7 +9,7 @@ import Svg, { Circle } from 'react-native-svg';
 import { documentId } from '@firebase/firestore';
 
 
-function IndividualMeal({ navigation, route }) {
+function IndividualMeal({ route }) {
 
   // This will read the data passed from the navigate function in the HistoryPage.js
   const {documentId} = route.params; 
@@ -46,15 +46,15 @@ function IndividualMeal({ navigation, route }) {
 
   const fetchNutritionalInfo = async (documentId) => {
     try {
-    
-      if (!documentId) {
-        throw new Error('Document ID is missing.');
-      }
+        if (!documentId) {
+            throw new Error('Document ID is missing.');
+        }
 
-      // Extract nutritional information from the meal document data
-      const mealEntry = await getMealEntryById(documentId);
-      const attributesToDisplay = ['calories', 'carbohydrates', 'cholesterol', 'fiber', 'protein', 'saturatedFat', 'sodium', 'sugar', 'totalFat'];
-      attributesToDisplay.forEach(attribute => {
+        const mealEntry = await getMealEntryById(documentId);
+        console.log('Fetched meal entry:', mealEntry); // Log the fetched data
+
+        const attributesToDisplay = ['calories', 'carbohydrates', 'cholesterol', 'fiber', 'protein', 'saturatedFat', 'sodium', 'sugar', 'totalFat'];
+        attributesToDisplay.forEach(attribute => {
         if (mealEntry[attribute] !== 0) {
           switch (attribute) {
             case 'calories':
@@ -89,9 +89,9 @@ function IndividualMeal({ navigation, route }) {
           }
         }
       });
+
     } catch (error) {
-      console.error('Error fetching nutritional info:', error);
-      // Handle error or set default error values here
+        console.error('Error fetching nutritional info:', error);
     }
   };
 
@@ -100,7 +100,7 @@ function IndividualMeal({ navigation, route }) {
     if (documentId) {
       fetchNutritionalInfo(documentId);
     }
-  }, []); // Empty dependency array to run only on component mount
+  }, [documentId]); // Empty dependency array to run only on component mount
 
   // Update favourites attribute in database when heart icon is pressed
   const toggleFavorite = async () => {
