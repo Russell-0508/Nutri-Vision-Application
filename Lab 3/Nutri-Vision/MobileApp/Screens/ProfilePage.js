@@ -1,7 +1,10 @@
-import React, { useState }from 'react';
+import React, { useState, useEffect }from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, SafeAreaView, Modal, Switch } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
+import firestore from '@react-native-firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
+import { getProfileByEmail } from '../../ProfileHistory'; // Adjust the path as necessary
 
 
 function ProfileScreen({navigation}){
@@ -13,13 +16,45 @@ function ProfileScreen({navigation}){
     setNotificationsEnabled(!notificationsEnabled);
   };
 
+  const [profileData, setProfileData] = useState({
+    name: 'Loading...', // Default value while loading
+    // You can add other fields here if needed
+  });
+  
+
+
   // Placeholder for profile data
-  const profileData = {
+  {/*const profileData = {
     name: 'Russell Tan',
     weight: '64 kg',
     height: '176 cm',
     age: '23',
-  };
+  };*/}
+
+  // Fetch profile data from Firestore
+  useEffect(() => {
+    const fetchProfileByEmail = async () => {
+      try {
+        const profiles = await getProfileByEmail("PAN@GMAIL.COM"); // Adjust the email case as needed
+        if (profiles.length > 0) {
+          // Assuming the first profile is the one you're interested in
+          setProfileData(profiles[0]);
+        } else {
+          setProfileData({ name: 'No profile found' });
+        }
+      } catch (error) {
+        console.error("Error fetching profile by email:", error);
+        setProfileData({ name: 'Error fetching profile' });
+      }
+    };
+  
+    fetchProfileByEmail();
+  }, []);
+  
+  
+
+  
+  
 
   // Placeholder function for button presses
   const handlePress = (action) => {
@@ -37,11 +72,15 @@ function ProfileScreen({navigation}){
           <MaterialIcons name="logout" size={24} color="red" />
         </TouchableOpacity>
         <View style={styles.profileHeader}>
+        {/* Profile Information Display */}
           <Image
             source={require('../assets/profile_image.png')}
             style={styles.profileImage}
           />
           <Text style={styles.profileName}>{profileData.name}</Text>
+          {/* Additional profile details can be displayed here */}
+
+        {/* Display other profile details as needed */}
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
               <Text style={styles.statLabel}>Weight</Text>
