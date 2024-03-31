@@ -55,6 +55,7 @@ function IndividualMeal({ route }) {
       const mealEntry = await getMealEntryById(documentId);
       console.log('Fetched meal entry:', mealEntry); // Log the fetched data
 
+      setMealEntry(mealEntry);
       setIsFavorite(mealEntry.favourite); // Set isFavorite state based on fetched data
       setHeartColor(mealEntry.favourite ? "red" : "black"); // Set heart color based on fetched data
       const attributesToDisplay = ['calories', 'carbohydrates', 'cholesterol', 'fiber', 'protein', 'saturatedFat', 'sodium', 'sugar', 'totalFat'];
@@ -206,7 +207,7 @@ function IndividualMeal({ route }) {
           </TouchableOpacity>
         </View>
         <View style={styles.nutritionalInfoContainer}>
-          <Text style={styles.nutritionalInfoContainerText}>Fried Rice with Chicken</Text>
+          <Text style={styles.nutritionalInfoContainerText}>{mealEntry && mealEntry.name}</Text>
           {/* Mass and Calories with Icons */}
           <View style={styles.nutritionalDetailsContainer}>
             <MaterialIcons name="local-fire-department" size={20} color="rgb(127, 127, 127)" />
