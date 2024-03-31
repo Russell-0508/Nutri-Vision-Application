@@ -4,7 +4,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import { collection, getDocs } from 'firebase/firestore';
-import { getProfileByEmail } from '../../ProfileHistory'; // Adjust the path as necessary
+import { getProfileByEmail } from '../../ProfileHistory';
 
 
 function ProfileScreen({navigation}){

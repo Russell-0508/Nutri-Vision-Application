@@ -1,4 +1,4 @@
-import { collection, query, where, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, startOfDay, endOfDay } from 'firebase/firestore';
+import { storage, collection, query, where, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, startOfDay, endOfDay } from 'firebase/firestore';
 import firestore from './firebase/config';
 
 const profileCollection = collection(firestore, 'profile');
@@ -50,5 +50,6 @@ export const deleteProfileDataInFirestore = (profileId) => {
             console.error('Error deleting profile data:', error);
         });
 };
+
 
 

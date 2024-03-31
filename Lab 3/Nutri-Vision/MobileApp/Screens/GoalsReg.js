@@ -1,28 +1,44 @@
 import React, { useState, useRef } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, Image, SafeAreaView, ScrollView, TouchableOpacity, Linking} from 'react-native';
+import { getFirestore, collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
 
 
-const GoalsReg = ({navigation}) => {
+const db = getFirestore();
 
+const GoalsReg = ({ navigation }) => {
     const [selectedGoal, setSelectedGoal] = useState(null);
-
-    const goals = [
-        'Gain Weight',
-        'Lose Weight',
-        'Get Fitter',
-        'Eat Healthier',
-        "I don't know yet",
-    ];
+    const goals = ['Gain Weight', 'Lose Weight', 'Get Fitter', 'Eat Healthier', "I don't know yet"];
 
     const handleGoalSelection = (goal) => {
         console.log(`Goal selected: ${goal}`);
         setSelectedGoal(goal);
     };
 
-    const handleNextPress = () => {
+    const handleNextPress = async () => {
         if (selectedGoal) {
-            console.log('Next button pressed with goal:', selectedGoal);
-            navigation.navigate('Tabs'); 
+            const userEmail = "PAN@GMAIL.COM"; // Substitute with dynamic user email if available
+            const profilesColRef = collection(db, 'profile');
+            const q = query(profilesColRef, where("email", "==", userEmail));
+
+            try {
+                const querySnapshot = await getDocs(q);
+                if (!querySnapshot.empty) {
+                    // Assuming the first document is the user's profile
+                    const userDoc = querySnapshot.docs[0];
+
+                    // Update the profile with the selected goal
+                    await updateDoc(userDoc.ref, { goals: selectedGoal });
+                    
+                    console.log('Goal updated successfully:', selectedGoal);
+                    navigation.navigate('Tabs'); // Navigate to the next screen after goal update
+                } else {
+                    console.log('Profile not found.');
+                    alert('Profile not found.');
+                }
+            } catch (error) {
+                console.error('Error updating goal:', error);
+                alert('Failed to update goal. Please try again.');
+            }
         } else {
             alert('Please select a goal to continue.');
         }
