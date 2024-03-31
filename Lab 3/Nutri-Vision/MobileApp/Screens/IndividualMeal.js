@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     fontStyle: 'italic',
-    textAlign: 'flex-start',
+    justifyContent: 'flex-start',
     margin: 16,
   },
   nutritionalDetailsContainer: {
