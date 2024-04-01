@@ -20,7 +20,7 @@ function NutritionalInfoPage({ navigation }) {
 
   // Placeholder image URI
   const placeholderImageUri = 'https://via.placeholder.com/150'; // Placeholder URL
-  
+
 
 
   // Placeholder ingredients
@@ -44,8 +44,8 @@ function NutritionalInfoPage({ navigation }) {
     setIngredientMass('');
     setIsModalVisible(false);
   };
-  
-  
+
+
   const EditIngredientModal = () => (
     <Modal
       animationType="slide"
@@ -78,7 +78,7 @@ function NutritionalInfoPage({ navigation }) {
       </View>
     </Modal>
   );
-  
+
 
   // Placeholder function for button presses
   const handlePress = (item) => {
@@ -90,21 +90,21 @@ function NutritionalInfoPage({ navigation }) {
   const handleUpdateIngredient = () => {
     const updatedIngredients = ingredients.map(ing => {
       if (ing.id === selectedIngredient.id) {
-        return {...ing, name: ingredientName, portion: ingredientMass + 'g'};
+        return { ...ing, name: ingredientName, portion: ingredientMass + 'g' };
       }
       return ing;
     });
     setIngredients(updatedIngredients);
     setSelectedIngredient(null);
   };
-  
+
   const handleDeleteIngredient = () => {
     const filteredIngredients = ingredients.filter(ing => ing.id !== selectedIngredient.id);
     setIngredients(filteredIngredients);
     setSelectedIngredient(null);
   };
-  
-  
+
+
   const renderIngredientItem = ({ item }) => (
     <TouchableOpacity onPress={() => handlePress(item)}>
       <View style={styles.ingredientItem}>
@@ -118,7 +118,7 @@ function NutritionalInfoPage({ navigation }) {
       <View style={styles.separator} />
     </TouchableOpacity>
   );
-  
+
 
   const AddIngredientButton = () => (
     <View>
@@ -130,44 +130,13 @@ function NutritionalInfoPage({ navigation }) {
     </View>
   );
 
-
-  
-
-
-  const handleConfirmMeal = async () => {
-    // Prepare the meal data based on your requirements
-    const mealData = {
-      name: 'Chicken Nuggets',
-      calories: 1000, // Example value, replace with actual value
-      carbohydrates: 50, // Example value, replace with actual value
-      cholesterol: 30, // Example value, replace with actual value
-      createdAt: new Date(), // Current timestamp
-      fiber: 10, // Example value, replace with actual value
-      protein: 30, // Example value, replace with actual value
-      saturatedFat: 5, // Example value, replace with actual value
-      servingSize: 1, // Example value, replace with actual value
-      sodium: 20, // Example value, replace with actual value
-      sugar: 15, // Example value, replace with actual value
-      totalFat: 15, // Example value, replace with actual value
-      type: 'Lunch', // Example value, replace with actual value
-      favourite: false
-    };
-
-    try {
-      // Save the meal data to Firebase
-      const mealId = await saveMealToFirestore(mealData);
-
-      // perform additional actions after the meal is saved
-      console.log('Meal confirmed and saved with ID:', mealId);
-
-    } catch (error) {
-      console.error('Error confirming meal:', error);
-      // Handle the error as needed
-    }
+  const handleConfirmMeal = () => {
+    const query = ingredients.map(ingredient => `${ingredient.portion} ${ingredient.name}`).join(' , ');
+    navigation.navigate('Confirm Meal', { ingredients: query });
   };
 
   const ConfirmMealButton = () => (
-    <TouchableOpacity style={styles.confirmMealButton} onPress={handleButtonPress}>
+    <TouchableOpacity style={styles.confirmMealButton} onPress={handleConfirmMeal}>
       <Text style={styles.confirmMealText}>Confirm Meal</Text>
     </TouchableOpacity>
   );
@@ -178,11 +147,6 @@ function NutritionalInfoPage({ navigation }) {
   // Toggle heart state
   const toggleHeart = () => {
     setIsHeartActive(!isHeartActive); // Toggle between true and false
-  };
-
-  const handleButtonPress = async () => {
-    await handleConfirmMeal(); // Wait for the meal to be confirmed
-    navigation.navigate('Confirm Meal'); // Navigate after confirmation
   };
 
   // Placeholder mass and calories 

@@ -30,15 +30,9 @@ function IndividualMeal({ route }) {
       is provided by the API
   */}
 
-  const [servingSize, setServingSize] = useState('Loading...');
   const [calories, setCalories] = useState('Loading...');
   const [carbohydrates, setCarbohydrates] = useState('Loading...');
   const [protein, setProtein] = useState('Loading...');
-  const [cholesterol, setCholesterol] = useState('Loading...');
-  const [fiber, setFiber] = useState('Loading...');
-  const [saturatedFat, setSaturatedFat] = useState('Loading...');
-  const [sodium, setSodium] = useState('Loading...');
-  const [sugar, setSugar] = useState('Loading...');
   const [totalFat, setTotalFat] = useState('Loading...');
 
   // For toggling favourites 
@@ -68,23 +62,8 @@ function IndividualMeal({ route }) {
             case 'carbohydrates':
               setCarbohydrates(mealEntry[attribute]);
               break;
-            case 'cholesterol':
-              setCholesterol(mealEntry[attribute]);
-              break;
-            case 'fiber':
-              setFiber(mealEntry[attribute]);
-              break;
             case 'protein':
               setProtein(mealEntry[attribute]);
-              break;
-            case 'saturatedFat':
-              setSaturatedFat(mealEntry[attribute]);
-              break;
-            case 'sodium':
-              setSodium(mealEntry[attribute]);
-              break;
-            case 'sugar':
-              setSugar(mealEntry[attribute]);
               break;
             case 'totalFat':
               setTotalFat(mealEntry[attribute]);
@@ -228,26 +207,6 @@ function IndividualMeal({ route }) {
             <View style={styles.nutritionalInfoRow}>
               <Text style={styles.labelText}>Protein:</Text>
               <Text style={styles.valueText}>{protein}</Text>
-            </View>
-            <View style={styles.nutritionalInfoRow}>
-              <Text style={styles.labelText}>Cholesterol:</Text>
-              <Text style={styles.valueText}>{cholesterol}</Text>
-            </View>
-            <View style={styles.nutritionalInfoRow}>
-              <Text style={styles.labelText}>Fiber:</Text>
-              <Text style={styles.valueText}>{fiber}</Text>
-            </View>
-            <View style={styles.nutritionalInfoRow}>
-              <Text style={styles.labelText}>Saturated Fat:</Text>
-              <Text style={styles.valueText}>{saturatedFat}</Text>
-            </View>
-            <View style={styles.nutritionalInfoRow}>
-              <Text style={styles.labelText}>Sodium:</Text>
-              <Text style={styles.valueText}>{sodium}</Text>
-            </View>
-            <View style={styles.nutritionalInfoRow}>
-              <Text style={styles.labelText}>Sugar:</Text>
-              <Text style={styles.valueText}>{sugar}</Text>
             </View>
             <View style={styles.nutritionalInfoRow}>
               <Text style={styles.labelText}>Total Fat:</Text>

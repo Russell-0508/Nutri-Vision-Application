@@ -127,7 +127,7 @@ function History({ navigation }) {
                     <View>
                         {mealEntries.map((entry, index) => (
                             <View key={index}>
-                                <Entry title={entry.type} description={entry.name} navigation={navigation} documentId={entry.id} />
+                                <Entry title={entry.name} navigation={navigation} documentId={entry.id} />
                             </View>
                         ))}
                     </View>

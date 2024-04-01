@@ -3,54 +3,86 @@ import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, 
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { saveMealToFirestore } from '../../MealHistory';
+import { saveMealToFirestore} from '../../MealHistory';
+import { fetchNutritionalInfo } from '../../CalorieNinjaAPI';
 import { useNavigation } from '@react-navigation/native';
 import Svg, { Circle } from 'react-native-svg';
 
 
 
 
-function ConfirmMealPage({ navigation }) {
+function ConfirmMealPage({ route, navigation }) {
   // State to hold the image URI
   const [imageUri, setImageUri] = useState(null); // Initial state is null
+
 
   // Placeholder image URI
   const placeholderImageUri = 'https://via.placeholder.com/150'; // Placeholder URL
 
   // State variables for nutritional information
-  const [servingSize, setServingSize] = useState('Loading...');
   const [calories, setCalories] = useState('Loading...');
   const [carbohydrates, setCarbohydrates] = useState('Loading...');
   const [fats, setFats] = useState('Loading...');
   const [protein, setProtein] = useState('Loading...');
+  const [mealName, setMealName] = useState(null);
 
-  const fetchNutritionalInfo = async () => {
-    try {
-      // Simulate fetching data from an API
-      // This is where you would make your actual API call
-      const apiResponse = {
-        servingSize: '1 portion',
-        calories: '550 kcal',
-        carbohydrates: '200 g',
-        fats: '50 g',
-        protein: '100 g',
-      };
-      // Update state variables with the API response
-      setServingSize(apiResponse.servingSize);
-      setCalories(apiResponse.calories);
-      setCarbohydrates(apiResponse.carbohydrates);
-      setFats(apiResponse.fats);
-      setProtein(apiResponse.protein);
-    } catch (error) {
-      console.error('Error fetching nutritional info:', error);
-      // Handle error or set default error values here
-    }
-  };
+  const { ingredients } = route.params;
 
-  // Trigger the API call on component mount
   useEffect(() => {
-    fetchNutritionalInfo();
-  }, []); // Empty dependency array means this runs once on mount
+    console.log("Received ingredients:", ingredients);
+
+    fetchNutritionalInfo(ingredients)
+      .then(data => {
+        let totalCalories = 0;
+        let totalCarbohydrates = 0;
+        let totalFats = 0;
+        let totalProtein = 0;
+        let ingredientNames = [];
+
+        // Iterate through each item in the API response
+        data.items.forEach(item => {
+          // Sum the nutritional values 
+          totalCalories += item.calories;
+          totalCarbohydrates += item.carbohydrates_total_g;
+          totalFats += item.fat_total_g;
+          totalProtein += item.protein_g;
+
+          ingredientNames.push(item.name);
+        });
+
+        // Round the total nutritional values to whole numbers
+        totalCalories = Math.round(totalCalories);
+        totalCarbohydrates = Math.round(totalCarbohydrates);
+        totalFats = Math.round(totalFats);
+        totalProtein = Math.round(totalProtein);
+
+        // Set values to display
+        const mealName = ingredientNames.join(' , ');
+        setMealName(mealName);
+        setCalories(totalCalories);
+        setCarbohydrates(totalCarbohydrates);
+        setFats(totalFats);
+        setProtein(totalProtein);
+
+        // Prepare the meal data
+        const mealData = {
+          name: mealName, // You can set a default name for the combined meal
+          calories: totalCalories,
+          carbohydrates: totalCarbohydrates,
+          totalFat: totalFats,
+          protein: totalProtein,
+          createdAt: new Date(),
+          favourite: false,
+        };
+
+        // Save the combined meal data to Firestore
+        saveMealToFirestore(mealData)
+          .then(mealId => console.log('Combined meal saved with ID:', mealId))
+          .catch(error => console.error('Error saving combined meal:', error));
+      })
+      .catch(error => console.error('Error fetching nutritional info:', error));
+  }, [ingredients]); // Make sure to include 'ingredients' in the dependency array
+
 
   // State for heart button
   const [isHeartActive, setIsHeartActive] = useState(false);
@@ -66,7 +98,7 @@ function ConfirmMealPage({ navigation }) {
   };
 
   const ConfirmMealButton = () => (
-    <TouchableOpacity style={styles.confirmMealButton} onPress={()=>navigation.navigate('Tabs')}>
+    <TouchableOpacity style={styles.confirmMealButton} onPress={() => navigation.navigate('Tabs')}>
       <Text style={styles.confirmMealText}>It fits your target!</Text>
     </TouchableOpacity>
   );
@@ -82,7 +114,7 @@ function ConfirmMealPage({ navigation }) {
     const radius = (size / 2) - (strokeWidth * 2); // Radius of the circle
     const circumference = 2 * Math.PI * radius;
     const strokeDashoffset = circumference - (percentage / 100) * circumference;
-  
+
     return (
       <View style={{ alignItems: 'center', margin: 10 }}>
         <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
@@ -108,15 +140,11 @@ function ConfirmMealPage({ navigation }) {
           />
         </Svg>
         <Text style={{ position: 'absolute', fontWeight: 'bold', top: size * 0.35 }}>{percentage}%</Text>
-        <Text style={{ marginTop: 4, fontWeight: 'bold' }}>{label}</Text> 
+        <Text style={{ marginTop: 4, fontWeight: 'bold' }}>{label}</Text>
       </View>
     );
   };
 
-
-  // Placeholder mass and calories 
-  const foodItemMass = "250g";
-  const foodItemCalories = "450 Calories";
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -142,21 +170,15 @@ function ConfirmMealPage({ navigation }) {
         </TouchableOpacity>
       </View>
       <View style={styles.nutritionalInfoContainer}>
-        <Text style={styles.nutritionalInfoContainerText}>Fried Rice with Chicken</Text>
+        <Text style={styles.nutritionalInfoContainerText}>{mealName}</Text>
         {/* Mass and Calories with Icons */}
         <View style={styles.nutritionalDetailsContainer}>
-          <MaterialIcons name="fitness-center" size={20} color="rgb(127, 127, 127)" />
-          <Text style={styles.nutritionalDetailsText}> 350g    </Text>
           <MaterialIcons name="local-fire-department" size={20} color="rgb(127, 127, 127)" />
-          <Text style={styles.nutritionalDetailsText}> 550 kcal</Text>
+          <Text style={styles.nutritionalDetailsText}>{calories}</Text>
         </View>
         {/*Nutritional Information */}
         <Text style={styles.ingredientsHeaderText}>Nutritional Information</Text>
         <View style={styles.innerGreyContainer}>
-          <View style={styles.nutritionalInfoRow}>
-            <Text style={styles.labelText}>Serving Size:</Text>
-            <Text style={styles.valueText}>{servingSize}</Text>
-          </View>
           <View style={styles.nutritionalInfoRow}>
             <Text style={styles.labelText}>Calories:</Text>
             <Text style={styles.valueText}>{calories}</Text>
@@ -233,9 +255,9 @@ const styles = StyleSheet.create({
   },
   nutritionalDetailsContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'auto',
     marginTop: 8,
-    marginLeft: 150,
+    marginLeft: 250,
   },
   nutritionalDetailsText: {
     fontSize: 18,
@@ -251,11 +273,11 @@ const styles = StyleSheet.create({
   },
 
   innerGreyContainer: {
-    backgroundColor: '#E0E0E0', 
-    borderRadius: 20, 
-    padding: 20, 
+    backgroundColor: '#E0E0E0',
+    borderRadius: 20,
+    padding: 20,
     marginHorizontal: 20,
-    marginTop: 10, 
+    marginTop: 10,
     marginRight: 70,
     marginLeft: 20,
     alignSelf: 'stretch',
@@ -277,7 +299,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     alignItems: 'center',
   },
-  
+
   // Style for the text of labels
   labelText: {
     fontSize: 20,
@@ -286,20 +308,20 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     flex: 1,
   },
-  
+
   // Style for the text of values
   valueText: {
     fontSize: 18,
     color: 'rgb(0, 0 , 0)',
     fontWeight: 'bold',
-    textAlign: 'right', 
-    flex: 1, 
+    textAlign: 'right',
+    flex: 1,
   },
 
   progressCirclesContainer: {
-    flexDirection: 'row', 
-    justifyContent: 'space-evenly', 
-    alignItems: 'center', 
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
     marginTop: 10,
     marginRight: 50,
   },
@@ -307,7 +329,7 @@ const styles = StyleSheet.create({
   progressCircleContainer: {
     alignItems: 'center', // Center-align the progress circle and label
   },
-  
+
   progressLabel: {
     marginTop: 8, // Space between the circle and the label text
     fontSize: 14, // Adjust based on your design needs
