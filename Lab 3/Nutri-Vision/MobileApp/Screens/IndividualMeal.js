@@ -101,14 +101,6 @@ function IndividualMeal({ route }) {
     }
   };
 
-  // State for heart button
-  const [isHeartActive, setIsHeartActive] = useState(false);
-
-  // Toggle heart state
-  const toggleHeart = () => {
-    setIsHeartActive(!isHeartActive); // Toggle between true and false
-  };
-
   // Placeholder function for button presses
   const handlePress = (action) => {
     console.log(`Pressed ${action}`);

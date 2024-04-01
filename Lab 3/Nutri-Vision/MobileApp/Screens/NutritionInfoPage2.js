@@ -199,14 +199,6 @@ function NutritionalInfoPage({ navigation }) {
         <TouchableOpacity style={styles.threeDotButton} onPress={() => handlePress('More')}>
           <MaterialIcons name="more-horiz" size={30} color="black" />
         </TouchableOpacity>
-        {/* Heart button */}
-        <TouchableOpacity style={styles.heartButton} onPress={toggleHeart}>
-          <MaterialIcons
-            name={isHeartActive ? "favorite" : "favorite-border"} // Change icon based on state
-            size={30}
-            color={isHeartActive ? "red" : "black"} // Change color based on state
-          />
-        </TouchableOpacity>
       </View>
       <View style={styles.nutritionalInfoContainer}>
         <Text style={styles.nutritionalInfoContainerText}>Fried Rice with Chicken</Text>

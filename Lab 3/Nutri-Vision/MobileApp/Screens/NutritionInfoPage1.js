@@ -3,12 +3,10 @@ import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, 
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { saveMealToFirestore} from '../../MealHistory';
+import { saveMealToFirestore, updateMealDataInFirestore } from '../../MealHistory';
 import { fetchNutritionalInfo } from '../../CalorieNinjaAPI';
 import { useNavigation } from '@react-navigation/native';
 import Svg, { Circle } from 'react-native-svg';
-
-
 
 
 function ConfirmMealPage({ route, navigation }) {
@@ -25,6 +23,7 @@ function ConfirmMealPage({ route, navigation }) {
   const [fats, setFats] = useState('Loading...');
   const [protein, setProtein] = useState('Loading...');
   const [mealName, setMealName] = useState(null);
+  const [mealId, setMealId] = useState(null);
 
   const { ingredients } = route.params;
 
@@ -77,19 +76,34 @@ function ConfirmMealPage({ route, navigation }) {
 
         // Save the combined meal data to Firestore
         saveMealToFirestore(mealData)
-          .then(mealId => console.log('Combined meal saved with ID:', mealId))
+          .then(mealId => {
+            setMealId(mealId);
+            console.log('Combined meal saved with ID:', mealId);
+          })
           .catch(error => console.error('Error saving combined meal:', error));
       })
       .catch(error => console.error('Error fetching nutritional info:', error));
   }, [ingredients]); // Make sure to include 'ingredients' in the dependency array
 
 
-  // State for heart button
-  const [isHeartActive, setIsHeartActive] = useState(false);
+  // For toggling favourites 
+  const [isFavorite, setIsFavorite] = useState(false);
+  // State for heart button color
+  const [heartColor, setHeartColor] = useState("black");
 
-  // Toggle heart state
-  const toggleHeart = () => {
-    setIsHeartActive(!isHeartActive); // Toggle between true and false
+  // Update favourites attribute in database when heart icon is pressed
+  const toggleFavorite = async () => {
+    try {
+      // Toggle the favorite status locally
+      setIsFavorite(!isFavorite);
+
+      // Update the database to reflect the change
+      updateMealDataInFirestore(mealId, { favourite: !isFavorite });
+      setHeartColor(!isFavorite ? "red" : "black");
+    } catch (error) {
+      console.error('Error toggling favorite status:', error);
+      // Handle error
+    }
   };
 
   // Placeholder function for button presses
@@ -161,11 +175,11 @@ function ConfirmMealPage({ route, navigation }) {
           <MaterialIcons name="more-horiz" size={30} color="black" />
         </TouchableOpacity>
         {/* Heart button */}
-        <TouchableOpacity style={styles.heartButton} onPress={toggleHeart}>
+        <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
           <MaterialIcons
-            name={isHeartActive ? "favorite" : "favorite-border"} // Change icon based on state
+            name={isFavorite ? "favorite" : "favorite-border"} // Change icon based on state
             size={30}
-            color={isHeartActive ? "red" : "black"} // Change color based on state
+            color={heartColor} // Change color based on state
           />
         </TouchableOpacity>
       </View>
