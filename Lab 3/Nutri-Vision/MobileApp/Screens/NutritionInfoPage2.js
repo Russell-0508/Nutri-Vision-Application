@@ -195,20 +195,8 @@ function NutritionalInfoPage({ navigation }) {
           style={styles.imageStyle}
           resizeMode="contain"
         />
-        {/* Three-dot button */}
-        <TouchableOpacity style={styles.threeDotButton} onPress={() => handlePress('More')}>
-          <MaterialIcons name="more-horiz" size={30} color="black" />
-        </TouchableOpacity>
       </View>
       <View style={styles.nutritionalInfoContainer}>
-        <Text style={styles.nutritionalInfoContainerText}>Fried Rice with Chicken</Text>
-        {/* Mass and Calories with Icons */}
-        <View style={styles.nutritionalDetailsContainer}>
-          <MaterialIcons name="fitness-center" size={20} color="rgb(127, 127, 127)" />
-          <Text style={styles.nutritionalDetailsText}> 350g    </Text>
-          <MaterialIcons name="local-fire-department" size={20} color="rgb(127, 127, 127)" />
-          <Text style={styles.nutritionalDetailsText}> 550 kcal</Text>
-        </View>
         <Text style={styles.ingredientsHeaderText}>Ingredients</Text>
         <FlatList
           data={ingredients}
