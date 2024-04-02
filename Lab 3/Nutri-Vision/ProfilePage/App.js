@@ -1,60 +1,16 @@
-import React, { useState, useEffect }from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, SafeAreaView, Modal, Switch } from 'react-native';
+import React from 'react';
+import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { useNavigation } from '@react-navigation/native';
-import firestore from '@react-native-firebase/firestore';
-import { collection, getDocs } from 'firebase/firestore';
-import { getProfileByEmail } from '../../ProfileHistory'; // Adjust the path as necessary
 
 
-function ProfileScreen({navigation}){
-
-  const [showNotificationsModal, setShowNotificationsModal] = useState(false);
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-
-  const toggleNotifications = () => {
-    setNotificationsEnabled(!notificationsEnabled);
-  };
-
-  const [profileData, setProfileData] = useState({
-    name: 'Loading...', // Default value while loading
-    // You can add other fields here if needed
-  });
-  
-
-
+const ProfileScreen = () => {
   // Placeholder for profile data
-  {/*const profileData = {
+  const profileData = {
     name: 'Russell Tan',
     weight: '64 kg',
     height: '176 cm',
     age: '23',
-  };*/}
-
-  // Fetch profile data from Firestore
-  useEffect(() => {
-    const fetchProfileByEmail = async () => {
-      try {
-        const profiles = await getProfileByEmail("PAN@GMAIL.COM"); // Adjust the email case as needed
-        if (profiles.length > 0) {
-          // Assuming the first profile is the one you're interested in
-          setProfileData(profiles[0]);
-        } else {
-          setProfileData({ name: 'No profile found' });
-        }
-      } catch (error) {
-        console.error("Error fetching profile by email:", error);
-        setProfileData({ name: 'Error fetching profile' });
-      }
-    };
-  
-    fetchProfileByEmail();
-  }, []);
-  
-  
-
-  
-  
+  };
 
   // Placeholder function for button presses
   const handlePress = (action) => {
@@ -64,23 +20,13 @@ function ProfileScreen({navigation}){
   return (
     <View style={{flex: 1, backgroundColor: 'rgb(64, 97, 50)'}}>
       <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView style={styles.container} contentContainerStyle={styles.scrollViewContent}>
-        {/* Logout Button */}
-        <TouchableOpacity
-          style={styles.logoutButton}
-          onPress={() => navigation.navigate('Login')}>
-          <MaterialIcons name="logout" size={24} color="red" />
-        </TouchableOpacity>
+      <ScrollView style={styles.container}>
         <View style={styles.profileHeader}>
-        {/* Profile Information Display */}
           <Image
-            source={require('../assets/profile_image.png')}
+            source={require('./assets/profile_image.png')}
             style={styles.profileImage}
           />
           <Text style={styles.profileName}>{profileData.name}</Text>
-          {/* Additional profile details can be displayed here */}
-
-        {/* Display other profile details as needed */}
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
               <Text style={styles.statLabel}>Weight</Text>
@@ -100,43 +46,15 @@ function ProfileScreen({navigation}){
         </View>
         <Text style={styles.headerText}>Account</Text>
         <View style={styles.actionsContainer}>
-
-          <TouchableOpacity onPress={() => navigation.navigate('Edit Profile')} style={styles.actionItem}>
+          <TouchableOpacity onPress={() => handlePress('Edit Profile')} style={styles.actionItem}>
             <MaterialIcons name="edit" size={20} color="#4CAF50" style={styles.iconStyle}/>
             <Text style={styles.actionText}>Edit Profile</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setShowNotificationsModal(true)} style={styles.actionItem}>
+          <TouchableOpacity onPress={() => handlePress('Notification')} style={styles.actionItem}>
             <MaterialIcons name="notifications" size={20} color="#4CAF50" style={styles.iconStyle} />
             <Text style={styles.actionText}>Notification</Text>
           </TouchableOpacity>
-          <Modal
-              animationType="slide"
-              transparent={true}
-              visible={showNotificationsModal}
-              onRequestClose={() => {
-                setShowNotificationsModal(false);
-              }}>
-              <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                  <Text style={styles.modalText}>Notifications</Text>
-                  <Switch
-                    trackColor={{ false: "#767577", true: "#81b0ff" }}
-                    thumbColor={notificationsEnabled ? "#f5dd4b" : "#f4f3f4"}
-                    ios_backgroundColor="#3e3e3e"
-                    onValueChange={toggleNotifications}
-                    value={notificationsEnabled}
-                  />
-                  <TouchableOpacity
-                    style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                    onPress={() => {
-                      setShowNotificationsModal(false);
-                    }}>
-                    <Text style={styles.textStyle}>Close</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </Modal>
-          <TouchableOpacity onPress={() => navigation.navigate('Favourites')} style={styles.actionItem}>
+          <TouchableOpacity onPress={() => handlePress('Favourites')} style={styles.actionItem}>
             <MaterialIcons name="favorite" size={20} color="#4CAF50" style={styles.iconStyle} />
             <Text style={styles.actionText}>Favourites</Text>
             </TouchableOpacity>
@@ -155,6 +73,36 @@ function ProfileScreen({navigation}){
         </View>
         {/* Add more sections as needed */}
       </ScrollView>
+      </SafeAreaView>
+      {/* Bottom White Platform */}
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.bottomContainer}>
+        <View style={styles.tabBar}>
+          <TouchableOpacity style={styles.tabItem} onPress={() => handlePress('Home')}>
+            <MaterialIcons name="home" size={24} color="#4CAF50" />
+            <Text style={styles.tabTitle}>Home</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.tabItemCalories} onPress={() => handlePress('Calories')}>
+            <MaterialIcons name="fastfood" size={24} color="#4CAF50" />
+            <Text style={styles.tabTitle}>Calories</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.scannerButton} onPress={() => handlePress('Scanner')}>
+            <MaterialIcons name="center-focus-strong" size={40} color="#4CAF50" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.tabItemProfile} onPress={() => handlePress('Profile')}>
+            <MaterialIcons name="person" size={24} color="#4CAF50" />
+            <Text style={styles.tabTitle}>Profile</Text>
+          </TouchableOpacity>   
+          <TouchableOpacity style={styles.tabItem} onPress={() => handlePress('History')}>
+            <MaterialIcons name="manage-search" size={24} color="#4CAF50" />
+            <Text style={styles.tabTitle}>History</Text>
+          </TouchableOpacity>
+            {/* Repeat for other tab items: Calories, Profile, More */}
+            {/* ... */}
+          </View>
+        </View>
+        {/* Bottom SafeAreaView with minimal height to cover the unsafe area */}
+        <SafeAreaView style={{ backgroundColor: 'white', height: 'auto' }} />
       </SafeAreaView>
     </View>
   );
@@ -186,13 +134,6 @@ const styles = StyleSheet.create({
   safeArea: {
     backgroundColor: 'white', // The SafeAreaView background color also needs to be white
     flexGrow: 0, // Ensure it doesn't take more space than necessary
-  },
-
-  logoutButton: {
-    position: 'absolute',
-    top: 20, // Adjust based on your SafeAreaView or header's height
-    right: 20, // Adjust the right position as needed
-    zIndex: 10, // Ensure it's above other elements
   },
 
   profileHeader: {
@@ -294,49 +235,47 @@ const styles = StyleSheet.create({
     // Add font weight or other styling as needed
   },
 
-  scrollViewContent: {
-    paddingBottom: 40, // Adjust this value as needed to accommodate your bottom tab/navigation
+  tabBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-around', // This spaces out the icons evenly
+    alignItems: 'center', // This centers the icons vertically
+    height: 50, // Adjust as needed
   },
-//--------------
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22
+  tabItemCalories: {
+    alignItems: 'center',
+    marginRight: 20, // Adjust this value as needed to push away from the scanner button
   },
-  modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-    height: 200, // Set the height to your desired value
-    width: 300, // Set the width to your desired value
+  
+  tabItemProfile: {
+    alignItems: 'center',
+    marginLeft: 20, // Adjust this value as needed to push away from the scanner button
   },
-  modalText: {
-    marginBottom: 15,
-    textAlign: "center"
+  tabItem: {
+    alignItems: 'center', // This centers the icon and label
   },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center"
+  scannerButton: {
+    backgroundColor: '#ccc', // Grey background
+    height: 75, // Set height for the circle
+    width: 75, // Set width for the circle
+    borderRadius: 37.5, // Half the size of width to make it a circle
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: -37.5,
+    marginRight: -27.5,
+    top: -10, // Half the size of the button to move it up above the tab bar
+    elevation: 4, // Optional: adds shadow on Android
+    shadowColor: '#000', // Optional: adds shadow on iOS
+    shadowOffset: { width: 0, height: 2 }, // Optional: adds shadow on iOS
+    shadowOpacity: 0.25, // Optional: adds shadow on iOS
+    shadowRadius: 3.84, // Optional: adds shadow on iOS
   },
-  openButton: {
-    backgroundColor: "#F194FF",
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2
+  tabTitle: {
+    color: '#4CAF50', // This sets the label color
+    fontSize: 15, // Adjust the size as needed
+    marginTop: 4, // This adds space between the icon and label
   },
 
+  // ... (rest of your styles)
 });
 
 export default ProfileScreen;
