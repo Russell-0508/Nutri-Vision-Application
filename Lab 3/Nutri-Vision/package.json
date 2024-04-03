@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@firebase/firestore": "^4.4.3",
-    "@react-native-community/datetimepicker": "7.6.1",
+    "@react-native-community/datetimepicker": "^7.6.1",
     "@react-native-community/hooks": "^3.0.0",
     "@react-native-firebase/app": "^19.0.1",
     "@react-native-firebase/firestore": "^19.0.1",

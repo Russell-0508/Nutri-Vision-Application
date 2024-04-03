@@ -1,12 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
     View,
-    ImageBackground,
     StyleSheet,
     Image,
     Text,
-    Dimensions,
-    Button,
     TouchableOpacity,
     SafeAreaView,
     ScrollView,
@@ -15,16 +12,22 @@ import {
 } from 'react-native';
 
 import { useNavigation } from "@react-navigation/native"
-import Collapsible from 'react-native-collapsible'
 import { getMealHistoryFromFirestore } from '../../MealHistory';
-import IndividualMeal from './IndividualMeal';
+
+import DateTimePicker from '@react-native-community/datetimepicker';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
 curveHeight = 100
 screenWidth = 500
 
 
 {/* This is the Entry element, which takes in title, description, and displays it all */ }
-function Entry({ title, description, navigation }) {
+function Entry({ title, description, navigation, documentId }) {
+
+    const handleNextEntryPress = () => {
+        navigation.navigate('IndividualMeal', {documentId: documentId})
+        console.log('Navigatiing to documentId: ', {documentId: documentId})
+    }
     return (
         <View style={styles.entry}>
             <View style={styles.entryContainer}>
@@ -33,7 +36,7 @@ function Entry({ title, description, navigation }) {
 
             </View>
             <View>
-                <TouchableOpacity onPress={() => navigation.navigate('IndividualMeal')}>
+                <TouchableOpacity  onPress={handleNextEntryPress}>
                     <Image
                         style={styles.arrowlogo}
                         source={require('../assets/right_pointing_arrow.png')}
@@ -48,36 +51,39 @@ function Entry({ title, description, navigation }) {
 
 function History({ navigation }) {
 
-    const [isCollapsed, setIsCollapsed] = useState(true);
-
-    const toggleCollapse = () => {
-        setIsCollapsed(!isCollapsed);
-    }
-
-    const [selectedDate, setSelectedDate] = useState('');
+    // Defining state for date picker method
+    const [date, setDate] = useState(new Date());
+    const [showDatePicker, setShowDatePicker] = useState(false);
+    
     const [mealEntries, setMealEntries] = useState([]);
 
-    useEffect(() => {
-        const fetchMealEntries = async () => {
-            try {
-                const today = new Date().toISOString(); // Get today's date, change this to display other dates 
-                setSelectedDate(today); // Update selectedDate directly
-                const entries = await getMealHistoryFromFirestore(today);
-                setMealEntries(entries);
-            } catch (error) {
-                console.error('Error fetching meal entries:', error);
-            }
-        };
-
-        fetchMealEntries();
-    }, []);
-
-    const handleDateSelection = (date) => {
-        setSelectedDate(date);
+    const onChange = (event, selectedDate) => {
+        const currentDate = selectedDate || date;
+        setShowDatePicker(false);
+        setDate(currentDate);
+        fetchMealEntriesForDate(currentDate);
     };
 
-    //Get today's date for the header display on history page
-    var dateString = new Date().toDateString();
+      // Function to format date
+    const formatDate = (date) => {
+        return `${date.getDate()} ${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`;
+    };
+    
+    useEffect(() => {
+        fetchMealEntriesForDate(date); // Initial fetch for today's entries
+    }, [date]);
+
+    const fetchMealEntriesForDate = async (date) => {
+        try {
+            const dateString = date.toISOString().split('T')[0]; // Convert date to YYYY-MM-DD format
+            const entries = await getMealHistoryFromFirestore(dateString);
+            setMealEntries(entries);
+        } catch (error) {
+            console.error('Error fetching meal entries:', error);
+        }
+    };
+   
+
     return (
 
         <View style={styles.container}>
@@ -89,13 +95,6 @@ function History({ navigation }) {
                             <Text style={styles.pmText}>Past Meals</Text>
                         </View>
                         <View style={styles.topIcons}>
-                            <TouchableOpacity>
-                                <Image
-                                    style={styles.searchlogo}
-                                    source={require('../assets/magnifying-glass.png')}
-                                    resizeMode='contain'
-                                />
-                            </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={() => navigation.navigate("IndividualMeal")}>
                                 <Image
@@ -107,34 +106,31 @@ function History({ navigation }) {
                         </View>
                     </View>
 
-                    <View style={styles.header}>
-                        <View style={styles.headerContainer}>
-                            {/* 1 Jan 2024 is a placeholder, should read the current date and be dynamic 
-                        Work in progress JY: i set to today's date to test backend 
-                    */}
-                            <Text style={styles.headerText}>{dateString}</Text>
-                        </View>
-                        <View>
-                            <TouchableOpacity
-                                onPress={toggleCollapse}
-                                style={styles.buttonContainer}>
-                                <Text style={styles.buttonCollapse}>View All</Text>
-                            </TouchableOpacity>
-                        </View>
+                    {/* Container to display datetimepicker */}
+                    <View style={styles.dateContainer}>
+                        <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePickerRow}>
+                            <FontAwesomeIcon name="calendar" size={24} color="#000" />
+                            <Text style={styles.datePickerText}>{formatDate(date)}</Text>
+                        </TouchableOpacity>
+                        {showDatePicker && (
+                            <DateTimePicker
+                                key={date.toString()}
+                                value={date}
+                                mode="date"
+                                display="default"
+                                onChange={onChange}
+                            />
+                            )}
                     </View>
 
-                    <Collapsible collapsed={isCollapsed}>
+                    {/* Displays entries according to date */}            
+                    <View>
                         {mealEntries.map((entry, index) => (
                             <View key={index}>
-                                <Entry title={entry.type} description={entry.name} navigation={navigation} documentId={entry.documentId}/>
+                                <Entry title={entry.name} navigation={navigation} documentId={entry.id} />
                             </View>
                         ))}
-                    </Collapsible>
-                    {!isCollapsed && (
-                        <TouchableOpacity onPress={toggleCollapse} style={styles.viewLessButton}>
-                            <Text style={styles.viewLessText}>View Less</Text>
-                        </TouchableOpacity>
-                    )}
+                    </View>
                 </ScrollView>
             </SafeAreaView>
         </View >
@@ -168,6 +164,11 @@ const styles = StyleSheet.create({
         backgroundColor: 'white'
     },
 
+    dateContainer: {
+        paddingTop: 10,
+
+    },
+
     dateHeader: {
         fontSize: 20,
         fontWeight: 'bold',
@@ -176,6 +177,27 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         marginBottom: 5,
     },
+
+    datepicker: {
+        backgroundColor: 'pink'
+    },
+
+    datePickerRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 10,
+        padding: 10,
+        backgroundColor: '#f2f2f2',
+        borderRadius: 5,
+    },
+
+    datePickerText: {
+        fontSize: 16,
+        marginLeft: 10,
+        color: '#333',
+    },
+
 
     dateText: {
         fontSize: 16,
@@ -206,8 +228,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 
-
-
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -215,10 +235,7 @@ const styles = StyleSheet.create({
         padding: 10,
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
-    },
-
-    headerContainer: {
-        flex: 1
+        backgroundColor: 'pink'
     },
 
     headerText: {
@@ -229,6 +246,7 @@ const styles = StyleSheet.create({
     morelogo: {
         height: 30,
         width: 30,
+        marginRight: 10,
     },
 
     pmText: {

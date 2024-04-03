@@ -11,23 +11,18 @@ import Svg, { Circle } from 'react-native-svg';
 
 
 
-
-function ConfirmMealPage({ navigation }) {
+function FavouritesPage() {
+  const navigation = useNavigation();
   // Placeholder image URI
   const headerImageUri = 'https://via.placeholder.com/150'; // Update this to your desired image URL
 
   // Simulate a dynamic list of images
   const images = new Array(8).fill(headerImageUri); // Example: 8 images. Adjust the number as needed.
 
-  const handlePress = () => {
-    console.log("Placeholder image and text button pressed!");
-    navigation.navigate('IndividualMeal');
-    // You can navigate to another screen or execute any action here
-
-
-  };
-
   const [favoriteMealEntries, setFavoriteMealEntries] = useState([]);
+
+  // Determine if the number of entries is odd
+  const isOddNumberOfEntries = favoriteMealEntries.length % 2 !== 0;
 
   useEffect(() => {
     // Fetch favorite meal entries when the component mounts
@@ -43,33 +38,37 @@ function ConfirmMealPage({ navigation }) {
     fetchFavorites();
   }, []); // Empty dependency array ensures this effect runs only once on mount
 
+  const handlePress = (documentId) => {
+    navigation.navigate('IndividualMeal', { documentId });
+    console.log('Navigating to documentId:', documentId);
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'rgba(173, 219, 199, 1)' }}>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.gridContainer}>
-          {images.map((imageUri, index) => (
-            index === 0 ? (
-              <TouchableOpacity key={`container-${index}`} style={styles.imageContainer} onPress={handlePress}>
-                <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
-                <Text style={styles.imageText}>{favoriteMealEntries.length > 0 ? favoriteMealEntries[0].name : 'No favorite meal entries'}</Text>
-              </TouchableOpacity>
-
-            ) : (
-              <View key={`container-${index}`} style={styles.imageContainer}>
-                <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
-                {/* Optionally add text for other images similar to the first one */}
-              </View>
-            )
+          {favoriteMealEntries.map((entry, index) => (
+            <TouchableOpacity
+              key={`meal-${index}`}
+              style={styles.imageContainer}
+              onPress={() => handlePress(entry.id)}
+            >
+              <Image source={{ uri: entry.imageUri }} style={styles.image} resizeMode="contain" />
+              <Text style={styles.imageText}>{entry.name}</Text>
+            </TouchableOpacity>
           ))}
+          {/* Conditionally render an invisible view to align the last item to the left if odd number of entries */}
+          {isOddNumberOfEntries && <View style={styles.imageContainer} />}
         </View>
       </ScrollView>
     </SafeAreaView>
   );
-
-
-
 }
+
+
+
+
+
 
 const styles = StyleSheet.create({
   scrollViewContent: {
@@ -101,4 +100,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ConfirmMealPage;
+export default FavouritesPage;

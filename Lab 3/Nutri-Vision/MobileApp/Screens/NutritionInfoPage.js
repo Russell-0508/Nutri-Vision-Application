@@ -10,38 +10,115 @@ import { useNavigation } from '@react-navigation/native';
 function NutritionalInfoPage({ navigation }) {
   // State to hold the image URI
   const [imageUri, setImageUri] = useState(null); // Initial state is null
+
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [ingredientName, setIngredientName] = useState('');
   const [ingredientMass, setIngredientMass] = useState('');
+
+  const [selectedIngredient, setSelectedIngredient] = useState(null);
+
 
   // Placeholder image URI
   const placeholderImageUri = 'https://via.placeholder.com/150'; // Placeholder URL
 
 
+
   // Placeholder ingredients
-  const ingredients = [
+  const [ingredients, setIngredients] = useState([
     { id: '1', name: 'Rice', portion: '200g', imageUrl: 'https://via.placeholder.com/150' },
     { id: '2', name: 'Chicken', portion: '150g', imageUrl: 'https://via.placeholder.com/150' },
-  ];
+  ]);
 
-  // Placeholder function for button presses
-  const handlePress = (action) => {
-    console.log(`Pressed ${action}`);
+
+
+  const handleAddIngredient = () => {
+    console.log("Add button pressed with ingredient name:", ingredientName, "and mass:", ingredientMass);
+    const newIngredient = {
+      id: new Date().getTime().toString(),
+      name: ingredientName,
+      portion: ingredientMass + 'g',
+      imageUrl: 'https://via.placeholder.com/150',
+    };
+    setIngredients(currentIngredients => [...currentIngredients, newIngredient]);
+    setIngredientName('');
+    setIngredientMass('');
+    setIsModalVisible(false);
   };
 
+
+  const EditIngredientModal = () => (
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={selectedIngredient !== null}
+      onRequestClose={() => setSelectedIngredient(null)}
+    >
+      <View style={styles.modalView}>
+        <TouchableOpacity
+          style={styles.closeButton}
+          onPress={() => setSelectedIngredient(null)}
+        >
+          <Text style={styles.closeButtonText}>X</Text>
+        </TouchableOpacity>
+        <TextInput
+          placeholder="Ingredient Name"
+          style={styles.textInput}
+          onChangeText={(text) => setIngredientName(text)}
+          value={ingredientName}
+        />
+        <TextInput
+          placeholder="Mass (g)"
+          style={styles.textInput}
+          onChangeText={(text) => setIngredientMass(text)}
+          value={ingredientMass}
+          keyboardType="numeric"
+        />
+        <Button title="Update" onPress={handleUpdateIngredient} />
+        <Button title="Delete" onPress={handleDeleteIngredient} color="red" />
+      </View>
+    </Modal>
+  );
+
+
+  // Placeholder function for button presses
+  const handlePress = (item) => {
+    setSelectedIngredient(item);
+    setIngredientName(item.name);
+    setIngredientMass(item.portion.replace('g', '')); // Assuming 'portion' is always in grams
+  };
+
+  const handleUpdateIngredient = () => {
+    const updatedIngredients = ingredients.map(ing => {
+      if (ing.id === selectedIngredient.id) {
+        return { ...ing, name: ingredientName, portion: ingredientMass + 'g' };
+      }
+      return ing;
+    });
+    setIngredients(updatedIngredients);
+    setSelectedIngredient(null);
+  };
+
+  const handleDeleteIngredient = () => {
+    const filteredIngredients = ingredients.filter(ing => ing.id !== selectedIngredient.id);
+    setIngredients(filteredIngredients);
+    setSelectedIngredient(null);
+  };
+
+
   const renderIngredientItem = ({ item }) => (
-    <View>
+    <TouchableOpacity onPress={() => handlePress(item)}>
       <View style={styles.ingredientItem}>
         <Image
-          source={{ uri: item.imageUrl || placeholderImageUri }} // Fallback to the placeholder URI
+          source={{ uri: item.imageUrl || placeholderImageUri }}
           style={styles.ingredientImage}
         />
         <Text style={styles.ingredientName}>{item.name}</Text>
         <Text style={styles.ingredientPortion}>{item.portion}</Text>
       </View>
       <View style={styles.separator} />
-    </View>
+    </TouchableOpacity>
   );
+
 
   const AddIngredientButton = () => (
     <View>
@@ -53,54 +130,13 @@ function NutritionalInfoPage({ navigation }) {
     </View>
   );
 
-  const handleAddIngredient = () => {
-    console.log("Add button pressed with ingredient name:", ingredientName, "and mass:", ingredientMass);
-    /*const newIngredient = {
-      id: new Date().getTime().toString(),
-      name: ingredientName,
-      portion: ingredientMass + 'g',
-      imageUrl: placeholderImageUri,
-    };
-    setIngredients(currentIngredients => [...currentIngredients, newIngredient]);
-    setIngredientName('');
-    setIngredientMass('');
-    setIsModalVisible(false);*/
-  };
-
-  const handleConfirmMeal = async () => {
-    // Prepare the meal data based on your requirements
-    const mealData = {
-      name: 'Chicken Nuggets',
-      calories: 1000, // Example value, replace with actual value
-      carbohydrates: 50, // Example value, replace with actual value
-      cholesterol: 30, // Example value, replace with actual value
-      createdAt: new Date(), // Current timestamp
-      fiber: 10, // Example value, replace with actual value
-      protein: 30, // Example value, replace with actual value
-      saturatedFat: 5, // Example value, replace with actual value
-      servingSize: 1, // Example value, replace with actual value
-      sodium: 20, // Example value, replace with actual value
-      sugar: 15, // Example value, replace with actual value
-      totalFat: 15, // Example value, replace with actual value
-      type: 'Lunch', // Example value, replace with actual value
-      favourite: false
-    };
-
-    try {
-      // Save the meal data to Firebase
-      const mealId = await saveMealToFirestore(mealData);
-
-      // perform additional actions after the meal is saved
-      console.log('Meal confirmed and saved with ID:', mealId);
-
-    } catch (error) {
-      console.error('Error confirming meal:', error);
-      // Handle the error as needed
-    }
+  const handleConfirmMeal = () => {
+    const query = ingredients.map(ingredient => `${ingredient.portion} ${ingredient.name}`).join(' , ');
+    navigation.navigate('Confirm Meal', { ingredients: query });
   };
 
   const ConfirmMealButton = () => (
-    <TouchableOpacity style={styles.confirmMealButton} onPress={handleButtonPress}>
+    <TouchableOpacity style={styles.confirmMealButton} onPress={handleConfirmMeal}>
       <Text style={styles.confirmMealText}>Confirm Meal</Text>
     </TouchableOpacity>
   );
@@ -113,17 +149,13 @@ function NutritionalInfoPage({ navigation }) {
     setIsHeartActive(!isHeartActive); // Toggle between true and false
   };
 
-  const handleButtonPress = async () => {
-    await handleConfirmMeal(); // Wait for the meal to be confirmed
-    navigation.navigate('Confirm Meal'); // Navigate after confirmation
-  };
-
   // Placeholder mass and calories 
   const foodItemMass = "250g";
   const foodItemCalories = "450 Calories";
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <EditIngredientModal />
       <Modal
         animationType="slide"
         transparent={true}
@@ -163,28 +195,8 @@ function NutritionalInfoPage({ navigation }) {
           style={styles.imageStyle}
           resizeMode="contain"
         />
-        {/* Three-dot button */}
-        <TouchableOpacity style={styles.threeDotButton} onPress={() => handlePress('More')}>
-          <MaterialIcons name="more-horiz" size={30} color="black" />
-        </TouchableOpacity>
-        {/* Heart button */}
-        <TouchableOpacity style={styles.heartButton} onPress={toggleHeart}>
-          <MaterialIcons
-            name={isHeartActive ? "favorite" : "favorite-border"} // Change icon based on state
-            size={30}
-            color={isHeartActive ? "red" : "black"} // Change color based on state
-          />
-        </TouchableOpacity>
       </View>
       <View style={styles.nutritionalInfoContainer}>
-        <Text style={styles.nutritionalInfoContainerText}>Fried Rice with Chicken</Text>
-        {/* Mass and Calories with Icons */}
-        <View style={styles.nutritionalDetailsContainer}>
-          <MaterialIcons name="fitness-center" size={20} color="rgb(127, 127, 127)" />
-          <Text style={styles.nutritionalDetailsText}> 350g    </Text>
-          <MaterialIcons name="local-fire-department" size={20} color="rgb(127, 127, 127)" />
-          <Text style={styles.nutritionalDetailsText}> 550 kcal</Text>
-        </View>
         <Text style={styles.ingredientsHeaderText}>Ingredients</Text>
         <FlatList
           data={ingredients}
@@ -272,7 +284,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     fontStyle: 'italic',
-    textAlign: 'flex-start',
+    textAlign: 'auto',
     margin: 16,
   },
   nutritionalDetailsContainer: {
