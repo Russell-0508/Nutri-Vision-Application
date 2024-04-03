@@ -22,15 +22,6 @@ function ProfileScreen({navigation}){
   });
   
 
-
-  // Placeholder for profile data
-  {/*const profileData = {
-    name: 'Russell Tan',
-    weight: '64 kg',
-    height: '176 cm',
-    age: '23',
-  };*/}
-
   // Fetch profile data from Firestore
   useEffect(() => {
     const fetchProfileByEmail = async () => {
@@ -50,10 +41,6 @@ function ProfileScreen({navigation}){
   
     fetchProfileByEmail();
   }, []);
-  
-  
-
-  
   
 
   // Placeholder function for button presses
@@ -120,14 +107,14 @@ function ProfileScreen({navigation}){
                 <View style={styles.modalView}>
                   <Text style={styles.modalText}>Notifications</Text>
                   <Switch
-                    trackColor={{ false: "#767577", true: "#81b0ff" }}
-                    thumbColor={notificationsEnabled ? "#f5dd4b" : "#f4f3f4"}
-                    ios_backgroundColor="#3e3e3e"
+                    trackColor={{ false: "#767577", true: "#61b390" }}
+                    thumbColor={notificationsEnabled ? "#dce775" : "#f4f3f4"}
+                    android_backgroundColor="#fff59d"
                     onValueChange={toggleNotifications}
                     value={notificationsEnabled}
                   />
                   <TouchableOpacity
-                    style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+                    style={{ ...styles.openButton, backgroundColor: "#002f35" }}
                     onPress={() => {
                       setShowNotificationsModal(false);
                     }}>
