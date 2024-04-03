@@ -95,8 +95,7 @@ function History({ navigation }) {
                             <Text style={styles.pmText}>Past Meals</Text>
                         </View>
                         <View style={styles.topIcons}>
-                            <TouchableOpacity
-                                onPress={() => navigation.navigate("IndividualMeal")}>
+                            <TouchableOpacity>
                                 <Image
                                     style={styles.morelogo}
                                     source={require('../assets/threedots.png')}
