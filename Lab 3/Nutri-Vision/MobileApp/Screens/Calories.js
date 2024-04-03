@@ -15,9 +15,14 @@ import { getMealHistoryFromFirestore } from '../../MealHistory';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import Svg, { Circle } from 'react-native-svg';
 
 
 function Calories({navigation}) {
+
+    const [carbsPercentage, setCarbsPercentage] = useState(70); // Example percentage
+    const [fatsPercentage, setFatsPercentage] = useState(55); // Example percentage
+    const [proteinPercentage, setProteinPercentage] = useState(25); // Example percentage
 
     const goalCalories = 2000; // Set goal calories here
     const [entries, setEntries] = useState([]); // State variable for meal entries
@@ -74,6 +79,43 @@ function Calories({navigation}) {
         }
     }
 
+    const ProgressCircle = ({ percentage, fillColor, label }) => {
+        const size = 75; // Diameter of the circle
+        const strokeWidth = 5; // Width of the circle border
+        const radius = (size / 2) - (strokeWidth * 2); // Radius of the circle
+        const circumference = 2 * Math.PI * radius;
+        const strokeDashoffset = circumference - (percentage / 100) * circumference;
+    
+        return (
+          <View style={{ alignItems: 'center', margin: 10 }}>
+            <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+              <Circle
+                stroke="#ddd" // This is the color for the "unfilled" part of the circle
+                fill="none"
+                cx={size / 2}
+                cy={size / 2}
+                r={radius}
+                strokeWidth={strokeWidth}
+              />
+              <Circle
+                stroke={fillColor}
+                fill="none"
+                cx={size / 2}
+                cy={size / 2}
+                r={radius}
+                strokeWidth={strokeWidth}
+                strokeDasharray={`${circumference} ${circumference}`}
+                strokeDashoffset={strokeDashoffset}
+                strokeLinecap="round"
+                transform={`rotate(-90, ${size / 2}, ${size / 2})`}
+              />
+            </Svg>
+            <Text style={{ position: 'absolute', fontWeight: 'bold', top: size * 0.35 }}>{percentage}%</Text>
+            <Text style={{ marginTop: 4, fontWeight: 'bold' }}>{label}</Text>
+          </View>
+        );
+      };
+
 
 
     return (
@@ -105,6 +147,12 @@ function Calories({navigation}) {
                                 onChange={onChange}
                             />
                         )}
+
+                        <View style={styles.progressCirclesContainer}>
+                            <ProgressCircle percentage={carbsPercentage} fillColor="brown" label="Carbohydrates" />
+                            <ProgressCircle percentage={fatsPercentage} fillColor="yellow" label="Fats" />
+                            <ProgressCircle percentage={proteinPercentage} fillColor="blue" label="Proteins" />
+                        </View>
 
                     <View style={styles.numberContainer}>
                         <Text style={styles.label}>Calories Remaining</Text>
@@ -223,6 +271,12 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
 
+    progress: {
+        height: '100%',
+        backgroundColor: '#406132',
+        borderRadius: 5,
+    },
+
     progressBar: {
         height: 10,
         backgroundColor: '#d3d3d3',
@@ -230,11 +284,12 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
 
-    progress: {
-        height: '100%',
-        backgroundColor: '#406132',
-        borderRadius: 5,
-    },
+    progressCirclesContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+      },
+    
 
     topContainer: {
         flexDirection: 'row',
