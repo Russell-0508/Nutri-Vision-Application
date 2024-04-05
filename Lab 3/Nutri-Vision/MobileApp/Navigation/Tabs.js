@@ -17,7 +17,7 @@ import CaloriePage from '../Screens/Calories';
 import ScannerPage from '../Screens/ScannerPage';
 import ProfilePage from '../Screens/ProfilePage';
 import HistoryPage from '../Screens/HistoryPage';
-import NutritionalInfoPage from '../Screens/NutritionInfoPage2';
+import NutritionalInfoPage from '../Screens/NutritionInfoPage';
 
 
 const homeName = 'Home';
