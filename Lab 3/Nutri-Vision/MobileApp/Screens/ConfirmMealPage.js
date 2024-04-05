@@ -21,6 +21,18 @@ function ConfirmMealPage({ navigation, route }) {
     { id: '2', name: 'Chicken', portion: '150g' },
   ]);
 
+  const IngredientSeparator = () => (
+    <View style={{
+      height: 1, 
+      backgroundColor: 'grey', 
+      marginTop: 5,
+      marginBottom: 5,
+      marginLeft: 60, // Adjust this value to control the starting point
+      marginRight: 100, // Adjust this value to control the ending point
+    }} />
+  );
+  
+
   const handleAddIngredient = () => {
     console.log("Add button pressed with ingredient name:", ingredientName, "and mass:", ingredientMass);
     const newIngredient = {
@@ -107,12 +119,13 @@ function ConfirmMealPage({ navigation, route }) {
 
   const AddIngredientButton = () => (
     <View>
-      <View style={styles.separator} />
+      {/* Add a separator view at the top of the footer component */}
+      <IngredientSeparator />
       <TouchableOpacity style={styles.addIngredientButton} onPress={() => setIsModalVisible(true)}>
         <Text style={styles.addIngredientText}>Add Ingredients</Text>
         <MaterialIcons name="add-circle-outline" size={24} color="black" />
       </TouchableOpacity>
-      <View style={{height:1, backgroundColor:'grey', marginHorizontal:0}} />
+      <IngredientSeparator />
     </View>
   );
 
@@ -169,6 +182,7 @@ function ConfirmMealPage({ navigation, route }) {
           renderItem={renderIngredientItem}
           keyExtractor={item => item.id}
           ListFooterComponent={AddIngredientButton}
+          ItemSeparatorComponent={IngredientSeparator} // Add this line
           style={styles.ingredientsList}
         />
         <ConfirmMealButton />
