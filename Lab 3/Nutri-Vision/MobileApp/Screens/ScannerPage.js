@@ -79,7 +79,7 @@ function ScannerPage({navigation}) {
       <View style={styles.infoContainer}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Text style={styles.foodItemText}>{foodItem}Hello</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Nutritional Info')} style={styles.arrowButton}>
+          <TouchableOpacity onPress={() => navigation.navigate('Confirm Meal')} style={styles.arrowButton}>
             <MaterialIcons name="keyboard-arrow-right" size={60} color="pink" />
           </TouchableOpacity>
         </View>
