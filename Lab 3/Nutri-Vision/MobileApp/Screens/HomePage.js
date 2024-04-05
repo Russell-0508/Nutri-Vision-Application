@@ -27,31 +27,31 @@ export default function HomePage({navigation}) {
 
     useEffect(() => {
         const fetchProfileByEmail = async () => {
-            const storage = getStorage();
-            const reference = ref(storage, "/kitty.png");
-            await getDownloadURL(reference).then((x) => {
-                setAvatarUrl(x);
-            })
-        }
-    //         try {
-    //             const email = "PAN@GMAIL.COM";
-    //             const profiles = await getProfileByEmail(email); 
-    //             if (profiles.length > 0) {
-    //                 const profile = profiles[0];
-    //                 // Handling avatarUrl
-    //                 if (profile.avatarUrl) {
-    //                     setAvatarUrl(profile.avatarUrl); 
-    //                 } else {
-    //                     console.log('Profile found but no avatar URL present.');
-    //                 }
+            // const storage = getStorage();
+            // const reference = ref(storage, "/kitty.png");
+            // await getDownloadURL(reference).then((x) => {
+            //     setAvatarUrl(x);
+            // })
+        //}
+            try {
+                const email = "PAN@GMAIL.COM";
+                const profiles = await getProfileByEmail(email); 
+                if (profiles.length > 0) {
+                    const profile = profiles[0];
+                    // Handling avatarUrl
+                    if (profile.avatarUrl) {
+                        setAvatarUrl(profile.avatarUrl); 
+                    } else {
+                        console.log('Profile found but no avatar URL present.');
+                    }
     
-    //             } else {
-    //                 console.log('No profile found for the given email:', email);
-    //             }
-    //         } catch (error) {
-    //             console.error("Error fetching profile by email:", error);
-    //         }
-    //     };
+                } else {
+                    console.log('No profile found for the given email:', email);
+                }
+            } catch (error) {
+                console.error("Error fetching profile by email:", error);
+            }
+        };
     
         fetchProfileByEmail();
     }, []);
