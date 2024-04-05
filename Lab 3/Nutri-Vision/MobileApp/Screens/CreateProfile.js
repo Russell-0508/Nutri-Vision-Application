@@ -14,6 +14,7 @@ const CreateProfile = ({ navigation }) => {
     const [selectedGender, setSelectedGender] = useState(null);
     const [height, setHeight] = useState('');
     const [weight, setWeight] = useState('');
+    const [selectedAvatarIndex, setSelectedAvatarIndex] = useState(0);
     const [phoneNumber, setPhoneNumber] = useState('');
 
 
@@ -32,6 +33,7 @@ const CreateProfile = ({ navigation }) => {
             phoneNumber: parseInt(phoneNumber, 8),
             dateOfBirth: dateOfBirth,
             age: age,
+            avatarUrl: avatarUrls[selectedAvatarIndex],
         };
       
         try {
@@ -54,7 +56,12 @@ const CreateProfile = ({ navigation }) => {
     };
 
     const [showAvatarSelection, setShowAvatarSelection] = useState(false);
-    const [selectedAvatarIndex, setSelectedAvatarIndex] = useState(0); // Default to first avatar
+
+    const avatarUrls = [
+        'https://firebasestorage.googleapis.com/v0/b/nutri-vision-78db7.appspot.com/o/hacker.png?alt=media&token=8691a89d-74d6-452b-ad90-6686e9806c72',
+        'https://firebasestorage.googleapis.com/v0/b/nutri-vision-78db7.appspot.com/o/kitty.png?alt=media&token=72881ff5-6327-4599-8d7d-ec9d4faa33e4',
+      ];
+
 
     // Preloaded Avatar Icons
     const avatarImages = [

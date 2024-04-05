@@ -20,7 +20,7 @@ export const getProfileByEmail = async (email) => {
         const querySnapshot = await getDocs(q);
         const profiles = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         console.log('Profile with email', email, ':', profiles);
-        return profiles; // Returns an array, but should ideally contain only one profile if emails are unique
+        return profiles; 
     } catch (error) {
         console.error('Error fetching profile by email:', error);
         throw error;
