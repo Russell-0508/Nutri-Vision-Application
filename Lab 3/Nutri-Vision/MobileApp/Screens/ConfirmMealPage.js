@@ -17,7 +17,7 @@ function ConfirmMealPage({ navigation }) {
   // Placeholder ingredients
   const [ingredients, setIngredients] = useState([
     { id: '1', name: 'Rice', portion: '200g' },
-    { id: '2', name: 'Chicken', portion: '150g'},
+    { id: '2', name: 'Chicken', portion: '150g' },
   ]);
 
   const handleAddIngredient = () => {
@@ -83,6 +83,7 @@ function ConfirmMealPage({ navigation }) {
       return ing;
     });
     setIngredients(updatedIngredients);
+    console.log("Update button pressed with ingredient name:", ingredientName, "and mass:", ingredientMass);
     setSelectedIngredient(null);
   };
 
@@ -99,18 +100,18 @@ function ConfirmMealPage({ navigation }) {
         <Text style={styles.ingredientName}>{item.name}</Text>
         <Text style={styles.ingredientPortion}>{item.portion}</Text>
       </View>
-      <View style={styles.separator} />
-    </TouchableOpacity>
+    </TouchableOpacity >
   );
 
 
   const AddIngredientButton = () => (
     <View>
+      <View style={styles.separator} />
       <TouchableOpacity style={styles.addIngredientButton} onPress={() => setIsModalVisible(true)}>
         <Text style={styles.addIngredientText}>Add Ingredients</Text>
         <MaterialIcons name="add-circle-outline" size={24} color="black" />
       </TouchableOpacity>
-      <View style={styles.separator} />
+      <View style={{height:1, backgroundColor:'grey', marginHorizontal:0}} />
     </View>
   );
 
@@ -269,8 +270,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'grey',
     alignSelf: 'stretch',
     marginTop: 8,
-    marginLeft: 40,
-    marginRight: 90,
+    marginLeft: 0,
+    marginRight: 50,
   },
   addIngredientButton: {
     flexDirection: 'row',
@@ -301,9 +302,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
-
-
-
 });
 
 export default ConfirmMealPage;
