@@ -4,10 +4,11 @@ import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
+import * as FileSystem from 'expo-file-system';
 
 <MaterialIcons name="photo-library" size={30} color="black" />
 
-function ScannerPage({navigation}) {
+function ScannerPage({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [galleryPermission, setGalleryPermission] = useState(null);
@@ -18,7 +19,7 @@ function ScannerPage({navigation}) {
     (async () => {
       const cameraStatus = await Camera.requestCameraPermissionsAsync();
       setHasPermission(cameraStatus.status === 'granted');
-      
+
       const galleryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
       setGalleryPermission(galleryStatus.status === 'granted');
     })();
@@ -33,6 +34,13 @@ function ScannerPage({navigation}) {
       let photo = await cameraRef.current.takePictureAsync();
       console.log(photo.uri);
       // You can do something with the photo taken here, like setting it to state or saving it
+      // Convert the captured image to base64
+      const base64Image = await FileSystem.readAsStringAsync(photo.uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      // Navigate to NutritionInfoPage and pass the base64 encoded image
+      navigation.navigate('Confirm Meal', { base64Image });
     }
   };
 
@@ -59,8 +67,26 @@ function ScannerPage({navigation}) {
       quality: 1,
     });
 
-    if (!result.cancelled) {
-      setSelectedImage(result.uri);
+    console.log("ImagePicker Result:", result);
+
+    if (!result.canceled && result.assets.length > 0) {
+      const selectedImageUri = result.assets[0].uri;
+      console.log("Image URI:", selectedImageUri);
+
+      try {
+        // Convert the captured image to base64
+        const base64Image = await FileSystem.readAsStringAsync(selectedImageUri, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+
+        // console.log("Base64 Image:", base64Image);
+
+        // Navigate to Confirm Meal page and pass the base64 encoded image
+        console.log("Navigating to Confirm Meal page...");
+        navigation.navigate('Confirm Meal', { base64Image });
+      } catch (error) {
+        console.error("Error converting image to base64:", error);
+      }
     }
   };
 
@@ -103,7 +129,7 @@ function ScannerPage({navigation}) {
         }} />
         {/* Add more buttons or information here */}
       </View>
-      
+
     </View>
   );
 }
@@ -151,19 +177,19 @@ const styles = StyleSheet.create({
     alignItems: 'center', // Center the text vertically within the container
     right: 20,
     width: '85%',
-    
+
   },
   foodItemText: {
     color: 'pink',
-    fontSize: 20, 
+    fontSize: 20,
     fontWeight: 'bold',
     marginTop: 0,
   },
   calorieCountText: {
     color: 'grey',
-    fontSize: 16, 
-    marginTop: -30, 
-    marginRight:80,
+    fontSize: 16,
+    marginTop: -30,
+    marginRight: 80,
   },
 
   arrowButton: {

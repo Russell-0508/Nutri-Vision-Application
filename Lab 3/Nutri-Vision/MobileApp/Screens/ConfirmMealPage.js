@@ -7,7 +7,8 @@ import { saveMealToFirestore } from '../../MealHistory';
 import { useNavigation } from '@react-navigation/native';
 
 
-function ConfirmMealPage({ navigation }) {
+function ConfirmMealPage({ navigation, route }) {
+  const { base64Image } = route.params;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [ingredientName, setIngredientName] = useState('');
   const [ingredientMass, setIngredientMass] = useState('');
@@ -117,7 +118,7 @@ function ConfirmMealPage({ navigation }) {
 
   const handleConfirmMeal = () => {
     const query = ingredients.map(ingredient => `${ingredient.portion} ${ingredient.name}`).join(' , ');
-    navigation.navigate('Nutritional Info', { ingredients: query });
+    navigation.navigate('Nutritional Info', { ingredients: query, base64Image });
   };
 
   const ConfirmMealButton = () => (

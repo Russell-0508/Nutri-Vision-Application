@@ -52,7 +52,7 @@ function IndividualMeal({ route }) {
       setMealEntry(mealEntry);
       setIsFavorite(mealEntry.favourite); // Set isFavorite state based on fetched data
       setHeartColor(mealEntry.favourite ? "red" : "black"); // Set heart color based on fetched data
-      const attributesToDisplay = ['calories', 'carbohydrates', 'cholesterol', 'fiber', 'protein', 'saturatedFat', 'sodium', 'sugar', 'totalFat'];
+      const attributesToDisplay = ['calories', 'carbohydrates', 'cholesterol', 'fiber', 'protein', 'saturatedFat', 'sodium', 'sugar', 'totalFat','picture'];
       attributesToDisplay.forEach(attribute => {
         if (mealEntry[attribute] !== 0) {
           switch (attribute) {
@@ -68,6 +68,8 @@ function IndividualMeal({ route }) {
             case 'totalFat':
               setTotalFat(mealEntry[attribute]);
               break;
+            case 'picture':
+              setImageUri(mealEntry[attribute]);
             default:
               break;
           }
@@ -149,10 +151,6 @@ function IndividualMeal({ route }) {
   };
 
 
-  // Placeholder mass and calories 
-  const foodItemMass = "250g";
-  const foodItemCalories = "450 Calories";
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView>
@@ -160,10 +158,10 @@ function IndividualMeal({ route }) {
         <View style={styles.imageContainer}>
           {/* Image placeholder */}
           <Image
-            source={{ uri: imageUri || placeholderImageUri }}
-            style={styles.imageStyle}
-            resizeMode="contain"
-          />
+          source={{ uri: `data:image/png;base64,${imageUri}` || placeholderImageUri }}
+          style={styles.imageStyle}
+          resizeMode="contain"
+        />
           {/* Three-dot button */}
           <TouchableOpacity style={styles.threeDotButton} onPress={() => handlePress('More')}>
             <MaterialIcons name="more-horiz" size={30} color="black" />

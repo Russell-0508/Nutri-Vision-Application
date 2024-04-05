@@ -10,9 +10,10 @@ import Svg, { Circle } from 'react-native-svg';
 
 
 function NutritionalInfoPage({ route, navigation }) {
+  const { base64Image } = route.params;
+
   // State to hold the image URI
   const [imageUri, setImageUri] = useState(null); // Initial state is null
-
 
   // Placeholder image URI
   const placeholderImageUri = 'https://via.placeholder.com/150'; // Placeholder URL
@@ -29,7 +30,7 @@ function NutritionalInfoPage({ route, navigation }) {
 
   useEffect(() => {
     console.log("Received ingredients:", ingredients);
-
+    setImageUri(base64Image);
     fetchNutritionalInfo(ingredients)
       .then(data => {
         let totalCalories = 0;
@@ -65,13 +66,14 @@ function NutritionalInfoPage({ route, navigation }) {
 
         // Prepare the meal data
         const mealData = {
-          name: mealName, // You can set a default name for the combined meal
+          name: mealName,
           calories: totalCalories,
           carbohydrates: totalCarbohydrates,
           totalFat: totalFats,
           protein: totalProtein,
           createdAt: new Date(),
           favourite: false,
+          picture:base64Image
         };
 
         // Save the combined meal data to Firestore
@@ -83,8 +85,7 @@ function NutritionalInfoPage({ route, navigation }) {
           .catch(error => console.error('Error saving combined meal:', error));
       })
       .catch(error => console.error('Error fetching nutritional info:', error));
-  }, [ingredients]); // Make sure to include 'ingredients' in the dependency array
-
+  }, [base64Image, ingredients]); // Make sure to include 'ingredients' in the dependency array
 
   // For toggling favourites 
   const [isFavorite, setIsFavorite] = useState(false);
@@ -166,7 +167,7 @@ function NutritionalInfoPage({ route, navigation }) {
       <View style={styles.imageContainer}>
         {/* Image placeholder */}
         <Image
-          source={{ uri: imageUri || placeholderImageUri }}
+          source={{ uri: `data:image/png;base64,${imageUri}` || placeholderImageUri }}
           style={styles.imageStyle}
           resizeMode="contain"
         />
