@@ -15,6 +15,7 @@ function NutritionalInfoPage({ route, navigation }) {
   // State to hold the image URI
   const [imageUri, setImageUri] = useState(null); // Initial state is null
 
+
   // Placeholder image URI
   const placeholderImageUri = 'https://via.placeholder.com/150'; // Placeholder URL
 
