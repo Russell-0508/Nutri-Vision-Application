@@ -31,16 +31,22 @@ function ScannerPage({ navigation }) {
 
   const takePicture = async () => {
     if (cameraRef.current) {
-      let photo = await cameraRef.current.takePictureAsync();
-      console.log(photo.uri);
-      // You can do something with the photo taken here, like setting it to state or saving it
-      // Convert the captured image to base64
-      const base64Image = await FileSystem.readAsStringAsync(photo.uri, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-
-      // Navigate to NutritionInfoPage and pass the base64 encoded image
-      navigation.navigate('Confirm Meal', { base64Image });
+      try {
+        let photo = await cameraRef.current.takePictureAsync();
+        console.log(photo.uri);
+  
+        // Convert the captured image to base64
+        const base64Image = await FileSystem.readAsStringAsync(photo.uri, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+  
+        console.log('Base64 image:', base64Image);
+  
+        // Navigate to Confirm Meal page and pass the base64 encoded image
+        navigation.navigate('Confirm Meal', { base64Image });
+      } catch (error) {
+        console.error('Error taking picture:', error);
+      }
     }
   };
 
