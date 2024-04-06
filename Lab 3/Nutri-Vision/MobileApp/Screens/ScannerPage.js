@@ -4,7 +4,7 @@ import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import * as FileSystem from 'expo-file-system';
 
 <MaterialIcons name="photo-library" size={30} color="black" />
@@ -15,6 +15,7 @@ function ScannerPage({ navigation }) {
   const [galleryPermission, setGalleryPermission] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const cameraRef = useRef(null); // Reference to the camera
+  const isFocused = useIsFocused(); // Check if screen is focused
 
   useEffect(() => {
     (async () => {
@@ -26,8 +27,10 @@ function ScannerPage({ navigation }) {
     })();
   }, []);
 
+
   const takePicture = async () => {
     console.log("Taking picture...");
+    // console.log("cameraRef.current:", cameraRef.current);
     if (cameraRef.current) {
       try {
         let photo = await cameraRef.current.takePictureAsync();
@@ -46,7 +49,7 @@ function ScannerPage({ navigation }) {
           encoding: FileSystem.EncodingType.Base64,
         });
 
-        console.log('Base64 image:', base64Image);
+        // console.log('Base64 image:', base64Image);
 
         // Navigate to Confirm Meal page and pass the base64 encoded image
         navigation.navigate('Confirm Meal', { base64Image });
@@ -108,7 +111,10 @@ function ScannerPage({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Camera ref={cameraRef} style={[styles.camera, { top: topOffset, height: cameraSize, width: windowWidth }]} type={type}>
+      {isFocused && (
+      <Camera ref={ref => {
+          cameraRef.current = ref;
+        }} style={[styles.camera, { top: topOffset, height: cameraSize, width: windowWidth }]} type={type}>
         {/*camera overlay components like buttons, they can be added here */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
@@ -116,6 +122,7 @@ function ScannerPage({ navigation }) {
           </TouchableOpacity>
         </View>
       </Camera>
+      )}
 
       {/* Gallery button*/}
       <TouchableOpacity style={styles.galleryButton} onPress={pickImage}>
