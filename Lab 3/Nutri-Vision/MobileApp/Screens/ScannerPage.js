@@ -52,6 +52,7 @@ function ScannerPage({ navigation }) {
         // console.log('Base64 image:', base64Image);
 
         // Navigate to Confirm Meal page and pass the base64 encoded image
+        console.log("Navigating to Confirm Meal page...");
         navigation.navigate('Confirm Meal', { base64Image });
       } catch (error) {
         console.error('Error taking picture:', error);
