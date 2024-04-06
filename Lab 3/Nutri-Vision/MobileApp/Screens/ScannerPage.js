@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, Dimensions } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 import * as FileSystem from 'expo-file-system';
@@ -25,30 +26,39 @@ function ScannerPage({ navigation }) {
     })();
   }, []);
 
-  // Dummy data for the food item name and calorie count
-  const foodItem = "Fried Rice with Chicken";
-  const calorieCount = "120 Calories 10 Min";
-
   const takePicture = async () => {
+    console.log("Taking picture...");
     if (cameraRef.current) {
       try {
         let photo = await cameraRef.current.takePictureAsync();
-        console.log(photo.uri);
-  
+        console.log("Photo captured: ", photo.uri);
+
+        const resizedImage = await ImageManipulator.manipulateAsync(
+          photo.uri,
+          [{ resize: { width: 640, height: 640 } }],
+          { compress: 0.5, format: ImageManipulator.SaveFormat.JPEG }
+        );
+
+        console.log('Resized and compressed image:', resizedImage);
+
         // Convert the captured image to base64
-        const base64Image = await FileSystem.readAsStringAsync(photo.uri, {
+        const base64Image = await FileSystem.readAsStringAsync(resizedImage.uri, {
           encoding: FileSystem.EncodingType.Base64,
         });
-  
+
         console.log('Base64 image:', base64Image);
-  
+
         // Navigate to Confirm Meal page and pass the base64 encoded image
         navigation.navigate('Confirm Meal', { base64Image });
       } catch (error) {
         console.error('Error taking picture:', error);
       }
     }
+    else {
+      console.log("cameraRef is null or undefined");
+    }
   };
+
 
   if (hasPermission === null || galleryPermission === null) {
     return <View />;
@@ -98,7 +108,7 @@ function ScannerPage({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Camera style={[styles.camera, { top: topOffset, height: cameraSize, width: windowWidth }]} type={type}>
+      <Camera ref={cameraRef} style={[styles.camera, { top: topOffset, height: cameraSize, width: windowWidth }]} type={type}>
         {/*camera overlay components like buttons, they can be added here */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
@@ -106,17 +116,6 @@ function ScannerPage({ navigation }) {
           </TouchableOpacity>
         </View>
       </Camera>
-
-      {/* Text and arrow button for the food item name and calorie count */}
-      <View style={styles.infoContainer}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={styles.foodItemText}>{foodItem}Hello</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Confirm Meal')} style={styles.arrowButton}>
-            <MaterialIcons name="keyboard-arrow-right" size={60} color="pink" />
-          </TouchableOpacity>
-        </View>
-        <Text style={styles.calorieCountText}>{calorieCount}</Text>
-      </View>
 
       {/* Gallery button*/}
       <TouchableOpacity style={styles.galleryButton} onPress={pickImage}>

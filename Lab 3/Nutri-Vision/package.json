@@ -34,7 +34,8 @@
     "react-native-screens": "~3.29.0",
     "react-native-svg": "^14.1.0",
     "react-native-tab-view": "^3.5.2",
-    "react-native-vector-icons": "^10.0.3"
+    "react-native-vector-icons": "^10.0.3",
+    "expo-image-manipulator": "~11.8.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
