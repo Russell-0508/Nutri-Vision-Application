@@ -53,7 +53,7 @@ function FavouritesPage() {
               style={styles.imageContainer}
               onPress={() => handlePress(entry.id)}
             >
-              <Image source={{ uri: entry.imageUri }} style={styles.image} resizeMode="contain" />
+              <Image source={{ uri: `data:image/png;base64,${entry.picture}` }} style={styles.image} resizeMode="contain" />
               <Text style={styles.imageText}>{entry.name}</Text>
             </TouchableOpacity>
           ))}
