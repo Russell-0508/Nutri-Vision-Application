@@ -4,19 +4,12 @@ import Login from './MobileApp/Screens/Login';
 import AccountReg from './MobileApp/Screens/AccountReg';
 import CreateProfile from './MobileApp/Screens/CreateProfile';
 import GoalsReg from './MobileApp/Screens/GoalsReg';
-import NutritionalInfoPage from './MobileApp/Screens/NutritionInfoPage2';
-import ConfirmMealPage from './MobileApp/Screens/NutritionInfoPage1';
+import NutritionalInfoPage from './MobileApp/Screens/NutritionInfoPage';
+import ConfirmMealPage from './MobileApp/Screens/ConfirmMealPage';
 import EditProfilePage from './MobileApp/Screens/EditProfile';
 import FavouritesPage from './MobileApp/Screens/FavouritesPage';
 import HistoryPage from './MobileApp/Screens/HistoryPage';
 import IndividualMeal from './MobileApp/Screens/IndividualMeal';
-
-/*import ScannerPage from './MobileApp/Screens/ScannerPage';
-import ProfilePage from './MobileApp/Screens/ProfilePage'
-import NutritionalInfoPage from './MobileApp/Screens/NutritionInfoPage2';
-import HomePage from './MobileApp/Screens/HomePage';*/
-
-
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack'; 
 import { NavigationContainer } from '@react-navigation/native'; 
@@ -24,6 +17,16 @@ import Tabs from './MobileApp/Navigation/Tabs';
 
 const Stack = createNativeStackNavigator();
 
+/**
+ * The main application component that sets up the navigation stack.
+ * 
+ * This component defines the navigation stack for the application, specifying
+ * the screens and their corresponding components. It uses the `NavigationContainer`
+ * from `@react-navigation/native` to manage the navigation state and the
+ * `createNativeStackNavigator` to create a stack navigator.
+ * 
+ * @returns {React.Component} The main application component with navigation configured.
+ */
 
 export default function App() {
   return (
@@ -42,7 +45,7 @@ export default function App() {
       <Stack.Screen name='Edit Profile' component={EditProfilePage} />
       <Stack.Screen name='Favourites' component={FavouritesPage} />
       <Stack.Screen name='IndividualMeal' component={IndividualMeal} />
-      
+        
       </Stack.Navigator>
     </NavigationContainer>
   );

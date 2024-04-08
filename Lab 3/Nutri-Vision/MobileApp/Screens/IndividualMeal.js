@@ -9,12 +9,13 @@ import Svg, { Circle } from 'react-native-svg';
 import { documentId } from '@firebase/firestore';
 
 
-function IndividualMeal({ navigation, route }) {
+function IndividualMeal({ route }) {
 
   // This will read the data passed from the navigate function in the HistoryPage.js
-  // const { documentId } = route.params;
+  const { documentId } = route.params;
 
-  const documentId = 'N5YEHKioNBm2xUFdzIVw'; //set documentId to a random entry in firebase first
+  const [mealEntry, setMealEntry] = useState(null);
+
   // State to hold the image URI
   const [imageUri, setImageUri] = useState(null); // Initial state is null
 
@@ -28,31 +29,30 @@ function IndividualMeal({ navigation, route }) {
       what is displayed according to what kind of nutritional information
       is provided by the API
   */}
-  
-  const [servingSize, setServingSize] = useState('Loading...');
+
   const [calories, setCalories] = useState('Loading...');
   const [carbohydrates, setCarbohydrates] = useState('Loading...');
   const [protein, setProtein] = useState('Loading...');
-  const [cholesterol, setCholesterol] = useState('Loading...');
-  const [fiber, setFiber] = useState('Loading...');
-  const [saturatedFat, setSaturatedFat] = useState('Loading...');
-  const [sodium, setSodium] = useState('Loading...');
-  const [sugar, setSugar] = useState('Loading...');
   const [totalFat, setTotalFat] = useState('Loading...');
 
   // For toggling favourites 
   const [isFavorite, setIsFavorite] = useState(false);
+  // State for heart button color
+  const [heartColor, setHeartColor] = useState("black");
 
   const fetchNutritionalInfo = async (documentId) => {
     try {
-    
       if (!documentId) {
         throw new Error('Document ID is missing.');
       }
 
-      // Extract nutritional information from the meal document data
       const mealEntry = await getMealEntryById(documentId);
-      const attributesToDisplay = ['calories', 'carbohydrates', 'cholesterol', 'fiber', 'protein', 'saturatedFat', 'sodium', 'sugar', 'totalFat'];
+      console.log('Fetched meal entry:', mealEntry); // Log the fetched data
+
+      setMealEntry(mealEntry);
+      setIsFavorite(mealEntry.favourite); // Set isFavorite state based on fetched data
+      setHeartColor(mealEntry.favourite ? "red" : "black"); // Set heart color based on fetched data
+      const attributesToDisplay = ['calories', 'carbohydrates', 'cholesterol', 'fiber', 'protein', 'saturatedFat', 'sodium', 'sugar', 'totalFat','picture'];
       attributesToDisplay.forEach(attribute => {
         if (mealEntry[attribute] !== 0) {
           switch (attribute) {
@@ -62,35 +62,22 @@ function IndividualMeal({ navigation, route }) {
             case 'carbohydrates':
               setCarbohydrates(mealEntry[attribute]);
               break;
-            case 'cholesterol':
-              setCholesterol(mealEntry[attribute]);
-              break;
-            case 'fiber':
-              setFiber(mealEntry[attribute]);
-              break;
             case 'protein':
               setProtein(mealEntry[attribute]);
-              break;
-            case 'saturatedFat':
-              setSaturatedFat(mealEntry[attribute]);
-              break;
-            case 'sodium':
-              setSodium(mealEntry[attribute]);
-              break;
-            case 'sugar':
-              setSugar(mealEntry[attribute]);
               break;
             case 'totalFat':
               setTotalFat(mealEntry[attribute]);
               break;
+            case 'picture':
+              setImageUri(mealEntry[attribute]);
             default:
               break;
           }
         }
       });
+
     } catch (error) {
       console.error('Error fetching nutritional info:', error);
-      // Handle error or set default error values here
     }
   };
 
@@ -99,7 +86,7 @@ function IndividualMeal({ navigation, route }) {
     if (documentId) {
       fetchNutritionalInfo(documentId);
     }
-  }, []); // Empty dependency array to run only on component mount
+  }, [documentId]); // Empty dependency array to run only on component mount
 
   // Update favourites attribute in database when heart icon is pressed
   const toggleFavorite = async () => {
@@ -108,19 +95,12 @@ function IndividualMeal({ navigation, route }) {
       setIsFavorite(!isFavorite);
 
       // Update the database to reflect the change
-      await updateMealDataInFirestore(documentId, { favourite: !isFavorite });
+      updateMealDataInFirestore(documentId, { favourite: !isFavorite });
+      setHeartColor(!isFavorite ? "red" : "black");
     } catch (error) {
       console.error('Error toggling favorite status:', error);
       // Handle error
     }
-  };
-
-  // State for heart button
-  const [isHeartActive, setIsHeartActive] = useState(false);
-
-  // Toggle heart state
-  const toggleHeart = () => {
-    setIsHeartActive(!isHeartActive); // Toggle between true and false
   };
 
   // Placeholder function for button presses
@@ -165,97 +145,73 @@ function IndividualMeal({ navigation, route }) {
           />
         </Svg>
         <Text style={{ position: 'absolute', fontWeight: 'bold', top: size * 0.35 }}>{percentage}%</Text>
-        <Text style={{ fontWeight: 'bold',top: size*0.85}}>{label}</Text>
+        <Text style={{ fontWeight: 'bold', top: size * 0.85 }}>{label}</Text>
       </View>
     );
   };
 
 
-  // Placeholder mass and calories 
-  const foodItemMass = "250g";
-  const foodItemCalories = "450 Calories";
-
   return (
     <SafeAreaView style={styles.safeArea}>
-    <ScrollView>
-      <StatusBar backgroundColor="rgba(173, 219, 199, 1)" barStyle="light-content" />
-      <View style={styles.imageContainer}>
-        {/* Image placeholder */}
-        <Image
-          source={{ uri: imageUri || placeholderImageUri }}
+      <ScrollView>
+        <StatusBar backgroundColor="rgba(173, 219, 199, 1)" barStyle="light-content" />
+        <View style={styles.imageContainer}>
+          {/* Image placeholder */}
+          <Image
+          source={{ uri: `data:image/png;base64,${imageUri}` || placeholderImageUri }}
           style={styles.imageStyle}
           resizeMode="contain"
         />
-        {/* Three-dot button */}
-        <TouchableOpacity style={styles.threeDotButton} onPress={() => handlePress('More')}>
-          <MaterialIcons name="more-horiz" size={30} color="black" />
-        </TouchableOpacity>
-        {/* Heart button */}
-        <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
-          <MaterialIcons
-            name={isFavorite ? "favorite" : "favorite-border"} // Change icon based on state
-            size={30}
-            color={isFavorite ? "red" : "black"} // Change color based on state
-          />
-        </TouchableOpacity>
-      </View>
-      <View style={styles.nutritionalInfoContainer}>
-        <Text style={styles.nutritionalInfoContainerText}>Fried Rice with Chicken</Text>
-        {/* Mass and Calories with Icons */}
-        <View style={styles.nutritionalDetailsContainer}>
-          <MaterialIcons name="local-fire-department" size={20} color="rgb(127, 127, 127)" />
-          <Text style={styles.nutritionalDetailsText}> {calories} </Text>
+          {/* Three-dot button */}
+          <TouchableOpacity style={styles.threeDotButton} onPress={() => handlePress('More')}>
+            <MaterialIcons name="more-horiz" size={30} color="black" />
+          </TouchableOpacity>
+          {/* Heart button */}
+          <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
+            <MaterialIcons
+              name={isFavorite ? "favorite" : "favorite-border"} // Change icon based on state
+              size={30}
+              color={heartColor} // Change color based on state
+            />
+          </TouchableOpacity>
         </View>
-        {/*Nutritional Information */}
-        <Text style={styles.ingredientsHeaderText}>Nutritional Information</Text>
-        <View style={styles.innerGreyContainer}>
+        <View style={styles.nutritionalInfoContainer}>
+          <Text style={styles.nutritionalInfoContainerText}>{mealEntry && mealEntry.name}</Text>
+          {/* Mass and Calories with Icons */}
+          <View style={styles.nutritionalDetailsContainer}>
+            <MaterialIcons name="local-fire-department" size={20} color="rgb(127, 127, 127)" />
+            <Text style={styles.nutritionalDetailsText}> {calories} </Text>
+          </View>
+          {/*Nutritional Information */}
+          <Text style={styles.ingredientsHeaderText}>Nutritional Information</Text>
+          <View style={styles.innerGreyContainer}>
 
-          <View style={styles.nutritionalInfoRow}>
-            <Text style={styles.labelText}>Calories:</Text>
-            <Text style={styles.valueText}>{calories}</Text>
+            <View style={styles.nutritionalInfoRow}>
+              <Text style={styles.labelText}>Calories:</Text>
+              <Text style={styles.valueText}>{calories}</Text>
+            </View>
+            <View style={styles.nutritionalInfoRow}>
+              <Text style={styles.labelText}>Carbohydrates:</Text>
+              <Text style={styles.valueText}>{carbohydrates}</Text>
+            </View>
+            <View style={styles.nutritionalInfoRow}>
+              <Text style={styles.labelText}>Protein:</Text>
+              <Text style={styles.valueText}>{protein}</Text>
+            </View>
+            <View style={styles.nutritionalInfoRow}>
+              <Text style={styles.labelText}>Total Fat:</Text>
+              <Text style={styles.valueText}>{totalFat}</Text>
+            </View>
           </View>
-          <View style={styles.nutritionalInfoRow}>
-            <Text style={styles.labelText}>Carbohydrates:</Text>
-            <Text style={styles.valueText}>{carbohydrates}</Text>
+          {/* Nutritional information progress circles */}
+          <View style={styles.progressCirclesContainer}>
+            <ProgressCircle percentage={carbsPercentage} fillColor="brown" label="Carbohydrates" />
+            <ProgressCircle percentage={fatsPercentage} fillColor="yellow" label="Fats" />
+            <ProgressCircle percentage={proteinPercentage} fillColor="blue" label="Proteins" />
           </View>
-          <View style={styles.nutritionalInfoRow}>
-            <Text style={styles.labelText}>Protein:</Text>
-            <Text style={styles.valueText}>{protein}</Text>
-          </View>
-          <View style={styles.nutritionalInfoRow}>
-            <Text style={styles.labelText}>Cholesterol:</Text>
-            <Text style={styles.valueText}>{cholesterol}</Text>
-          </View>
-          <View style={styles.nutritionalInfoRow}>
-            <Text style={styles.labelText}>Fiber:</Text>
-            <Text style={styles.valueText}>{fiber}</Text>
-          </View>
-          <View style={styles.nutritionalInfoRow}>
-            <Text style={styles.labelText}>Saturated Fat:</Text>
-            <Text style={styles.valueText}>{saturatedFat}</Text>
-          </View>
-          <View style={styles.nutritionalInfoRow}>
-            <Text style={styles.labelText}>Sodium:</Text>
-            <Text style={styles.valueText}>{sodium}</Text>
-          </View>
-          <View style={styles.nutritionalInfoRow}>
-            <Text style={styles.labelText}>Sugar:</Text>
-            <Text style={styles.valueText}>{sugar}</Text>
-          </View>
-          <View style={styles.nutritionalInfoRow}>
-            <Text style={styles.labelText}>Total Fat:</Text>
-            <Text style={styles.valueText}>{totalFat}</Text>
-          </View>
-        </View>
-        {/* Nutritional information progress circles */}
-        <View style={styles.progressCirclesContainer}>
-          <ProgressCircle percentage={carbsPercentage} fillColor="brown" label="Carbohydrates" />
-          <ProgressCircle percentage={fatsPercentage} fillColor="yellow" label="Fats" />
-          <ProgressCircle percentage={proteinPercentage} fillColor="blue" label="Proteins" />
-        </View>
 
-      </View>
-    </ScrollView>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -302,7 +258,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     fontStyle: 'italic',
-    textAlign: 'flex-start',
+    justifyContent: 'flex-start',
     margin: 16,
   },
   nutritionalDetailsContainer: {
