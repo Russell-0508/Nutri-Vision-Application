@@ -130,9 +130,9 @@ function ProfileScreen({navigation}){
         </View>
         <Text style={styles.headerText}>Statistics</Text>
         <View style={styles.actionsContainer}>
-          <TouchableOpacity onPress={() => handlePress('Edit Plan')} style={styles.actionItem}>
+          <TouchableOpacity onPress={() => navigation.navigate('EditGoals')} style={styles.actionItem}>
             <MaterialIcons name="edit-note" size={20} color="#4CAF50" style={styles.iconStyle} />
-            <Text style={styles.actionText}>Edit Plan</Text>
+            <Text style={styles.actionText}>Edit Goals</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => handlePress('My Progress')} style={styles.actionItem}>
             <MaterialIcons name="show-chart" size={20} color="#4CAF50" style={styles.iconStyle} />

@@ -150,10 +150,12 @@ const EditProfilePage = ({ navigation }) => {
                         onChangeText={setWeight}
                         keyboardType="numeric"
                     />
-
-                    <TouchableOpacity onPress={handleEditProfile} style={styles.button}>
-                        <Text style={styles.buttonText}>Save Changes</Text>
-                    </TouchableOpacity>
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity onPress={handleEditProfile} style={styles.button}>
+                            <Text style={styles.buttonText}>Save Changes</Text>
+                        </TouchableOpacity>
+                    </View>
+                    
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -174,6 +176,7 @@ const styles = StyleSheet.create({
         textAlign : 'center',
     },
     avatarSelectButton: {
+        borderWidth: 1,
         alignItems: 'center',
         marginBottom: 20,
     },
@@ -189,6 +192,27 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         borderRadius: 50,
+    },
+
+    button: {
+        borderRadius: 20,
+        marginTop: 50,
+        paddingVertical: 10,
+        paddingHorizontal: 17,
+        backgroundColor: '#007bff',
+        width: 200,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+
+    buttonContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    buttonText: {
+        color: 'white'
     },
     
     container: {

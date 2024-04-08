@@ -110,8 +110,8 @@ function Login({navigation}) {
             </View>
                 <TouchableOpacity onPress={onEyeIconPress}>
                 <Image 
-                source={isPasswordVisible ? require('../assets/open_eye.png'):
-                        require('../assets/close_eye.png')} 
+                source={isPasswordVisible ? require('../assets/close_eye.png'):
+                        require('../assets/open_eye.png')} 
                 style={{width: 30, height: 30, position: 'absolute', 
                         right: 60, bottom: 5, alignSelf: 'center'}} 
                 />
@@ -130,10 +130,13 @@ function Login({navigation}) {
                 </TouchableOpacity>
             </View>
             <View style={{marginTop: 80}}>
+                <View style={{paddingBottom:10}}>
                 <Text style={{
                         alignSelf: 'center',
                         fontSize: 18,
+                        color: 'white'
                     }}> Don't have an account? </Text>
+                </View>
                     <TouchableOpacity 
                         onPress={()=>navigation.navigate("AccountRegistration")}
                         style={styles.buttonContainer}>
