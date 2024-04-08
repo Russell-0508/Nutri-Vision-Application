@@ -25,8 +25,8 @@ screenWidth = 500
 function Entry({ title, description, navigation, documentId }) {
 
     const handleNextEntryPress = () => {
-        navigation.navigate('IndividualMeal', {documentId: documentId})
-        console.log('Navigatiing to documentId: ', {documentId: documentId})
+        navigation.navigate('IndividualMeal', { documentId: documentId })
+        console.log('Navigatiing to documentId: ', { documentId: documentId })
     }
     return (
         <View style={styles.entry}>
@@ -36,7 +36,7 @@ function Entry({ title, description, navigation, documentId }) {
 
             </View>
             <View>
-                <TouchableOpacity  onPress={handleNextEntryPress}>
+                <TouchableOpacity onPress={handleNextEntryPress}>
                     <Image
                         style={styles.arrowlogo}
                         source={require('../assets/right_pointing_arrow.png')}
@@ -54,7 +54,6 @@ function History({ navigation }) {
     // Defining state for date picker method
     const [date, setDate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
-    
     const [mealEntries, setMealEntries] = useState([]);
 
     const onChange = (event, selectedDate) => {
@@ -64,11 +63,11 @@ function History({ navigation }) {
         fetchMealEntriesForDate(currentDate);
     };
 
-      // Function to format date
+    // Function to format date
     const formatDate = (date) => {
         return `${date.getDate()} ${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`;
     };
-    
+
     useEffect(() => {
         fetchMealEntriesForDate(date); // Initial fetch for today's entries
     }, [date]);
@@ -82,10 +81,9 @@ function History({ navigation }) {
             console.error('Error fetching meal entries:', error);
         }
     };
-   
+
 
     return (
-
         <View style={styles.container}>
             <StatusBar backgroundColor="#406132" barStyle="light-content" />
             <SafeAreaView>
@@ -93,15 +91,6 @@ function History({ navigation }) {
                     <View style={styles.topContainer}>
                         <View style={styles.topContent}>
                             <Text style={styles.pmText}>Past Meals</Text>
-                        </View>
-                        <View style={styles.topIcons}>
-                            <TouchableOpacity>
-                                <Image
-                                    style={styles.morelogo}
-                                    source={require('../assets/threedots.png')}
-                                    resizeMode='contain'
-                                />
-                            </TouchableOpacity>
                         </View>
                     </View>
 
@@ -119,16 +108,20 @@ function History({ navigation }) {
                                 display="default"
                                 onChange={onChange}
                             />
-                            )}
+                        )}
                     </View>
 
-                    {/* Displays entries according to date */}            
+                    {/* Displays entries according to date */}
                     <View>
-                        {mealEntries.map((entry, index) => (
-                            <View key={index}>
-                                <Entry title={entry.name} navigation={navigation} documentId={entry.id} />
-                            </View>
-                        ))}
+                        {mealEntries.length === 0 ? ( // Check if there are no meal entries
+                            <Text style={styles.noMealsText}>No meals logged yet</Text>
+                        ) : (
+                            mealEntries.map((entry, index) => (
+                                <View key={index}>
+                                    <Entry title={entry.name} navigation={navigation} documentId={entry.id} />
+                                </View>
+                            ))
+                        )}
                     </View>
                 </ScrollView>
             </SafeAreaView>
@@ -286,6 +279,13 @@ const styles = StyleSheet.create({
     viewLessText: {
         fontSize: 16,
         color: 'blue',
+    },
+    noMealsText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginTop: 30, 
+        color: 'gray', 
     },
 })
 
