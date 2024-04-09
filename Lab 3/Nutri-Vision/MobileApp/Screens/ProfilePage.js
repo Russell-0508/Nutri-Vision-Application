@@ -43,7 +43,6 @@ function ProfileScreen({navigation}){
   
     fetchProfileByEmail();
   }, []);
-  
 
   // Placeholder function for button presses
   const handlePress = (action) => {
