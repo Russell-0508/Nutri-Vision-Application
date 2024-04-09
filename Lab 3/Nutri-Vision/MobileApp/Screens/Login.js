@@ -11,6 +11,7 @@ import {
     SafeAreaView,
     ScrollView,
     TextInput,
+    Alert
 } from 'react-native';
 
 import Svg, { Path } from 'react-native-svg';
@@ -41,6 +42,7 @@ function Login({ navigation }) {
             //return { isNewUser: false, user: userCredential.user };
             navigation.navigate('CreateProfile');
         } catch (error) {
+<<<<<<< HEAD
             if (error.code === 'auth/user-not-found') { 
                 // New user created
                 return { isNewUser: true, user: newUserCredential.user };
@@ -49,6 +51,12 @@ function Login({ navigation }) {
                 Alert.alert(error.message);
                 navigation.navigate('LandingUI');
             }
+=======
+            Alert.alert("Login failed, please ensure your email and password are entered correctly.");
+            Alert.alert("Please register if you are a new user");
+            navigation.navigate('Login');
+            console.log("Login failed D:");
+>>>>>>> becdf82af4ea05e081f20bc480542015dcad57ed
         }
     }
     /*
