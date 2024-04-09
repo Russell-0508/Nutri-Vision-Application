@@ -34,7 +34,9 @@ function Login({ navigation }) {
     const [password, setPassword] = useState(null);
 
     const LoginFunction = async () => {
-        try {
+        console.log('login success!');
+        navigation.navigate('Tabs');
+        /*try {
             // Attempt to sign in
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             console.log("Login success!");
@@ -42,40 +44,12 @@ function Login({ navigation }) {
             //return { isNewUser: false, user: userCredential.user };
             navigation.navigate('CreateProfile');
         } catch (error) {
-<<<<<<< HEAD
-            if (error.code === 'auth/user-not-found') { 
-                // New user created
-                return { isNewUser: true, user: newUserCredential.user };
-            } else {
-                console.log("Login failed D:");
-                Alert.alert(error.message);
-                navigation.navigate('LandingUI');
-            }
-=======
             Alert.alert("Login failed, please ensure your email and password are entered correctly.");
             Alert.alert("Please register if you are a new user");
             navigation.navigate('Login');
             console.log("Login failed D:");
->>>>>>> becdf82af4ea05e081f20bc480542015dcad57ed
-        }
+        }*/
     }
-    /*
-        //Ke Yuan
-        // State to check if user is new or not.
-    
-        const [isNewUser, setIsNewUser] = useState(false);
-    
-        const onSuccessfulLogin = (response) => {
-            const userIsNew = response.isNewUser;
-            setIsNewUser(userIsNew);
-    
-            if (userIsNew) {
-                navigation.navigate('CreateProfile');
-            } else {
-                navigation.navigate('HomePage');
-            }
-        }
-    */
     // Logic when Email button is pressed
     const textInputRef = useRef(null);
     const [isEmailIconActive, setIsEmailIconActive] = useState(false);

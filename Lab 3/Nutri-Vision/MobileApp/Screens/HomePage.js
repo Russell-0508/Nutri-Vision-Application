@@ -6,6 +6,8 @@ import Svg, { Circle, Path } from 'react-native-svg';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import { getProfileByEmail } from '../../ProfileHistory';
+import { getMealHistoryFromFirestore } from '../../MealHistory';
+import { fetchUserGoalDetails } from '../../goalsDetail';
 import { getStorage, ref, getDownloadURL } from "firebase/storage"
 
 
@@ -13,7 +15,27 @@ export default function HomePage({navigation}) {
 
     const [date, setDate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
-  
+    const [mealEntries, setMealEntries] = useState([]);
+
+    const [carbsPercentage, setCarbsPercentage] = useState(70); // Example percentage
+    const [fatsPercentage, setFatsPercentage] = useState(55); // Example percentage
+    const [proteinPercentage, setProteinPercentage] = useState(25); // Example percentage    
+    const [Heartpercentage, setHeartPercentage] = useState(50); // Example percentage
+
+    const goalCalories = 2000; // Set goal calories here
+    const totalCaloriesConsumed = mealEntries.reduce((total, entry) => total + entry.calories, 0);
+
+    const [caloriesRemaining,setCaloriesRemaining] = useState(goalCalories - totalCaloriesConsumed);
+    // Calculate the percentage of calories consumed
+    const caloriePercantage = Math.min((totalCaloriesConsumed / goalCalories) * 100, 100);
+
+    const [goalsDetails, setGoalsDetails] = useState([]);
+
+    // Filter entries based on selected date
+
+    const [caloriesConsumed, setCaloriesConsumed] = useState(0);
+
+
     const onChange = (event, selectedDate) => {
       const currentDate = selectedDate || date;
       setShowDatePicker(Platform.OS === 'ios');
@@ -24,18 +46,28 @@ export default function HomePage({navigation}) {
       return `${date.getDate()} ${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`;
     };
 
+    // Allows the component to interact with external system (Firestore database)
+    useEffect(() => {
+        fetchMealEntriesForDate(date); // Initial fetch for today's entries
+    }, [date]);
+
+
+    const fetchMealEntriesForDate = async (date) => {
+        try {
+            const dateString = date.toISOString().split('T')[0]; // Convert date to YYYY-MM-DD Format
+            const entries = await getMealHistoryFromFirestore(dateString);
+            setMealEntries(entries);
+        } catch(error) {
+            console.error('Error fetching meal entries', error);
+        }
+    }
+
     const [avatarUrl, setAvatarUrl] = useState();
 
     useEffect(() => {
         const fetchProfileByEmail = async () => {
-            // const storage = getStorage();
-            // const reference = ref(storage, "/kitty.png");
-            // await getDownloadURL(reference).then((x) => {
-            //     setAvatarUrl(x);
-            // })
-        //}
             try {
-                const email = "PAN@GMAIL.COM";
+                const email = "PAN@GMAIL.COM"; //change this email to read from user.email or smth
                 const profiles = await getProfileByEmail(email); 
                 if (profiles.length > 0) {
                     const profile = profiles[0];
@@ -45,6 +77,11 @@ export default function HomePage({navigation}) {
                     } else {
                         console.log('Profile found but no avatar URL present.');
                     }
+
+                    // Fetch and set goals details
+                    const goals = await fetchUserGoalDetails(email);
+                    setGoalsDetails(goals);
+                    console.log('Goal Details:', goals); //why undefined?
     
                 } else {
                     console.log('No profile found for the given email:', email);
@@ -56,11 +93,6 @@ export default function HomePage({navigation}) {
     
         fetchProfileByEmail();
     }, []);
-
-    const [carbsPercentage, setCarbsPercentage] = useState(50); // Example percentage
-    const [fatsPercentage, setFatsPercentage] = useState(40); // Example percentage
-    const [proteinPercentage, setProteinPercentage] = useState(25); // Example percentage
-    const [Heartpercentage, setHeartPercentage] = useState(50); // Example percentage
 
     const ProgressCircle = ({ percentage, fillColor, label }) => {
         const size = 75; // Diameter of the circle
@@ -207,7 +239,7 @@ export default function HomePage({navigation}) {
 
                 <View style={styles.caloriesSection}>
                     <Text style={styles.caloriesTitle}>My Calories</Text>
-                    <CalorieProgressCircle percentage={60} calories={1500} />
+                    <CalorieProgressCircle percentage={caloriePercantage} calories={totalCaloriesConsumed} />
 
                     {/* Nutritional information progress circles */}
                     <View style={styles.progressCirclesContainer}>
