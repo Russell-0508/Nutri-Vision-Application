@@ -16,6 +16,51 @@ const AccountReg = ({ navigation }) => {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
     const [passwordMismatchError, setPasswordMismatchError] = useState('');
+    const [passwordStrength, setPasswordStrength] = useState({ message: '' });
+
+
+    // Function to check password strength
+    const checkPasswordStrength = (newPassword) => {
+        const strength = {
+            length: newPassword.length >= 8,
+            hasUpper: /[A-Z]/.test(newPassword),
+            hasLower: /[a-z]/.test(newPassword),
+            hasNumber: /[0-9]/.test(newPassword),
+            hasSpecial: /[^A-Za-z0-9]/.test(newPassword),
+        };
+    
+        let strengthMessage = '';
+        let strengthCount = 0;
+    
+        for (let check in strength) {
+            if (strength[check]) {
+                strengthCount++;
+            }
+        }
+    
+        switch (strengthCount) {
+            case 0:
+            case 1:
+            case 2:
+                strengthMessage = 'Weak';
+                break;
+            case 3:
+            case 4:
+                strengthMessage = 'Moderate';
+                break;
+            case 5:
+                strengthMessage = 'Strong';
+                break;
+            default:
+                strengthMessage = 'Weak';
+        }
+    
+        setPasswordStrength({
+            message: strengthMessage,
+            ...strength, 
+        });
+    };
+
 
     const checkPasswordsMatch = () => {
         if (password !== confirmPassword) {
@@ -94,14 +139,28 @@ const AccountReg = ({ navigation }) => {
                             style={styles.input}
                             placeholder='Enter Your Password'
                             secureTextEntry={!passwordVisible} // Hide password by default
-                            value={password}
-                            onChangeText={setPassword} // Update password state
+                            value={password} 
+                            onChangeText={(newPassword) => {
+                                setPassword(newPassword);
+                                checkPasswordStrength(newPassword); 
+                            }}
                         />
                         {/* Toggle Password Visibility Button for Password */}
                         <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
                             <Icon name={passwordVisible ? 'visibility-off' : 'visibility'} size={24} color="grey" />
                         </TouchableOpacity>
                     </View>
+
+                    {passwordStrength.message && (
+                        <Text style={[
+                            styles.passwordStrength,
+                            passwordStrength.message === 'Weak' && styles.weakPassword,
+                            passwordStrength.message === 'Moderate' && styles.moderatePassword,
+                            passwordStrength.message === 'Strong' && styles.strongPassword,
+                        ]}>
+                            Password strength: {passwordStrength.message}
+                        </Text>
+                    )}
 
                     {/* Confirm Password Input */}
                     <Text style={styles.label}>Confirm Password</Text>
@@ -197,6 +256,20 @@ const styles = StyleSheet.create({
         borderColor: 'gray',
         backgroundColor: '#FFF',
         borderRadius: 15,
+    },
+
+    passwordStrength: {
+        marginTop: 4,
+    },
+    
+    weakPassword: {
+        color: 'red',
+    },
+    moderatePassword: {
+        color: 'orange',
+    },
+    strongPassword: {
+        color: 'green',
     },
 
     //--------------------------------------------------------------------------------
