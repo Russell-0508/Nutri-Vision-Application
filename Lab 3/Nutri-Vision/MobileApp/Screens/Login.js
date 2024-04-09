@@ -41,7 +41,7 @@ function Login({ navigation }) {
             //return { isNewUser: false, user: userCredential.user };
             navigation.navigate('CreateProfile');
         } catch (error) {
-            if (error.code === 'auth/user-not-found') {
+            if (error.code === 'auth/user-not-found') { 
                 // New user created
                 return { isNewUser: true, user: newUserCredential.user };
             } else {
@@ -50,7 +50,6 @@ function Login({ navigation }) {
                 navigation.navigate('LandingUI');
             }
         }
-
     }
     /*
         //Ke Yuan
@@ -112,6 +111,7 @@ function Login({ navigation }) {
                             placeholder='*******@gmail.com'
                             value={email}
                             onChangeText={setEmail}
+                            autoCapitalize='none'
                         />
                     </View>
                     <TouchableOpacity onPress={onEmailIconPress}>
@@ -134,6 +134,7 @@ function Login({ navigation }) {
                             secureTextEntry={!isPasswordVisible}
                             value={password}
                             onChangeText={setPassword}
+                            autoCapitalize='none'
                         />
                     </View>
                     <TouchableOpacity onPress={onEyeIconPress}>
