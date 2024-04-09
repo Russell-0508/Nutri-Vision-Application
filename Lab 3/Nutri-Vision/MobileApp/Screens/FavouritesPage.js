@@ -11,20 +11,13 @@ import Svg, { Circle } from 'react-native-svg';
 
 
 
-function FavouritesPage({ navigation }) {
+function FavouritesPage() {
+  const navigation = useNavigation();
   // Placeholder image URI
   const headerImageUri = 'https://via.placeholder.com/150'; // Update this to your desired image URL
 
   // Simulate a dynamic list of images
   const images = new Array(8).fill(headerImageUri); // Example: 8 images. Adjust the number as needed.
-
-  const handlePress = () => {
-    console.log("Placeholder image and text button pressed!");
-    navigation.navigate('IndividualMeal');
-    // You can navigate to another screen or execute any action here
-
-
-  };
 
   const [favoriteMealEntries, setFavoriteMealEntries] = useState([]);
 
@@ -45,6 +38,10 @@ function FavouritesPage({ navigation }) {
     fetchFavorites();
   }, []); // Empty dependency array ensures this effect runs only once on mount
 
+  const handlePress = (documentId) => {
+    navigation.navigate('IndividualMeal', { documentId });
+    console.log('Navigating to documentId:', documentId);
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'rgba(173, 219, 199, 1)' }}>
@@ -54,9 +51,9 @@ function FavouritesPage({ navigation }) {
             <TouchableOpacity
               key={`meal-${index}`}
               style={styles.imageContainer}
-              onPress={() => handlePress(entry.name)}
+              onPress={() => handlePress(entry.id)}
             >
-              <Image source={{ uri: entry.imageUri }} style={styles.image} resizeMode="contain" />
+              <Image source={{ uri: `data:image/png;base64,${entry.picture}` }} style={styles.image} resizeMode="contain" />
               <Text style={styles.imageText}>{entry.name}</Text>
             </TouchableOpacity>
           ))}

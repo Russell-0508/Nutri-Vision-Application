@@ -1,12 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
     View,
-    ImageBackground,
     StyleSheet,
     Image,
     Text,
-    Dimensions,
-    Button,
     TouchableOpacity,
     SafeAreaView,
     ScrollView,
@@ -15,11 +12,8 @@ import {
 } from 'react-native';
 
 import { useNavigation } from "@react-navigation/native"
-import Collapsible from 'react-native-collapsible'
 import { getMealHistoryFromFirestore } from '../../MealHistory';
-import IndividualMeal from './IndividualMeal';
 
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
@@ -29,6 +23,11 @@ screenWidth = 500
 
 {/* This is the Entry element, which takes in title, description, and displays it all */ }
 function Entry({ title, description, navigation, documentId }) {
+
+    const handleNextEntryPress = () => {
+        navigation.navigate('IndividualMeal', { documentId: documentId })
+        console.log('Navigatiing to documentId: ', { documentId: documentId })
+    }
     return (
         <View style={styles.entry}>
             <View style={styles.entryContainer}>
@@ -37,7 +36,7 @@ function Entry({ title, description, navigation, documentId }) {
 
             </View>
             <View>
-                <TouchableOpacity  onPress={() => navigation.navigate("IndividualMeal", {documentId})}>
+                <TouchableOpacity onPress={handleNextEntryPress}>
                     <Image
                         style={styles.arrowlogo}
                         source={require('../assets/right_pointing_arrow.png')}
@@ -52,13 +51,9 @@ function Entry({ title, description, navigation, documentId }) {
 
 function History({ navigation }) {
 
-    // Defining state for collapsible feature
-    const [isCollapsed, setIsCollapsed] = useState(true);
-
     // Defining state for date picker method
     const [date, setDate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
-    
     const [mealEntries, setMealEntries] = useState([]);
 
     const onChange = (event, selectedDate) => {
@@ -68,13 +63,11 @@ function History({ navigation }) {
         fetchMealEntriesForDate(currentDate);
     };
 
-      // Function to format date
+    // Function to format date
     const formatDate = (date) => {
         return `${date.getDate()} ${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`;
     };
 
-    //const [selectedDate, setSelectedDate] = useState('');
-    
     useEffect(() => {
         fetchMealEntriesForDate(date); // Initial fetch for today's entries
     }, [date]);
@@ -88,21 +81,9 @@ function History({ navigation }) {
             console.error('Error fetching meal entries:', error);
         }
     };
-   
 
-    /*const handleDateSelection = (date) => {
-        setSelectedDate(date);
-    };*/
-    
-  
-    // changes date based on date user clicked
-      
-
-    //Get today's date for the header display on history page
-    //var dateString = new Date().toDateString();
 
     return (
-
         <View style={styles.container}>
             <StatusBar backgroundColor="#406132" barStyle="light-content" />
             <SafeAreaView>
@@ -110,16 +91,6 @@ function History({ navigation }) {
                     <View style={styles.topContainer}>
                         <View style={styles.topContent}>
                             <Text style={styles.pmText}>Past Meals</Text>
-                        </View>
-                        <View style={styles.topIcons}>
-                            <TouchableOpacity
-                                onPress={() => navigation.navigate("IndividualMeal")}>
-                                <Image
-                                    style={styles.morelogo}
-                                    source={require('../assets/threedots.png')}
-                                    resizeMode='contain'
-                                />
-                            </TouchableOpacity>
                         </View>
                     </View>
 
@@ -137,16 +108,20 @@ function History({ navigation }) {
                                 display="default"
                                 onChange={onChange}
                             />
-                            )}
+                        )}
                     </View>
 
-                    {/* Displays entries according to date */}            
+                    {/* Displays entries according to date */}
                     <View>
-                        {mealEntries.map((entry, index) => (
-                            <View key={index}>
-                                <Entry title={entry.type} description={entry.name} navigation={navigation} documentId={entry.documentId} />
-                            </View>
-                        ))}
+                        {mealEntries.length === 0 ? ( // Check if there are no meal entries
+                            <Text style={styles.noMealsText}>No meals logged yet</Text>
+                        ) : (
+                            mealEntries.map((entry, index) => (
+                                <View key={index}>
+                                    <Entry title={entry.name} navigation={navigation} documentId={entry.id} />
+                                </View>
+                            ))
+                        )}
                     </View>
                 </ScrollView>
             </SafeAreaView>
@@ -304,6 +279,13 @@ const styles = StyleSheet.create({
     viewLessText: {
         fontSize: 16,
         color: 'blue',
+    },
+    noMealsText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginTop: 30, 
+        color: 'gray', 
     },
 })
 

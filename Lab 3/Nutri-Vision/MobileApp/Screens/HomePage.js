@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, Platform, Button, Image, SafeAreaView, ScrollView, TouchableOpacity, Linking} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import React, { useState } from 'react';
+import { Image, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 //import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import { useNavigation } from '@react-navigation/native';
 import Svg, { Circle, Path } from 'react-native-svg';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
 
 export default function HomePage({navigation}) {
@@ -200,6 +199,21 @@ export default function HomePage({navigation}) {
                         <Text>230 Kcal</Text>
                         <FontAwesomeIcon name="chevron-right" type="font-awesome" size={24} />
                     </View>
+
+                    <View style={styles.mealItem}>
+                        <Image style={styles.mealImage} source={require('../assets/icon.png')} />
+                        <Text>Lunch</Text>
+                        <Text>230 Kcal</Text>
+                        <FontAwesomeIcon name="chevron-right" type="font-awesome" size={24} />
+                    </View>
+
+                    <View style={styles.mealItem}>
+                        <Image style={styles.mealImage} source={require('../assets/icon.png')} />
+                        <Text>Dinner</Text>
+                        <Text>230 Kcal</Text>
+                        <FontAwesomeIcon name="chevron-right" type="font-awesome" size={24} />
+                    </View>
+
 
                     {/* Repeat for lunch and dinner */}
                 </View>

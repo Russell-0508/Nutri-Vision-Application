@@ -10,11 +10,19 @@ import {
     Platform,
 } from 'react-native';
 
+import { getMealHistoryFromFirestore } from '../../MealHistory';
+
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import Svg, { Circle } from 'react-native-svg';
+
 
 function Calories({navigation}) {
+
+    const [carbsPercentage, setCarbsPercentage] = useState(70); // Example percentage
+    const [fatsPercentage, setFatsPercentage] = useState(55); // Example percentage
+    const [proteinPercentage, setProteinPercentage] = useState(25); // Example percentage
 
     const goalCalories = 2000; // Set goal calories here
     const [entries, setEntries] = useState([]); // State variable for meal entries
@@ -24,6 +32,7 @@ function Calories({navigation}) {
     const [date, setDate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [caloriesRemaining,setCaloriesRemaining] = useState(goalCalories - caloriesConsumed);
+    const [mealEntries, setMealEntries] = useState([]);
     const progress = caloriesConsumed / goalCalories;
     
     // Function to update calories count
@@ -32,13 +41,11 @@ function Calories({navigation}) {
         setCaloriesConsumed(newCalories > 0 ? newCalories : 0); // Ensure calories consumed is not negative
     }
 
-    // Function to update remaining calories in each entry
-
     // Function to add meal entries
     const addFood = (food, calories) => {
         const newEntries = [...entries, {name: food, calories, date}];
         updateCalories(calories);
-        setEntries(newEntries);
+        setMealEntries(newEntries);
     }
 
 
@@ -46,6 +53,7 @@ function Calories({navigation}) {
         const currentDate = selectedDate || date;
         setShowDatePicker(false);
         setDate(currentDate);
+        fetchMealEntriesForDate(currentDate)
     };
      
     const formatDate = (date) => {
@@ -55,6 +63,60 @@ function Calories({navigation}) {
 
     // Filter entries based on selected date
     const filteredEntries = entries.filter(entry => entry.date.toDateString() === date.toDateString());
+
+    // Allows the component to interact with external system (Firestore database)
+    useEffect(() => {
+        fetchMealEntriesForDate(date); // Initial fetch for today's entries
+    }, [date]);
+
+    const fetchMealEntriesForDate = async (date) => {
+        try {
+            const dateString = date.toISOString().split('T')[0]; // Convert date to YYYY-MM-DD Format
+            const entries = await getMealHistoryFromFirestore(dateString);
+            setMealEntries(entries);
+        } catch(error) {
+            console.error('Error fetching meal entries', error);
+        }
+    }
+
+    const ProgressCircle = ({ percentage, fillColor, label }) => {
+        const size = 75; // Diameter of the circle
+        const strokeWidth = 5; // Width of the circle border
+        const radius = (size / 2) - (strokeWidth * 2); // Radius of the circle
+        const circumference = 2 * Math.PI * radius;
+        const strokeDashoffset = circumference - (percentage / 100) * circumference;
+    
+        return (
+          <View style={{ alignItems: 'center', margin: 10 }}>
+            <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+              <Circle
+                stroke="#ddd" // This is the color for the "unfilled" part of the circle
+                fill="none"
+                cx={size / 2}
+                cy={size / 2}
+                r={radius}
+                strokeWidth={strokeWidth}
+              />
+              <Circle
+                stroke={fillColor}
+                fill="none"
+                cx={size / 2}
+                cy={size / 2}
+                r={radius}
+                strokeWidth={strokeWidth}
+                strokeDasharray={`${circumference} ${circumference}`}
+                strokeDashoffset={strokeDashoffset}
+                strokeLinecap="round"
+                transform={`rotate(-90, ${size / 2}, ${size / 2})`}
+              />
+            </Svg>
+            <Text style={{ position: 'absolute', fontWeight: 'bold', top: size * 0.35 }}>{percentage}%</Text>
+            <Text style={{ marginTop: 4, fontWeight: 'bold' }}>{label}</Text>
+          </View>
+        );
+      };
+
+
 
     return (
         <View style={styles.container}>
@@ -85,6 +147,12 @@ function Calories({navigation}) {
                                 onChange={onChange}
                             />
                         )}
+
+                        <View style={styles.progressCirclesContainer}>
+                            <ProgressCircle percentage={carbsPercentage} fillColor="brown" label="Carbohydrates" />
+                            <ProgressCircle percentage={fatsPercentage} fillColor="yellow" label="Fats" />
+                            <ProgressCircle percentage={proteinPercentage} fillColor="blue" label="Proteins" />
+                        </View>
 
                     <View style={styles.numberContainer}>
                         <Text style={styles.label}>Calories Remaining</Text>
@@ -203,6 +271,12 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
 
+    progress: {
+        height: '100%',
+        backgroundColor: '#406132',
+        borderRadius: 5,
+    },
+
     progressBar: {
         height: 10,
         backgroundColor: '#d3d3d3',
@@ -210,11 +284,12 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
 
-    progress: {
-        height: '100%',
-        backgroundColor: '#406132',
-        borderRadius: 5,
-    },
+    progressCirclesContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+      },
+    
 
     topContainer: {
         flexDirection: 'row',
