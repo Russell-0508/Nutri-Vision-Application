@@ -247,8 +247,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 40,
     padding: 16,
-    margin: -50,
-    marginLeft: 0,
     marginTop: 10,
     flex: 1,
     justifyContent: 'flex-start',

@@ -1,148 +1,166 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, Button, Image, SafeAreaView, ScrollView, TouchableOpacity, Linking} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, SafeAreaView, ScrollView, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-
+import { format } from 'date-fns';
+import { getFirestore, collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { getProfileByEmail } from '../../ProfileHistory';
 
 const EditProfilePage = ({ navigation }) => {
+    const db = getFirestore();
 
-    const handleCreateAccountPress = () => {
-        navigation.navigate('GoalsReg');
-    };
-
-    // Defining State for Gender Selection
-    const [selectedGender, setSelectedGender] = useState(null);
-
-    // Defining state for Date Picker Method
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('PAN@GMAIL.COM'); 
+    const [selectedGender, setSelectedGender] = useState('');
+    const [height, setHeight] = useState('');
+    const [weight, setWeight] = useState('');
     const [date, setDate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
-    const [isDateSelected, setIsDateSelected] = useState(false); // Track if a date has been selected
-    
-    const onChangeDate = (event, selectedDate) => {
-        const currentDate = selectedDate || date;
-        setDate(currentDate);
-        setIsDateSelected(true); // Optionally hide picker after selection
-        setShowDatePicker(false);
-    };
+    const [profileId, setProfileId] = useState('');
 
-    const [showAvatarSelection, setShowAvatarSelection] = useState(false);
-    const [selectedAvatarIndex, setSelectedAvatarIndex] = useState(0); // Default to first avatar
+    // Fetch profile from Firestore
+    useEffect(() => {
+        const fetchProfileByEmail = async () => {
+            try {
+                const profiles = await getProfileByEmail("PAN@GMAIL.COM");
+                if (profiles.length > 0) {
+                    const profile = profiles[0];
+                    setName(profile.name);
+                    setEmail(profile.email);
+                    setSelectedGender(profile.gender);
+                    setHeight(profile.height.toString());
+                    setWeight(profile.weight.toString());
+                    setDate(profile.dateOfBirth.toDate());
+                    setProfileId(profile.id);
+                } else {
+                    console.log('No profile found');
+                }
+            } catch (error) {
+                console.error("Error fetching profile by email:", error);
+            }
+        };
 
-    // Preloaded Avatar Icons
-    const avatarImages = [
-        require('../assets/hacker.png'),
-        require('../assets/kitty.png'),
-        require('../assets/splash.png'),
+        fetchProfileByEmail();
+    }, []);
 
-    ];
 
-    const handleAvatarSelect = (index) => {
-        setSelectedAvatarIndex(index);
-        setShowAvatarSelection(false);
-        console.log('Avatar pressed'); 
+    const handleEditProfile = async () => {
+        try {
+            // Reference to the profiles collection
+            const profilesRef = collection(db, "profile");
+
+            // Query for the profile with the matching email
+            const q = query(profilesRef, where("email", "==", email));
+
+            const querySnapshot = await getDocs(q);
+            if (querySnapshot.empty) {
+                Alert.alert("No profile found with the given email.");
+                return;
+            }
+
+            const profileDoc = querySnapshot.docs[0];
+            const profileRef = profileDoc.ref;
+
+            // Update the profile
+            await updateDoc(profileRef, {
+                name,
+                gender: selectedGender,
+                height: parseFloat(height), 
+                weight: parseFloat(weight), 
+            });
+
+            Alert.alert("Profile updated successfully.");
+        } catch (error) {
+            console.error("Error updating profile:", error);
+            Alert.alert("Error updating profile. Please try again.");
+        }
     };
 
     return (
         <SafeAreaView style={styles.safeArea}>
             <ScrollView style={styles.scrollView}>
                 <View style={styles.container}>
-                    <Text style = {styles.chooseAvatar}>Choose Your Avatar</Text>
+                    <Text style={styles.label}>Name</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter Your Name"
+                        value={name}
+                        onChangeText={setName}
+                    />
 
-                    <TouchableOpacity onPress={() => setShowAvatarSelection(!showAvatarSelection)} style={styles.avatarSelectButton}>
-                        <Image source={avatarImages[selectedAvatarIndex]} style={styles.avatar} />
-                    </TouchableOpacity>
+                    <Text style={styles.label}>Email</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter Your Email"
+                        value={email}
+                        onChangeText={setEmail}
+                        keyboardType="email-address"
+                    />
 
-                    {showAvatarSelection && (
-                        <View style={styles.avatarPicker}>
-                            {avatarImages.map((avatar, index) => (
-                                <TouchableOpacity key={index} onPress={() => handleAvatarSelect(index)} style={styles.avatarOption}>
-                                    <Image source={avatar} style={styles.avatar} />
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-                    )}
-
-
-                    {/* Gender Selection */}
-                    <Text style={styles.genderLabel}>Gender: </Text>
+                    <Text style={styles.label}>Gender</Text>
                     <View style={styles.genderContainer}>
-                        {['Male', 'Female', 'Prefer Not to Say'].map((gender) => (
+                        {['Male', 'Female', 'Other'].map((gender) => (
                             <TouchableOpacity
                                 key={gender}
                                 style={[
                                     styles.genderButton,
-                                    selectedGender === gender && styles.genderButtonSelected
+                                    selectedGender === gender && styles.genderButtonSelected,
                                 ]}
                                 onPress={() => setSelectedGender(gender)}
                             >
-                                <Text style={[
-                                    styles.genderButtonText,
-                                    selectedGender === gender && styles.genderButtonTextSelected
-                                ]}>
+                                <Text
+                                    style={[
+                                        styles.genderButtonText,
+                                        selectedGender === gender && styles.genderButtonTextSelected,
+                                    ]}
+                                >
                                     {gender}
                                 </Text>
                             </TouchableOpacity>
                         ))}
                     </View>
 
-                    {/* Name Input */}
-                    <Text style={styles.label}>Your Name</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Enter Your Name"
-                    />
-
-                    {/* DOB Selection */}
-                    <Text style = {styles.label} >Date of Birth</Text>
-                    <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePickerToggle}>
-                        <Text style={styles.datePickerText}>
-                            {isDateSelected ? date.toLocaleDateString() : "DD/MM/YYYY"}
-                        </Text>
+                    <Text style={styles.label}>Date of Birth</Text>
+                    <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.input}>
+                        <Text style={styles.textInput}>{format(date, 'dd/MM/yyyy')}</Text>
                     </TouchableOpacity>
-
-                    {/* Email Input */}
-                    {/*<Text style={styles.label}>Email</Text>
-                    <TextInput
-                        style = {styles.input}
-                        placeholder='Enter Your Email'
-                        keyboardType="email-address"
-                            />*/}
-
                     {showDatePicker && (
                         <DateTimePicker
-                            testID="dateTimePicker"
                             value={date}
                             mode="date"
                             display="default"
                             onChange={onChangeDate}
                         />
                     )}
-            
-                    {/* Height and Weight */}
-                    <Text style = {styles.label} >Height</Text>
+
+                    <Text style={styles.label}>Height (cm)</Text>
                     <TextInput
-                        style = {styles.input}
-                        placeholder='Enter Your Height ( in cm )'
-                        keyboardType='number-pad'
+                        style={styles.input}
+                        placeholder="Enter Your Height"
+                        value={height}
+                        onChangeText={setHeight}
+                        keyboardType="numeric"
                     />
 
-                    <Text style = {styles.label} >Weight</Text>
+                    <Text style={styles.label}>Weight (kg)</Text>
                     <TextInput
-                        style = {styles.input}
-                        placeholder='Enter Your Weight ( in kg )'
-                        keyboardType='number-pad'
+                        style={styles.input}
+                        placeholder="Enter Your Weight"
+                        value={weight}
+                        onChangeText={setWeight}
+                        keyboardType="numeric"
                     />
-
-
-                    <TouchableOpacity onPress={handleCreateAccountPress} style={styles.createAccountButton}>
-                        <Text style={styles.createAccountButtonText}>Edit Profile</Text>
-                    </TouchableOpacity>
-                
-            </View>
-        </ScrollView>
-    </SafeAreaView>
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity onPress={handleEditProfile} style={styles.button}>
+                            <Text style={styles.buttonText}>Save Changes</Text>
+                        </TouchableOpacity>
+                    </View>
+                    
+                </View>
+            </ScrollView>
+        </SafeAreaView>
     );
-}
+};
 
 const styles = StyleSheet.create({
     //Safe Area for IOS devices
@@ -158,6 +176,7 @@ const styles = StyleSheet.create({
         textAlign : 'center',
     },
     avatarSelectButton: {
+        borderWidth: 1,
         alignItems: 'center',
         marginBottom: 20,
     },
@@ -173,6 +192,27 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         borderRadius: 50,
+    },
+
+    button: {
+        borderRadius: 20,
+        marginTop: 50,
+        paddingVertical: 10,
+        paddingHorizontal: 17,
+        backgroundColor: '#007bff',
+        width: 200,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+
+    buttonContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    buttonText: {
+        color: 'white'
     },
     
     container: {
