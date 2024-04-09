@@ -89,6 +89,7 @@ function Login({ navigation }) {
                     <Path d={`M-200 0 C ${screenWidth} 100 ${curveHeight / 5} ${curveHeight} ${screenWidth * 2.2} 0 Z`} fill="#afb281" />
                 </Svg>
             </View>
+
             <SafeAreaView style={{ flex: 1 }}>
                 <ScrollView style={{ paddingTop: 50 }}>
                     <View style={styles.textcontainer}>

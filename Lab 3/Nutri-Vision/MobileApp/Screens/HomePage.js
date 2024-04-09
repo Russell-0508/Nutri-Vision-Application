@@ -1,9 +1,12 @@
+import React, { useEffect, useState } from 'react';
+import { Alert, StyleSheet, View, Text, TextInput, Platform, Button, Image, SafeAreaView, ScrollView, TouchableOpacity, Linking} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import React, { useState } from 'react';
-import { Image, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 //import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import Svg, { Circle, Path } from 'react-native-svg';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import { useNavigation } from '@react-navigation/native';
+import { getProfileByEmail } from '../../ProfileHistory';
+import { getStorage, ref, getDownloadURL } from "firebase/storage"
 
 
 export default function HomePage({navigation}) {
@@ -21,6 +24,38 @@ export default function HomePage({navigation}) {
       return `${date.getDate()} ${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`;
     };
 
+    const [avatarUrl, setAvatarUrl] = useState();
+
+    useEffect(() => {
+        const fetchProfileByEmail = async () => {
+            // const storage = getStorage();
+            // const reference = ref(storage, "/kitty.png");
+            // await getDownloadURL(reference).then((x) => {
+            //     setAvatarUrl(x);
+            // })
+        //}
+            try {
+                const email = "PAN@GMAIL.COM";
+                const profiles = await getProfileByEmail(email); 
+                if (profiles.length > 0) {
+                    const profile = profiles[0];
+                    // Handling avatarUrl
+                    if (profile.avatarUrl) {
+                        setAvatarUrl(profile.avatarUrl); 
+                    } else {
+                        console.log('Profile found but no avatar URL present.');
+                    }
+    
+                } else {
+                    console.log('No profile found for the given email:', email);
+                }
+            } catch (error) {
+                console.error("Error fetching profile by email:", error);
+            }
+        };
+    
+        fetchProfileByEmail();
+    }, []);
 
     const [carbsPercentage, setCarbsPercentage] = useState(50); // Example percentage
     const [fatsPercentage, setFatsPercentage] = useState(40); // Example percentage
@@ -140,13 +175,15 @@ export default function HomePage({navigation}) {
       };
 
 
+
     return (
         <SafeAreaView style={styles.safeArea}>
             <ScrollView style={styles.container}>
                 <View style={styles.topSection}>
                     <View style={styles.avatarContainer}>
                         <Image
-                            source={require('../assets/hacker.png')}
+                            source={{ uri: avatarUrl }}
+                            //source={require('../assets/hacker.png')}
                             style={styles.avatar}
                         />
                      </View>

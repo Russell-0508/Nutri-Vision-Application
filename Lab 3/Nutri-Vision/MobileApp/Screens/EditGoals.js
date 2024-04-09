@@ -1,11 +1,11 @@
 import React, { useState, useRef } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, Image, SafeAreaView, ScrollView, TouchableOpacity, Linking} from 'react-native';
-import { getFirestore, collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
+import { getFirestore, collection, query, where, getDocs, updateDoc, doc, getDoc } from 'firebase/firestore';
 
 
 const db = getFirestore();
 
-const GoalsReg = ({ navigation }) => {
+const EditGoals = ({ navigation }) => {
     const [selectedGoal, setSelectedGoal] = useState(null);
     const goals = ['Gain Weight', 'Lose Weight', 'Get Fitter', 'Eat Healthier', "I don't know yet"];
 
@@ -45,6 +45,42 @@ const GoalsReg = ({ navigation }) => {
     };
 
 
+    async function fetchUserProfileByEmail(email) {
+        const profilesRef = collection(db, 'profile');
+        const q = query(profilesRef, where("email", "==", email));
+        const querySnapshot = await getDocs(q);
+      
+        if (!querySnapshot.empty) {
+          const userProfileDoc = querySnapshot.docs[0];
+          const userProfile = userProfileDoc.data();
+          fetchAndDisplayGoalDetails(userProfile.goals);
+        } else {
+          console.log("No matching user profile found!");
+        }
+      }
+      
+      // Function to fetch and display goal details given a goal ID
+      async function fetchAndDisplayGoalDetails(goalId) {
+        const goalRef = doc(db, 'goalsDetail', goalId); // Ensure 'goalsDetail' matches your collection name
+        const goalSnap = await getDoc(goalRef);
+      
+        if (goalSnap.exists()) {
+          const goalDetails = goalSnap.data();
+          displayGoalDetails(goalDetails);
+        } else {
+          console.log("No such goal document!");
+        }
+      }
+      
+      // Example function to display goal details
+      function displayGoalDetails(goalDetails) {
+        console.log("Goal Details:", goalDetails);
+      }
+      
+      fetchUserProfileByEmail("PAN@GMAIL.COM");
+
+
+
  
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -69,10 +105,7 @@ const GoalsReg = ({ navigation }) => {
                     {/* Navigation Buttons */}
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity onPress={handleNextPress} style={styles.createProfileButton}>
-                            <Text style={styles.createProfileText}>Create Goals</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => navigation.navigate('Tabs')} style={styles.skipButton}>
-                            <Text style={styles.skipText}>Skip</Text>
+                            <Text style={styles.createProfileText}>Edit Goals</Text>
                         </TouchableOpacity>
                     </View>
                     
@@ -163,4 +196,4 @@ const styles = StyleSheet.create({
 
   });
 
-  export default GoalsReg;
+  export default EditGoals;
