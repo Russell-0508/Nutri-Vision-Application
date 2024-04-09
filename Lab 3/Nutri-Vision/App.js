@@ -38,7 +38,7 @@ export default function App() {
       <Stack.Screen name='Login' component={Login} />
       <Stack.Screen name='AccountRegistration' component={AccountReg}/>
       <Stack.Screen name='CreateProfile' component = { CreateProfile } />
-      <Stack.Screen name='GoalsReg' component={GoalsReg} />
+      <Stack.Screen name='GoalsReg' component={GoalsReg} options={{ title: 'Goals Registration' }}/>
       <Stack.Screen name='Tabs' component={Tabs} options={{headerShown: false}}/>
       <Stack.Screen name='Nutritional Info' component={NutritionalInfoPage} />
       <Stack.Screen name='Confirm Meal' component={ConfirmMealPage} />
