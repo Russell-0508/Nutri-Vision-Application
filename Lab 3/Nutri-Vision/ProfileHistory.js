@@ -1,4 +1,4 @@
-import { collection, query, where, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, startOfDay, endOfDay } from 'firebase/firestore';
+import { storage, collection, query, where, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, startOfDay, endOfDay } from 'firebase/firestore';
 import firestore from './firebase/config';
 
 const profileCollection = collection(firestore, 'profile');
@@ -20,7 +20,7 @@ export const getProfileByEmail = async (email) => {
         const querySnapshot = await getDocs(q);
         const profiles = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         console.log('Profile with email', email, ':', profiles);
-        return profiles; // Returns an array, but should ideally contain only one profile if emails are unique
+        return profiles; 
     } catch (error) {
         console.error('Error fetching profile by email:', error);
         throw error;
@@ -50,5 +50,6 @@ export const deleteProfileDataInFirestore = (profileId) => {
             console.error('Error deleting profile data:', error);
         });
 };
+
 
 

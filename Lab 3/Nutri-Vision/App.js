@@ -10,6 +10,7 @@ import EditProfilePage from './MobileApp/Screens/EditProfile';
 import FavouritesPage from './MobileApp/Screens/FavouritesPage';
 import HistoryPage from './MobileApp/Screens/HistoryPage';
 import IndividualMeal from './MobileApp/Screens/IndividualMeal';
+import EditGoals from './MobileApp/Screens/EditGoals';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack'; 
 import { NavigationContainer } from '@react-navigation/native'; 
@@ -45,6 +46,7 @@ export default function App() {
       <Stack.Screen name='Edit Profile' component={EditProfilePage} />
       <Stack.Screen name='Favourites' component={FavouritesPage} />
       <Stack.Screen name='IndividualMeal' component={IndividualMeal} />
+      <Stack.Screen name ='EditGoals' component={EditGoals}/>
         
       </Stack.Navigator>
     </NavigationContainer>
