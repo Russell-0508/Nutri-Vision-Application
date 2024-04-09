@@ -4,7 +4,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import { collection, getDocs } from 'firebase/firestore';
-import { getProfileByEmail } from '../../ProfileHistory'; // Adjust the path as necessary
+import { getProfileByEmail } from '../../ProfileHistory';
 
 
 function ProfileScreen({navigation}){
@@ -18,9 +18,11 @@ function ProfileScreen({navigation}){
 
   const [profileData, setProfileData] = useState({
     name: 'Loading...', // Default value while loading
-    // You can add other fields here if needed
+    height: '...',
+    weight: '...',
+    age: '...',
   });
-  
+
 
   // Fetch profile data from Firestore
   useEffect(() => {
@@ -41,7 +43,6 @@ function ProfileScreen({navigation}){
   
     fetchProfileByEmail();
   }, []);
-  
 
   // Placeholder function for button presses
   const handlePress = (action) => {
@@ -65,23 +66,20 @@ function ProfileScreen({navigation}){
             style={styles.profileImage}
           />
           <Text style={styles.profileName}>{profileData.name}</Text>
-          {/* Additional profile details can be displayed here */}
-
-        {/* Display other profile details as needed */}
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
               <Text style={styles.statLabel}>Weight</Text>
-              <Text style={styles.statValue}>64 kg</Text>
+              <Text style={styles.statValue}>{profileData.weight}</Text>
             </View>
             <View style={styles.separator} />
             <View style={styles.statItem}>
               <Text style={styles.statLabel}>Height</Text>
-              <Text style={styles.statValue}>176 cm</Text>
+              <Text style={styles.statValue}>{profileData.height}</Text>
             </View>
             <View style={styles.separator} />
             <View style={styles.statItem}>
               <Text style={styles.statLabel}>Age</Text>
-              <Text style={styles.statValue}>23</Text>
+              <Text style={styles.statValue}>{profileData.age}</Text>
             </View>
           </View>
         </View>
@@ -131,9 +129,9 @@ function ProfileScreen({navigation}){
         </View>
         <Text style={styles.headerText}>Statistics</Text>
         <View style={styles.actionsContainer}>
-          <TouchableOpacity onPress={() => handlePress('Edit Plan')} style={styles.actionItem}>
+          <TouchableOpacity onPress={() => navigation.navigate('EditGoals')} style={styles.actionItem}>
             <MaterialIcons name="edit-note" size={20} color="#4CAF50" style={styles.iconStyle} />
-            <Text style={styles.actionText}>Edit Plan</Text>
+            <Text style={styles.actionText}>Edit Goals</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => handlePress('My Progress')} style={styles.actionItem}>
             <MaterialIcons name="show-chart" size={20} color="#4CAF50" style={styles.iconStyle} />

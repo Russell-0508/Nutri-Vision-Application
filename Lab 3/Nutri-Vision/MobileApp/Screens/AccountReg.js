@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, Button, Image, SafeAreaView, ScrollView, TouchableOpacity, Linking} from 'react-native';
+import { StyleSheet, View, Text, TextInput, Button, Image, SafeAreaView, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { firestore, auth } from '../../firebase/config';
 
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
-const AccountReg = ({ navigation}) => {
+const AccountReg = ({ navigation }) => {
+
+    // Defining state for email
+    const [email, setEmail] = useState('');
 
     // Defining state for Password Checker
     const [password, setPassword] = useState('');
@@ -66,13 +71,26 @@ const AccountReg = ({ navigation}) => {
         return true;
     };
 
-    const handleCreateAccountPress = () => {
+    const handleCreateAccountPress = async () => {
         const passwordsDoMatch = checkPasswordsMatch(); // Check if passwords match
         if (!termsAccepted) {
             alert('Please read and accept the Terms and Conditions to proceed.');
             return;
         } else if (passwordsDoMatch) {
-            console.log("Creating account...");
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                /*const userRef = doc(firestore, "users", user.uid);
+                await setDoc(userRef, {
+                    displayName: name,
+                    email: email,
+                    uid: user.uid,
+                });*/
+            } catch (error) {
+                console.log("Account creation failed D:");
+                console.log(error.message);
+            }
+
             navigation.navigate('Login');
         } else {
             //the error message is set by checkPasswordsMatch,
@@ -80,7 +98,7 @@ const AccountReg = ({ navigation}) => {
         }
     };
 
-    
+
     const handlePressTerms = () => {
         // URL
         const url = 'https://www.google.com.sg/';
@@ -96,7 +114,7 @@ const AccountReg = ({ navigation}) => {
             <ScrollView style={styles.scrollView}>
                 <View style={styles.container}>
 
-                    <View style = {styles.headerContainer}>
+                    <View style={styles.headerContainer}>
                         <Text style={styles.headerText}>
                             Create Account
                         </Text>
@@ -106,9 +124,11 @@ const AccountReg = ({ navigation}) => {
                     {/* Email Input */}
                     <Text style={styles.label}>Email</Text>
                     <TextInput
-                        style = {styles.input}
+                        style={styles.input}
                         placeholder='Enter Your Email'
                         keyboardType="email-address"
+                        value={email}
+                        onChangeText={setEmail} //Update email state
                     />
 
 
@@ -116,7 +136,7 @@ const AccountReg = ({ navigation}) => {
                     <Text style={styles.label}>Password</Text>
                     <View style={styles.inputWrapper}>
                         <TextInput
-                            style = {styles.input}
+                            style={styles.input}
                             placeholder='Enter Your Password'
                             secureTextEntry={!passwordVisible} // Hide password by default
                             value={password} 
@@ -144,16 +164,16 @@ const AccountReg = ({ navigation}) => {
 
                     {/* Confirm Password Input */}
                     <Text style={styles.label}>Confirm Password</Text>
-                    <View style = {styles.inputWrapper} >
+                    <View style={styles.inputWrapper} >
                         <TextInput
-                            style = {styles.input}
+                            style={styles.input}
                             placeholder='Re-Enter Your Password'
                             secureTextEntry={!confirmPasswordVisible} // Hide confirm password by default
-                            value={confirmPassword} 
+                            value={confirmPassword}
                             onChangeText={setConfirmPassword} // Update confirm password state
                         />
 
-                    {/* Toggle Password Visibility Button for Confirm Password */}
+                        {/* Toggle Password Visibility Button for Confirm Password */}
                         <TouchableOpacity onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)}>
                             <Icon name={confirmPasswordVisible ? 'visibility-off' : 'visibility'} size={24} color="grey" />
                         </TouchableOpacity>
@@ -165,31 +185,31 @@ const AccountReg = ({ navigation}) => {
                             style={[styles.checkboxBase, termsAccepted && styles.checkboxChecked]}
                             onPress={() => setTermsAccepted(!termsAccepted)}
                         >
-                        {termsAccepted && <Icon name="check" size={24} color="#fff" />}
+                            {termsAccepted && <Icon name="check" size={24} color="#fff" />}
                         </TouchableOpacity>
                         <TouchableOpacity onPress={handlePressTerms}>
                             <Text style={styles.linkText}>Terms and Conditions**</Text>
                         </TouchableOpacity>
                     </View>
 
-            
+
                     <TouchableOpacity onPress={handleCreateAccountPress} style={styles.createAccountButton}>
                         <Text style={styles.createAccountButtonText}>Create Account</Text>
                     </TouchableOpacity>
-                
+
 
                     {/* Display password mismatch error */}
                     {passwordMismatchError ? <Text style={styles.error}>{passwordMismatchError}</Text> : null}
-            </View>
-        </ScrollView>
-    </SafeAreaView>
+                </View>
+            </ScrollView>
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#36622B', 
+        backgroundColor: '#36622B',
     },
 
     container: {
@@ -198,23 +218,23 @@ const styles = StyleSheet.create({
     },
 
     headerContainer: {
-        flex : 1,
+        flex: 1,
         alignItems: 'center',
-        position : 'relative',
-        justifyContent: 'center', 
+        position: 'relative',
+        justifyContent: 'center',
         padding: 10,
     },
-    
+
     headerText: {
-        fontSize: 30, 
+        fontSize: 30,
         fontWeight: 'bold',
     },
-    
+
 
     label: {
-        fontSize: 14, 
-        color: '#000', 
-        fontWeight: 'bold', 
+        fontSize: 14,
+        color: '#000',
+        fontWeight: 'bold',
         marginBottom: 3,
         marginTop: 8,
     },
@@ -222,20 +242,20 @@ const styles = StyleSheet.create({
     //--------------------------------------------------------------------------------
 
     input: {
-      flex: 1,
-      paddingVertical: 10,
-      paddingLeft : 10,
-      backgroundColor: '#FFF',
-      borderRadius : 15,
+        flex: 1,
+        paddingVertical: 10,
+        paddingLeft: 10,
+        backgroundColor: '#FFF',
+        borderRadius: 15,
     },
 
     inputWrapper: {
-        flexDirection: 'row', 
-        alignItems: 'center', 
+        flexDirection: 'row',
+        alignItems: 'center',
         borderWidth: 1,
         borderColor: 'gray',
         backgroundColor: '#FFF',
-        borderRadius : 15,
+        borderRadius: 15,
     },
 
     passwordStrength: {
@@ -257,7 +277,7 @@ const styles = StyleSheet.create({
 
     linkText: {
         color: 'blue',
-        textDecorationLine : 'underline',
+        textDecorationLine: 'underline',
     },
 
     termsRow: {
@@ -287,15 +307,15 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         paddingVertical: 10,
         paddingHorizontal: 20,
-        alignItems: 'center', 
-        justifyContent: 'center', 
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-    
+
     createAccountButtonText: {
-        color: '#ffffff', 
+        color: '#ffffff',
         fontSize: 18,
         fontWeight: 'bold',
     },
-  });
+});
 
-  export default AccountReg;
+export default AccountReg;

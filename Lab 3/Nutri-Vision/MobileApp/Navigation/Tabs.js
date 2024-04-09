@@ -17,6 +17,7 @@ import CaloriePage from '../Screens/Calories';
 import ScannerPage from '../Screens/ScannerPage';
 import ProfilePage from '../Screens/ProfilePage';
 import HistoryPage from '../Screens/HistoryPage';
+import Community from '../Screens/Community';
 import NutritionalInfoPage from '../Screens/NutritionInfoPage';
 
 
@@ -45,11 +46,11 @@ const Tabs = () => (
             }}/>
 
             <Tab.Screen 
-            name='Calories' 
-            component={CaloriePage} 
+            name='Community' 
+            component={Community} 
             options={{
                 tabBarIcon:({color,size})=>(
-                    <MaterialIcons name="fastfood" size={24} color={color} />
+                    <MaterialIcons name="people" size={24} color={color} />
                 )
             }}/>
 
