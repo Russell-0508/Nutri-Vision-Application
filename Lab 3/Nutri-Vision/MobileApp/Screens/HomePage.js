@@ -259,34 +259,6 @@ export default function HomePage({navigation}) {
 
                 </View>
 
-                <View style={styles.mealsSection}>
-                    <Text style={styles.mealsTitle}>Today's Meals:</Text>
-                    {/* List of meals */}
-                    <View style={styles.mealItem}>
-                        <Image style={styles.mealImage} source={require('../assets/icon.png')} />
-                        <Text>Breakfast</Text>
-                        <Text>230 Kcal</Text>
-                        <FontAwesomeIcon name="chevron-right" type="font-awesome" size={24} />
-                    </View>
-
-                    <View style={styles.mealItem}>
-                        <Image style={styles.mealImage} source={require('../assets/icon.png')} />
-                        <Text>Lunch</Text>
-                        <Text>230 Kcal</Text>
-                        <FontAwesomeIcon name="chevron-right" type="font-awesome" size={24} />
-                    </View>
-
-                    <View style={styles.mealItem}>
-                        <Image style={styles.mealImage} source={require('../assets/icon.png')} />
-                        <Text>Dinner</Text>
-                        <Text>230 Kcal</Text>
-                        <FontAwesomeIcon name="chevron-right" type="font-awesome" size={24} />
-                    </View>
-
-
-                    {/* Repeat for lunch and dinner */}
-                </View>
-
   
             </ScrollView>
         </SafeAreaView>
@@ -340,6 +312,7 @@ const styles = StyleSheet.create({
     caloriesSection: {
         padding: 16,
         backgroundColor: '#A0A0A0',
+        alignItems: 'center',
     },
 
     caloriesTitle: {
@@ -350,10 +323,10 @@ const styles = StyleSheet.create({
 
     progressCirclesContainer: {
         flexDirection: 'row', 
-        justifyContent: 'space-evenly', 
+        justifyContent: 'center', 
         alignItems: 'center', 
-        marginTop: 10,
-        marginRight: 50,
+
+        width: '100%',
     },
     
 
