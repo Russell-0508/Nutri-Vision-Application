@@ -65,9 +65,12 @@ const CreateProfile = ({ navigation }) => {
 
     // Preloaded Avatar Icons
     const avatarImages = [
-        require('../assets/hacker.png'),
-        require('../assets/kitty.png'),
-        require('../assets/splash.png'),
+        require('../assets/images/Man1.png'),
+        require('../assets/images/Man2.png'),
+        require('../assets/images/hacker.png'),
+        require('../assets/images/Woman1.png'),
+        require('../assets/images/Woman2.png'),
+        require('../assets/images/Woman3.png'),
 
     ];
 
