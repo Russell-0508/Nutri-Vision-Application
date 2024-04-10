@@ -13,6 +13,10 @@ import { getStorage, ref, getDownloadURL } from "firebase/storage"
 
 export default function HomePage({navigation}) {
 
+    const onGetStartedPress = () => {
+        navigation.navigate('Login');
+    };
+
     const [date, setDate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [mealEntries, setMealEntries] = useState([]);
@@ -259,6 +263,27 @@ export default function HomePage({navigation}) {
 
                 </View>
 
+                <View style = {styles.recipe}>
+                    <Text style = {styles.recipeTitle}>Recipes Recommendation</Text> 
+                    <View style={styles.rowContainer}>
+                        <Image
+                            source={require('../assets/kitty.png')} 
+                            style={styles.image}
+                        />
+                        <Text style={styles.recipeDescription}>
+                             RECIPE DESCRIPTION 123
+                        </Text>
+                    </View>
+
+                    <View style = {styles.recipeButtons}>
+                        <TouchableOpacity onPress = {onGetStartedPress} style = {styles.buttonGetStarted}>
+                            <Text style = {styles.buttonText}>Get Started</Text>
+                        </TouchableOpacity>
+                    </View>
+                        
+
+                </View>
+
   
             </ScrollView>
         </SafeAreaView>
@@ -364,5 +389,58 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         backgroundColor: '#fff',
+    },
+
+    rowContainer: {
+        flexDirection: 'row',
+        alignItems: 'center', 
+        justifyContent: 'center', 
+    },
+
+    recipe: {
+        backgroundColor: '#fff', 
+        borderRadius: 10,
+        padding: 20,
+        margin: 20, 
+    },
+
+    recipeTitle: {
+        fontSize: 22,
+        fontWeight: 'bold',
+        color: '#333', 
+        marginBottom: 10, 
+        textAlign: 'center', 
+    },
+      
+    recipeDescription: {
+        fontSize: 16,
+        color: '#666',
+        marginBottom: 20, 
+        textAlign: 'center', 
+    },
+      
+    image: {
+        width: 60, 
+        height: 60, 
+        marginBottom: 20, 
+    },
+      
+    recipeButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-around', 
+    },
+      
+    buttonGetStarted: {
+        backgroundColor: '#FFA500', 
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 20,
+    },
+      
+    buttonText: {
+        color: '#fff', 
+        fontSize: 18,
+        fontWeight: 'bold',
+        textAlign: 'center', 
     },
 });
