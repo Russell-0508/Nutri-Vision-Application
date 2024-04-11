@@ -73,10 +73,16 @@ const AccountReg = ({ navigation }) => {
 
     const handleCreateAccountPress = async () => {
         const passwordsDoMatch = checkPasswordsMatch(); // Check if passwords match
+        const isPasswordStrong = passwordStrength && passwordStrength.message === 'Strong';
+        
         if (!termsAccepted) {
             alert('Please read and accept the Terms and Conditions to proceed.');
             return;
-        } else if (passwordsDoMatch) {
+        } else if (!isPasswordStrong) {
+            alert('Please use a Stronger Password.');
+            return;
+        }
+        else if (passwordsDoMatch) {
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
