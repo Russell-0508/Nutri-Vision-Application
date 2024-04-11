@@ -14,7 +14,7 @@ import { getStorage, ref, getDownloadURL } from "firebase/storage"
 export default function HomePage({navigation}) {
 
     const onGetStartedPress = () => {
-        navigation.navigate('Login');
+        navigation.navigate('Community');
     };
 
     const [date, setDate] = useState(new Date());
