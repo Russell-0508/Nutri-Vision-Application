@@ -265,23 +265,30 @@ export default function HomePage({navigation}) {
 
                 <View style = {styles.recipe}>
                     <Text style = {styles.recipeTitle}>Recipes Recommendation</Text> 
-                    <View style={styles.rowContainer}>
+                    <Text style = {styles.recipeDescription} >
+                        Get started with our personalized recipe recommendations!
+                    </Text>
+
+                    <View style = {styles.recipeHighlight} >
                         <Image
-                            source={require('../assets/kitty.png')} 
-                            style={styles.image}
+                            source={require('../assets/images/ChickenRice.jpg')} 
+                            style={styles.recipeImage}
                         />
-                        <Text style={styles.recipeDescription}>
-                             RECIPE DESCRIPTION 123
+                        <Text style={styles.recipeName}>
+                            CHICKEN RICE
                         </Text>
                     </View>
+
+                    <Text style = {styles.recipeTime}>
+                            20 Mins Preparation Time
+                    </Text>
+
 
                     <View style = {styles.recipeButtons}>
                         <TouchableOpacity onPress = {onGetStartedPress} style = {styles.buttonGetStarted}>
                             <Text style = {styles.buttonText}>Get Started</Text>
                         </TouchableOpacity>
                     </View>
-                        
-
                 </View>
 
   
@@ -367,45 +374,23 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 
-
-    mealsSection: {
-        padding: 16,
-    },
-    mealsTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    mealItem: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    mealImage: {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
-    },
     bottomNav: {
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         backgroundColor: '#fff',
     },
 
-    rowContainer: {
-        flexDirection: 'row',
-        alignItems: 'center', 
-        justifyContent: 'center', 
-    },
-
+// ---------------------------------------------------------------------------
     recipe: {
         backgroundColor: '#fff', 
-        borderRadius: 10,
-        padding: 20,
-        margin: 20, 
+        borderRadius: 20,
+        padding: 10,
+        marginHorizontal: 25,
+        marginTop: 20,
     },
 
     recipeTitle: {
-        fontSize: 22,
+        fontSize: 23,
         fontWeight: 'bold',
         color: '#333', 
         marginBottom: 10, 
@@ -415,19 +400,45 @@ const styles = StyleSheet.create({
     recipeDescription: {
         fontSize: 16,
         color: '#666',
-        marginBottom: 20, 
-        textAlign: 'center', 
+        textAlign: 'center',
+        marginTop : -5, 
+    },
+
+    recipeHighlight: {
+        flexDirection : 'row',
+        alignItems: 'center',
     },
       
-    image: {
+    recipeImage: {
         width: 60, 
         height: 60, 
         marginBottom: 20, 
+        marginRight: 45,
     },
       
     recipeButtons: {
         flexDirection: 'row',
         justifyContent: 'space-around', 
+    },
+
+    recipeName: {
+        fontSize : 20,
+        fontWeight : 'bold',
+        color: '#333333',
+    },
+
+    recipeButtons : {
+        flexDirection : 'row',
+        justifyContent : 'center',
+        alignContent : 'center',
+    },
+
+    recipeTime: {
+        fontSize : 15,
+        color : '#555555',
+        textAlign : 'center',
+        marginTop : -15,
+        marginBottom : 18,
     },
       
     buttonGetStarted: {
