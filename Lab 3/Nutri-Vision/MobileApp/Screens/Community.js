@@ -14,7 +14,7 @@ const Community = ({ navigation }) => {
         },
         {
             id: 2,
-            name: 'Eliif Sonas',
+            name: 'Jake Sonas',
             profilePic: require('../assets/images/Woman1.png'),
             // more data as needed...
         },
@@ -23,9 +23,13 @@ const Community = ({ navigation }) => {
     return (
         <ScrollView style={styles.container}>
             <View style={styles.searchContainer}>
-                <TextInput style={styles.searchInput} placeholder="Search..." />
+                <TextInput 
+                    style={styles.searchInput}
+                    placeholder="Search..."
+                    value={searchQuery}
+                    onChangeText={setSearchQuery}
+                />
                 <Icon name="search" size={24} color="#000" />
-        
             </View>
         
             {/* List of community members or posts */}
@@ -37,43 +41,58 @@ const Community = ({ navigation }) => {
                         onPress={() => navigateToProfile(member.id)}
                     >
                         <Image 
-                            source={{ uri: member.profilePic }} 
+                            source={member.profilePic} 
                             style={styles.profilePic} 
                         />
-
                         <Text style={styles.memberName}>{member.name}</Text>
-                    
                     </TouchableOpacity>
                 ))}
             </View>
         </ScrollView>
+
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff', // Adjust the background color as needed
+        backgroundColor: '#fff',
     },
     searchContainer: {
-        // Styles for the search container
+        flexDirection: 'row',
+        padding: 10,
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        borderRadius: 20,
+        margin: 10,
     },
     searchInput: {
-        // Styles for the search input
+        flex: 1,
+        padding: 10,
+        fontSize: 16,
     },
     communityList: {
         // Styles for the community list container
     },
     memberCard: {
-        // Styles for each community member card
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        padding: 10,
+        margin: 10,
     },
     profilePic: {
-        // Styles for the profile picture of each community member
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        marginRight: 10,
     },
     memberName: {
-        // Styles for the name of each community member
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#333',
     },
-    // Add other styles as needed
 });
 
 export default Community;
