@@ -7,7 +7,7 @@ import { saveMealToFirestore, updateMealDataInFirestore } from '../../MealHistor
 import { fetchNutritionalInfo } from '../../CalorieNinjaAPI';
 import { useNavigation } from '@react-navigation/native';
 import Svg, { Circle } from 'react-native-svg';
-import { checkMealTarget } from '../../goalsDetail'; 
+import { fetchUserGoalDetails, checkMealTarget } from '../../goalsDetail';
 
 function NutritionalInfoPage({ route, navigation }) {
   const { content } = route.params;
@@ -143,10 +143,35 @@ function NutritionalInfoPage({ route, navigation }) {
     }
   };
 
-  const [carbsPercentage, setCarbsPercentage] = useState(70); // Example percentage
-  const [fatsPercentage, setFatsPercentage] = useState(55); // Example percentage
-  const [proteinPercentage, setProteinPercentage] = useState(25); // Example percentage
+  const [carbsPercentage, setCarbsPercentage] = useState(0); // Example percentage
+  const [fatsPercentage, setFatsPercentage] = useState(0); // Example percentage
+  const [proteinPercentage, setProteinPercentage] = useState(0); // Example percentage
 
+  useEffect(() => {
+    // Fetch user's goal details
+    const fetchGoalDetails = async () => {
+      try {
+        const userEmail = 'PAN@GMAIL.COM'; 
+        const goalDetails = await fetchUserGoalDetails(userEmail);
+
+        // Calculate percentages
+        const targetCarbs = goalDetails.Carbs;
+        const targetFats = goalDetails.Fats;
+        const targetProtein = goalDetails.Protein;
+        const carbsPercent = Math.round((carbohydrates / targetCarbs) * 100);
+        const fatsPercent = Math.round((fats / targetFats) * 100);
+        const proteinPercent = Math.round((protein / targetProtein) * 100);
+
+        // Update state with calculated percentages
+        setCarbsPercentage(carbsPercent);
+        setFatsPercentage(fatsPercent);
+        setProteinPercentage(proteinPercent);
+      } catch (error) {
+        console.error('Error fetching user goal details:', error);
+      }
+    };
+    fetchGoalDetails();
+  }, [carbohydrates, fats, protein]);
 
   const ProgressCircle = ({ percentage, fillColor, label }) => {
     const size = 75; // Diameter of the circle
