@@ -10,35 +10,74 @@ import { fetchUserGoalDetails } from '../../goalsDetail';
 
 
 export default function HomePage({navigation}) {
-    
+
+    // Variables for date
+    const [date, setDate] = useState(new Date());
+    const [showDatePicker, setShowDatePicker] = useState(false);
+
+    // Variables for meals and goals
+    const [mealEntries, setMealEntries] = useState([]);
+    const [goalsDetails, setGoalsDetails] = useState([]);
+
+    // Goals for macronutrients
+    const goalCalories = goalsDetails.Calories;
+    const goalCarbohydrates = goalsDetails.Carbs;
+    const goalProtein = goalsDetails.Protein;
+    const goalFat = goalsDetails.Fats;
+ 
+    const [Heartpercentage, setHeartPercentage] = useState(0); // Example percentage
+
+    // Total of each macronutrients consumed
+    const totalCaloriesConsumed = mealEntries.reduce((total, entry) => total + entry.calories, 0);
+    const totalCarbohydratesConsumed = mealEntries.reduce((total,entry) => total + entry.carbohydrates,0);
+    const totalFatConsumed = mealEntries.reduce((total,entry) => total + entry.totalFat, 0);
+    const totlaProteinConsumed = mealEntries.reduce((total,entry) => total + entry.protein,0);   
+
+    // Calculating percentages
+    const calculateCarbohydratePercentage = () => {
+        if (goalCalories > 0){
+            return (totalCaloriesConsumed / goalCarbohydrates) * 100;
+        }
+        return 0;
+    };
+
+    const calculateCaloriePercentage = () => {
+        if (goalCalories > 0){
+            return (totalCaloriesConsumed / goalCalories) * 100;
+        }
+        return 0;
+    };
+
+    const calculateFatPercentage = () => {
+        if (goalFat > 0){
+            return (totalFatConsumed / goalFat) * 100;
+        }
+        return 0;
+    };
+
+    const calculateProteinPercentage = () => {
+        if (goalProtein > 0){
+            return (totlaProteinConsumed / goalProtein) * 100;
+        }
+        return 0;
+    };
+
+    // Calculate the percentage of calories consumed
+    const caloriePercantage = Math.min(calculateCaloriePercentage(), 100);
+    const CarbohydratePercentage = Math.min(calculateCarbohydratePercentage(), 100);
+    const FatPercentage = Math.min(calculateFatPercentage(), 100);
+    const ProteinPercentage = Math.min(calculateProteinPercentage(), 100);
+
+
+
+   // Handles navigation to Community Page
     const onGetStartedPress = () => {
         console.log('Navigation object:', navigation);
         navigation.navigate('Community');
     };
 
-    const [date, setDate] = useState(new Date());
-    const [showDatePicker, setShowDatePicker] = useState(false);
-    const [mealEntries, setMealEntries] = useState([]);
-
-    const [carbsPercentage, setCarbsPercentage] = useState(70); // Example percentage
-    const [fatsPercentage, setFatsPercentage] = useState(55); // Example percentage
-    const [proteinPercentage, setProteinPercentage] = useState(25); // Example percentage    
-    const [Heartpercentage, setHeartPercentage] = useState(50); // Example percentage
-
-    const goalCalories = 2000; // Set goal calories here
-    const totalCaloriesConsumed = mealEntries.reduce((total, entry) => total + entry.calories, 0);
-
-    const [caloriesRemaining,setCaloriesRemaining] = useState(goalCalories - totalCaloriesConsumed);
-    // Calculate the percentage of calories consumed
-    const caloriePercantage = Math.min((totalCaloriesConsumed / goalCalories) * 100, 100);
-
-    const [goalsDetails, setGoalsDetails] = useState([]);
 
     // Filter entries based on selected date
-
-    const [caloriesConsumed, setCaloriesConsumed] = useState(0);
-
-
     const onChange = (event, selectedDate) => {
       const currentDate = selectedDate || date;
       setShowDatePicker(Platform.OS === 'ios');
@@ -68,34 +107,35 @@ export default function HomePage({navigation}) {
     const [avatarUrl, setAvatarUrl] = useState();
 
     useEffect(() => {
-        const fetchProfileByEmail = async () => {
-            try {
-                const email = "PAN@GMAIL.COM"; //change this email to read from user.email or smth
-                const profiles = await getProfileByEmail(email); 
-                if (profiles.length > 0) {
-                    const profile = profiles[0];
-                    // Handling avatarUrl
-                    if (profile.avatarUrl) {
-                        setAvatarUrl(profile.avatarUrl); 
-                    } else {
-                        console.log('Profile found but no avatar URL present.');
-                    }
-
-                    // Fetch and set goals details
-                    const goals = await fetchUserGoalDetails(email);
-                    setGoalsDetails(goals);
-                    console.log('Goal Details:', goals); //why undefined?
-    
-                } else {
-                    console.log('No profile found for the given email:', email);
-                }
-            } catch (error) {
-                console.error("Error fetching profile by email:", error);
-            }
-        };
-    
         fetchProfileByEmail();
     }, []);
+
+    const fetchProfileByEmail = async () => {
+        try {
+            const email = "PAN@GMAIL.COM"; //change this email to read from user.email or smth
+            const profiles = await getProfileByEmail(email); 
+            if (profiles.length > 0) {
+                const profile = profiles[0];
+                // Handling avatarUrl
+                if (profile.avatarUrl) {
+                    setAvatarUrl(profile.avatarUrl); 
+                } else {
+                    console.log('Profile found but no avatar URL present.');
+                }
+
+                // Fetch and set goals details
+                const goals = await fetchUserGoalDetails(email);
+                setGoalsDetails(goals);
+                console.log('Goal Details:', goals); //why undefined?
+
+            } else {
+                console.log('No profile found for the given email:', email);
+            }
+        } catch (error) {
+            console.error("Error fetching profile by email:", error);
+        }
+    };
+
 
     const ProgressCircle = ({ percentage, fillColor, label }) => {
         const size = 75; // Diameter of the circle
@@ -128,7 +168,7 @@ export default function HomePage({navigation}) {
                 transform={`rotate(-90, ${size / 2}, ${size / 2})`}
               />
             </Svg>
-            <Text style={{ position: 'absolute', fontWeight: 'bold', top: size * 0.35 }}>{percentage}%</Text>
+            <Text style={{ position: 'absolute', fontWeight: 'bold', top: size * 0.35 }}>{Math.round(percentage)}%</Text>
             <Text style={{ marginTop: 4, fontWeight: 'bold' }}>{label}</Text> 
           </View>
         );
@@ -246,9 +286,9 @@ export default function HomePage({navigation}) {
 
                     {/* Nutritional information progress circles */}
                     <View style={styles.progressCirclesContainer}>
-                        <ProgressCircle percentage={carbsPercentage} fillColor="brown" label="Carbohydrates" />
-                        <ProgressCircle percentage={fatsPercentage} fillColor="yellow" label="Fats" />
-                        <ProgressCircle percentage={proteinPercentage} fillColor="blue" label="Proteins" />
+                        <ProgressCircle percentage={CarbohydratePercentage} fillColor="brown" label="Carbohydrates" />
+                        <ProgressCircle percentage={FatPercentage} fillColor="yellow" label="Fats" />
+                        <ProgressCircle percentage={ProteinPercentage} fillColor="blue" label="Proteins" />
                     </View>
                 </View>
 
