@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
         fontWeight: '400',
         alignSelf: 'flex-start',
         marginTop: 70,
-        marginLeft: 5
+        marginLeft: 20
     },
 
     textcontainer: {

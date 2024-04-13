@@ -24,8 +24,6 @@ export default function HomePage({navigation}) {
     const goalCarbohydrates = goalsDetails.Carbs;
     const goalProtein = goalsDetails.Protein;
     const goalFat = goalsDetails.Fats;
- 
-    const [Heartpercentage, setHeartPercentage] = useState(0); // Example percentage
 
     // Total of each macronutrients consumed
     const totalCaloriesConsumed = mealEntries.reduce((total, entry) => total + entry.calories, 0);
@@ -34,16 +32,16 @@ export default function HomePage({navigation}) {
     const totlaProteinConsumed = mealEntries.reduce((total,entry) => total + entry.protein,0);   
 
     // Calculating percentages
-    const calculateCarbohydratePercentage = () => {
+    const calculateCaloriePercentage = () => {
         if (goalCalories > 0){
-            return (totalCaloriesConsumed / goalCarbohydrates) * 100;
+            return (totalCaloriesConsumed / goalCalories) * 100;
         }
         return 0;
     };
 
-    const calculateCaloriePercentage = () => {
-        if (goalCalories > 0){
-            return (totalCaloriesConsumed / goalCalories) * 100;
+    const calculateCarbohydratePercentage = () => {
+        if (goalCarbohydrates > 0){
+            return (totalCarbohydratesConsumed / goalCarbohydrates) * 100;
         }
         return 0;
     };
@@ -62,12 +60,12 @@ export default function HomePage({navigation}) {
         return 0;
     };
 
-    // Calculate the percentage of calories consumed
+    // Calculate the percentages for the Circles
     const caloriePercantage = Math.min(calculateCaloriePercentage(), 100);
     const CarbohydratePercentage = Math.min(calculateCarbohydratePercentage(), 100);
     const FatPercentage = Math.min(calculateFatPercentage(), 100);
     const ProteinPercentage = Math.min(calculateProteinPercentage(), 100);
-
+    const progressPercentage = Math.round((caloriePercantage + CarbohydratePercentage + FatPercentage + ProteinPercentage)/4);
 
 
    // Handles navigation to Community Page
@@ -243,7 +241,7 @@ export default function HomePage({navigation}) {
                 </Svg>
                 <View style={{ position: 'absolute', bottom: 0, alignItems: 'center' }}>
                     <Text style={{ fontSize: 20, fontWeight: 'bold', color: fillColor }}>{`${percentage}%`}</Text>
-                    <Text style={{ fontSize: 14, color: '#666' }}>Heart Rate</Text>
+                    <Text style={{ fontSize: 14, color: '#666' }}>My Progress</Text>
                 </View>
             </View>
         );
@@ -295,7 +293,7 @@ export default function HomePage({navigation}) {
                 <View style={styles.targetSection}>
                     <Text style = {styles.targetTitle}>My Target</Text>
                     <HeartRateTracker
-                        percentage = {Heartpercentage}
+                        percentage = {progressPercentage}
                         fillColor="#FF4500" 
                         label = "Heart Rate"
                     />
