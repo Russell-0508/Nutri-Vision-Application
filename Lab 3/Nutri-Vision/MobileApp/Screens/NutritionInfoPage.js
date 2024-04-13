@@ -7,7 +7,7 @@ import { saveMealToFirestore, updateMealDataInFirestore } from '../../MealHistor
 import { fetchNutritionalInfo } from '../../CalorieNinjaAPI';
 import { useNavigation } from '@react-navigation/native';
 import Svg, { Circle } from 'react-native-svg';
-
+import { fetchUserGoalDetails, checkMealTarget } from '../../goalsDetail';
 
 function NutritionalInfoPage({ route, navigation }) {
   const { content } = route.params;
@@ -27,6 +27,7 @@ function NutritionalInfoPage({ route, navigation }) {
   const [protein, setProtein] = useState('Loading...');
   const [mealName, setMealName] = useState(null);
   const [mealId, setMealId] = useState(null);
+  const [isTargetFit, setIsTargetFit] = useState(false);
 
   const { ingredients } = route.params;
 
@@ -89,6 +90,18 @@ function NutritionalInfoPage({ route, navigation }) {
       .catch(error => console.error('Error fetching nutritional info:', error));
   }, [base64Image, ingredients]); // Make sure to include 'ingredients' in the dependency array
 
+  useEffect(() => {
+
+    // Check if the meal matches the user's target calories
+    checkMealTarget('PAN@GMAIL.COM', calories)
+      .then(result => {
+        setIsTargetFit(result);
+      })
+      .catch(error => {
+        console.error('Error checking meal target:', error);
+      });
+  }, []);
+
   // For toggling favourites 
   const [isFavorite, setIsFavorite] = useState(false);
   // State for heart button color
@@ -114,16 +127,51 @@ function NutritionalInfoPage({ route, navigation }) {
     console.log(`Pressed ${action}`);
   };
 
-  const ConfirmMealButton = () => (
-    <TouchableOpacity style={styles.confirmMealButton} onPress={() => navigation.navigate('Tabs')}>
-      <Text style={styles.confirmMealText}>It fits your target!</Text>
-    </TouchableOpacity>
-  );
+  const ConfirmMealButton = () => {
+    if (isTargetFit) {
+      return (
+        <TouchableOpacity style={[styles.confirmMealButton, { backgroundColor: 'rgb(96, 190, 61)' }]} onPress={() => navigation.navigate('Tabs')}>
+          <Text style={styles.confirmMealText}>It fits your target!</Text>
+        </TouchableOpacity>
+      );
+    } else {
+      return (
+        <TouchableOpacity style={[styles.confirmMealButton, { backgroundColor: 'red' }]} onPress={() => navigation.navigate('Tabs')}>
+          <Text style={styles.confirmMealText}>It does not fit your target!</Text>
+        </TouchableOpacity>
+      );
+    }
+  };
 
-  const [carbsPercentage, setCarbsPercentage] = useState(70); // Example percentage
-  const [fatsPercentage, setFatsPercentage] = useState(55); // Example percentage
-  const [proteinPercentage, setProteinPercentage] = useState(25); // Example percentage
+  const [carbsPercentage, setCarbsPercentage] = useState(0); // Example percentage
+  const [fatsPercentage, setFatsPercentage] = useState(0); // Example percentage
+  const [proteinPercentage, setProteinPercentage] = useState(0); // Example percentage
 
+  useEffect(() => {
+    // Fetch user's goal details
+    const fetchGoalDetails = async () => {
+      try {
+        const userEmail = 'PAN@GMAIL.COM'; 
+        const goalDetails = await fetchUserGoalDetails(userEmail);
+
+        // Calculate percentages
+        const targetCarbs = goalDetails.Carbs;
+        const targetFats = goalDetails.Fats;
+        const targetProtein = goalDetails.Protein;
+        const carbsPercent = Math.round((carbohydrates / targetCarbs) * 100);
+        const fatsPercent = Math.round((fats / targetFats) * 100);
+        const proteinPercent = Math.round((protein / targetProtein) * 100);
+
+        // Update state with calculated percentages
+        setCarbsPercentage(carbsPercent);
+        setFatsPercentage(fatsPercent);
+        setProteinPercentage(proteinPercent);
+      } catch (error) {
+        console.error('Error fetching user goal details:', error);
+      }
+    };
+    fetchGoalDetails();
+  }, [carbohydrates, fats, protein]);
 
   const ProgressCircle = ({ percentage, fillColor, label }) => {
     const size = 75; // Diameter of the circle
