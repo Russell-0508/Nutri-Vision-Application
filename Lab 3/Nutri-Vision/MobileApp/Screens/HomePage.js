@@ -24,8 +24,6 @@ export default function HomePage({navigation}) {
     const goalCarbohydrates = goalsDetails.Carbs;
     const goalProtein = goalsDetails.Protein;
     const goalFat = goalsDetails.Fats;
- 
-    const [Heartpercentage, setHeartPercentage] = useState(0); // Example percentage
 
     // Total of each macronutrients consumed
     const totalCaloriesConsumed = mealEntries.reduce((total, entry) => total + entry.calories, 0);

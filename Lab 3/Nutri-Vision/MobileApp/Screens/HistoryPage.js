@@ -22,8 +22,7 @@ screenWidth = 500
 
 
 {/* This is the Entry element, which takes in title, description, and displays it all */ }
-function Entry({ title, description, navigation, documentId }) {
-
+function Entry({ title, description, navigation, documentId}) {
     const handleNextEntryPress = () => {
         navigation.navigate('IndividualMeal', { documentId: documentId })
         console.log('Navigatiing to documentId: ', { documentId: documentId })
