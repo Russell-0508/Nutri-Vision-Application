@@ -1,8 +1,18 @@
-import { collection, query, where, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, startOfDay, endOfDay } from 'firebase/firestore';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import firestore from './firebase/config';
 
 const profileCollection = collection(firestore, 'profile');
 const goalsDetailCollection = collection(firestore, 'goalsDetail');
+
+// Predefined goal details
+const goalDetailsMap = {
+    'Eat Healthier': { Calories: 2500, Protein: 84, Carbs: 350, Fats: 75 },
+    'Gain Weight': { Calories: 3000, Protein: 105, Carbs: 415, Fats: 85 },
+    'Get Fitter': { Calories: 2500, Protein: 126, Carbs: 350, Fats: 60 },
+    'Lose Weight': { Calories: 2000, Protein: 84, Carbs: 245, Fats: 60 },
+    "I don't know yet": { Calories: 2500, Protein: 84, Carbs: 350, Fats: 75 },
+    'default': { Calories: 2500, Protein: 84, Carbs: 350, Fats: 75 }
+};
 
 // Function to fetch user's goals and their details
 export const fetchUserGoalDetails = async (userEmail) => {
@@ -10,21 +20,17 @@ export const fetchUserGoalDetails = async (userEmail) => {
         // Query ProfileHistory to get the user's profile
         const profileQuery = query(profileCollection, where('email', '==', userEmail));
         const profileSnapshot = await getDocs(profileQuery);
-        const userProfile = profileSnapshot.docs.map(doc => doc.data())[0]; // Assuming email is unique
+        if (!profileSnapshot.empty) {
+            const userProfile = profileSnapshot.docs[0].data(); // Assuming email is unique
+            const userGoals = userProfile.goals || 'default'; // Fallback to default if no goals are set
+            console.log('UserGoal:', userGoals);
 
-        // Get the user's goals
-        const userGoals = userProfile.goals;
-
-        // Query goalsDetail to get details for each goal
-        const goalsDetails = [];
-        for (const goal of userGoals) {
-            const goalQuery = query(goalsDetailCollection, where('goalName', '==', goal));
-            const goalSnapshot = await getDocs(goalQuery);
-            const goalDetails = goalSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))[0]; // Assuming goalName is unique
-            goalsDetails.push(goalDetails);
+            // Retrieve goal details based on user goals
+            return goalDetailsMap[userGoals] || goalDetailsMap['default'];
+        } else {
+            throw new Error('No profile found for the given email');
         }
 
-        return goalsDetails;
     } catch (error) {
         console.error('Error fetching user goals details:', error);
         throw error;

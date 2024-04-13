@@ -113,7 +113,7 @@ function IndividualMeal({ route }) {
   const [proteinPercentage, setProteinPercentage] = useState(25); // Example percentage
 
 
-  const ProgressCircle = ({ percentage, fillColor, label }) => {
+  const ProgressCircle = ({ percentage, fillColor, label, value }) => {
     const size = 75; // Diameter of the circle
     const strokeWidth = 5; // Width of the circle border
     const radius = (size / 2) - (strokeWidth * 2); // Radius of the circle
@@ -121,10 +121,10 @@ function IndividualMeal({ route }) {
     const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
     return (
-      <View style={{ alignItems: 'center', margin: 10 }}>
+      <View style={{ alignItems: 'center', margin: 10, position: 'relative' }}>
         <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
           <Circle
-            stroke="#ddd" // This is the color for the "unfilled" part of the circle
+            stroke="#ddd"
             fill="none"
             cx={size / 2}
             cy={size / 2}
@@ -144,11 +144,23 @@ function IndividualMeal({ route }) {
             transform={`rotate(-90, ${size / 2}, ${size / 2})`}
           />
         </Svg>
-        <Text style={{ position: 'absolute', fontWeight: 'bold', top: size * 0.35 }}>{percentage}%</Text>
-        <Text style={{ fontWeight: 'bold', top: size * 0.85 }}>{label}</Text>
+        {/* Percentage Text with absolute positioning */}
+        <Text style={{
+            position: 'absolute',
+            fontWeight: 'bold',
+            fontSize: 14, // Adjust the font size as needed
+            left: '55%',
+            top: '35%',
+            transform: [{ translateX: -size * 0.2 }, { translateY: -size * 0.1 }],
+        }}>
+            {percentage}%
+        </Text>
+        {/* Label and Value Text */}
+        <Text style={{ fontWeight: 'bold', marginTop: 4 }}>{label}</Text>
       </View>
     );
-  };
+};
+
 
 
   return (
@@ -205,9 +217,9 @@ function IndividualMeal({ route }) {
           </View>
           {/* Nutritional information progress circles */}
           <View style={styles.progressCirclesContainer}>
-            <ProgressCircle percentage={carbsPercentage} fillColor="brown" label="Carbohydrates" />
-            <ProgressCircle percentage={fatsPercentage} fillColor="yellow" label="Fats" />
-            <ProgressCircle percentage={proteinPercentage} fillColor="blue" label="Proteins" />
+            <ProgressCircle percentage={carbsPercentage} fillColor="brown" label="Carbohydrates" value={carbohydrates} />
+            <ProgressCircle percentage={fatsPercentage} fillColor="yellow" label="Fats" value={totalFat} />
+            <ProgressCircle percentage={proteinPercentage} fillColor="blue" label="Proteins" value={protein} />
           </View>
 
         </View>
@@ -246,8 +258,10 @@ const styles = StyleSheet.create({
   nutritionalInfoContainer: {
     backgroundColor: 'white',
     borderRadius: 40,
-    padding: 16,
+    padding: 10,
+    paddingBottom: 160,
     marginTop: 10,
+    marginBottom: 100,
     flex: 1,
     justifyContent: 'flex-start',
   },
@@ -284,7 +298,7 @@ const styles = StyleSheet.create({
     padding: 20,
     marginHorizontal: 20,
     marginTop: 10,
-    marginRight: 70,
+    marginRight: 30,
     marginLeft: 20,
     alignSelf: 'stretch',
     alignItems: 'flex-start',
@@ -328,13 +342,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    marginTop: 10,
-    marginRight: 50,
+    marginTop: 80,
+    marginRight: 20,
   },
 
-  progressCircleContainer: {
-    alignItems: 'center', // Center-align the progress circle and label
-  },
 
   progressLabel: {
     marginTop: 8, // Space between the circle and the label text
@@ -372,10 +383,6 @@ const styles = StyleSheet.create({
     borderColor: 'blue',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  progressValue:
-  {
-    fontWeight: 'bold',
   },
 
 

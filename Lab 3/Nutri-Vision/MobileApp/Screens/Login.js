@@ -34,9 +34,7 @@ function Login({ navigation }) {
     const [password, setPassword] = useState(null);
 
     const LoginFunction = async () => {
-        console.log('login success!');
-        navigation.navigate('Tabs');
-        /*try {
+        try {
             // Attempt to sign in
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             console.log("Login success!");
@@ -48,7 +46,7 @@ function Login({ navigation }) {
             Alert.alert("Please register if you are a new user");
             navigation.navigate('Login');
             console.log("Login failed D:");
-        }*/
+        }
     }
     // Logic when Email button is pressed
     const textInputRef = useRef(null);
@@ -121,8 +119,8 @@ function Login({ navigation }) {
                     </View>
                     <TouchableOpacity onPress={onEyeIconPress}>
                         <Image
-                            source={isPasswordVisible ? require('../assets/open_eye.png') :
-                                require('../assets/close_eye.png')}
+                            source={isPasswordVisible ? require('../assets/close_eye.png') :
+                                    require('../assets/open_eye.png')}
                             style={{
                                 width: 30, height: 30, position: 'absolute',
                                 right: 60, bottom: 5, alignSelf: 'center'
@@ -225,5 +223,4 @@ const styles = StyleSheet.create({
 
 
 })
-
 export default Login;

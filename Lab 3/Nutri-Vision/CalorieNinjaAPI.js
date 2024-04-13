@@ -1,8 +1,9 @@
 // CalorieNinjasAPI.js
 
-//const apiKey = 'ZU5mjAQ4XCSqCf5coiK7Tg==2xon0PnMDSJJAMX7';
-const apiKey = '';
+
+//const apiKey = '';
 export const fetchNutritionalInfo = async (query) => {
+    const apiKey = 'ZU5mjAQ4XCSqCf5coiK7Tg==2xon0PnMDSJJAMX7';
     try {
         const apiUrl = `https://api.calorieninjas.com/v1/nutrition?query=${query}`;
 
