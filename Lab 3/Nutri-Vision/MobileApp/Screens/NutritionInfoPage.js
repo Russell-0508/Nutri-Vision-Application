@@ -27,7 +27,7 @@ function NutritionalInfoPage({ route, navigation }) {
   const [protein, setProtein] = useState('Loading...');
   const [mealName, setMealName] = useState(null);
   const [mealId, setMealId] = useState(null);
-  const [isTargetFit, setIsTargetFit] = useState(false);
+  const [isTargetFit, setIsTargetFit] = useState(null);
 
   const { ingredients } = route.params;
 
@@ -67,6 +67,12 @@ function NutritionalInfoPage({ route, navigation }) {
         setFats(totalFats);
         setProtein(totalProtein);
 
+        checkMealTarget('PAN@GMAIL.COM', totalCalories) 
+        .then(result => {
+          // console.log(result);
+          setIsTargetFit(result);
+        })
+
         // Prepare the meal data
         const mealData = {
           name: mealName,
@@ -89,18 +95,6 @@ function NutritionalInfoPage({ route, navigation }) {
       })
       .catch(error => console.error('Error fetching nutritional info:', error));
   }, [base64Image, ingredients]); // Make sure to include 'ingredients' in the dependency array
-
-  useEffect(() => {
-
-    // Check if the meal matches the user's target calories
-    checkMealTarget('PAN@GMAIL.COM', calories)
-      .then(result => {
-        setIsTargetFit(result);
-      })
-      .catch(error => {
-        console.error('Error checking meal target:', error);
-      });
-  }, []);
 
   // For toggling favourites 
   const [isFavorite, setIsFavorite] = useState(false);
@@ -128,13 +122,13 @@ function NutritionalInfoPage({ route, navigation }) {
   };
 
   const ConfirmMealButton = () => {
-    if (isTargetFit) {
+    if (isTargetFit==true) {
       return (
         <TouchableOpacity style={[styles.confirmMealButton, { backgroundColor: 'rgb(96, 190, 61)' }]} onPress={() => navigation.navigate('Tabs')}>
           <Text style={styles.confirmMealText}>It fits your target!</Text>
         </TouchableOpacity>
       );
-    } else {
+    } else if (isTargetFit == false) {
       return (
         <TouchableOpacity style={[styles.confirmMealButton, { backgroundColor: 'red' }]} onPress={() => navigation.navigate('Tabs')}>
           <Text style={styles.confirmMealText}>It does not fit your target!</Text>
@@ -151,7 +145,7 @@ function NutritionalInfoPage({ route, navigation }) {
     // Fetch user's goal details
     const fetchGoalDetails = async () => {
       try {
-        const userEmail = 'PAN@GMAIL.COM'; 
+        const userEmail = 'PAN@GMAIL.COM';
         const goalDetails = await fetchUserGoalDetails(userEmail);
 
         // Calculate percentages
@@ -221,10 +215,6 @@ function NutritionalInfoPage({ route, navigation }) {
           style={styles.imageStyle}
           resizeMode="contain"
         />
-        {/* Three-dot button */}
-        <TouchableOpacity style={styles.threeDotButton} onPress={() => handlePress('More')}>
-          <MaterialIcons name="more-horiz" size={30} color="black" />
-        </TouchableOpacity>
         {/* Heart button */}
         <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
           <MaterialIcons
