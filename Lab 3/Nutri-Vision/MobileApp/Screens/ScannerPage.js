@@ -7,7 +7,29 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import * as FileSystem from 'expo-file-system';
 
+//API orchestration imports
+import { sendImageToAPI } from '../../GPT4API';
+import { fetchNutritionalInfo } from '../../CalorieNinjaAPI';
+
 <MaterialIcons name="photo-library" size={30} color="black" />
+
+//extract content from JSON, json traversal doesnt work for some reason
+function extractContent(inputString) {
+  // Define a regex to search for "content":" followed by any text until the next quote
+  const regex = /"content":"(.*?)"/;
+
+  // Use the regex to search the input string
+  const match = inputString.match(regex);
+
+  // Check if a match was found
+  if (match && match[1]) {
+    // Return the matched group, which is the content text
+    return match[1];
+  } else {
+    // Return a message or null if no match was found
+    return 'Content not found';
+  }
+}
 
 function ScannerPage({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
@@ -49,11 +71,24 @@ function ScannerPage({ navigation }) {
           encoding: FileSystem.EncodingType.Base64,
         });
 
+        if (base64Image) {
+          const apiResponse = await sendImageToAPI(base64Image);
+          console.log(apiResponse);
+          const content = extractContent(apiResponse);
+          console.log(content);
+
+          // Navigate to Confirm Meal page and pass the ingredients of the API response content
+          console.log("Navigating to Confirm Meal page...");
+          navigation.navigate('Confirm Meal', { base64Image, content });
+          //const ingredientList = await fetchNutritionalInfo(content);
+          //console.log(ingredientList);
+        } else {
+          console.log('No image selected or captured');
+        }
         // console.log('Base64 image:', base64Image);
 
-        // Navigate to Confirm Meal page and pass the base64 encoded image
-        console.log("Navigating to Confirm Meal page...");
-        navigation.navigate('Confirm Meal', { base64Image });
+
+
       } catch (error) {
         console.error('Error taking picture:', error);
       }
@@ -113,16 +148,16 @@ function ScannerPage({ navigation }) {
   return (
     <View style={styles.container}>
       {isFocused && (
-      <Camera ref={ref => {
+        <Camera ref={ref => {
           cameraRef.current = ref;
         }} style={[styles.camera, { top: topOffset, height: cameraSize, width: windowWidth }]} type={type}>
-        {/*camera overlay components like buttons, they can be added here */}
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
-            <MaterialIcons name="camera" size={50} color="white" />
-          </TouchableOpacity>
-        </View>
-      </Camera>
+          {/*camera overlay components like buttons, they can be added here */}
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
+              <MaterialIcons name="camera" size={50} color="white" />
+            </TouchableOpacity>
+          </View>
+        </Camera>
       )}
 
       {/* Gallery button*/}
