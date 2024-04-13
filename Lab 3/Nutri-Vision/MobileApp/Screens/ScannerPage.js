@@ -135,10 +135,16 @@ function ScannerPage({ navigation }) {
         });
 
         // console.log("Base64 Image:", base64Image);
+        if (base64Image) {
+          const apiResponse = await sendImageToAPI(base64Image);
+          console.log(apiResponse);
+          const content = extractContent(apiResponse);
+          console.log(content);
 
-        // Navigate to Confirm Meal page and pass the base64 encoded image
-        console.log("Navigating to Confirm Meal page...");
-        navigation.navigate('Confirm Meal', { base64Image });
+          // Navigate to Confirm Meal page and pass the base64 encoded image
+          console.log("Navigating to Confirm Meal page...");
+          navigation.navigate('Confirm Meal', { base64Image, content });
+        }
       } catch (error) {
         console.error("Error converting image to base64:", error);
       }
