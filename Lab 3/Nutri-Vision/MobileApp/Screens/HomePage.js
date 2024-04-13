@@ -1,17 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { Alert, StyleSheet, View, Text, TextInput, Platform, Button, Image, SafeAreaView, ScrollView, TouchableOpacity, Linking} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import React, { useEffect, useState } from 'react';
+import { Image, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 //import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import Svg, { Circle, Path } from 'react-native-svg';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import { useNavigation } from '@react-navigation/native';
-import { getProfileByEmail } from '../../ProfileHistory';
 import { getMealHistoryFromFirestore } from '../../MealHistory';
+import { getProfileByEmail } from '../../ProfileHistory';
 import { fetchUserGoalDetails } from '../../goalsDetail';
-import { getStorage, ref, getDownloadURL } from "firebase/storage"
 
 
 export default function HomePage({navigation}) {
+    
+    const onGetStartedPress = () => {
+        console.log('Navigation object:', navigation);
+        navigation.navigate('Community');
+    };
 
     const [date, setDate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
@@ -259,6 +262,34 @@ export default function HomePage({navigation}) {
 
                 </View>
 
+                <View style = {styles.recipe}>
+                    <Text style = {styles.recipeTitle}>Recipes Recommendation</Text> 
+                    <Text style = {styles.recipeDescription} >
+                        Get started with our personalized recipe recommendations!
+                    </Text>
+
+                    <View style = {styles.recipeHighlight} >
+                        <Image
+                            source={require('../assets/images/ChickenRice.jpg')}
+                            style={styles.recipeImage}
+                        />
+                        <View style = {styles.TextContainer}>
+                            <Text style={styles.recipeName}>CHICKEN RICE</Text>
+                            <Text style={styles.recipeTime}>20 Mins Preparation Time</Text>
+                            <Text style = {styles.difficulty}>Difficulty Level: Easy</Text>
+                        </View>
+                    </View>
+
+
+
+
+                    <View style = {styles.recipeButtons}>
+                        <TouchableOpacity onPress = {onGetStartedPress} style = {styles.buttonGetStarted}>
+                            <Text style = {styles.buttonText}>Get Started</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
   
             </ScrollView>
         </SafeAreaView>
@@ -342,27 +373,88 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 
-
-    mealsSection: {
-        padding: 16,
-    },
-    mealsTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    mealItem: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    mealImage: {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
-    },
     bottomNav: {
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         backgroundColor: '#fff',
+    },
+
+// ---------------------------------------------------------------------------
+    recipe: {
+        backgroundColor: '#fff', 
+        borderRadius: 20,
+        padding: 10,
+        marginHorizontal: 25,
+        marginTop: 20,
+    },
+
+    recipeTitle: {
+        fontSize: 23,
+        fontWeight: 'bold',
+        color: '#333', 
+        marginBottom: 10, 
+        textAlign: 'center', 
+    },
+      
+    recipeDescription: {
+        fontSize: 16,
+        color: '#666',
+        textAlign: 'center',
+        marginTop : -5, 
+    },
+
+    recipeHighlight: {
+        flexDirection : 'row',
+        alignItems: 'center',
+        marginTop: 8,
+        marginBottom : 5,
+    },
+
+    TextContainer: {
+        flexDirection: 'column',
+    },
+      
+    recipeImage: {
+        width: 60, 
+        height: 60, 
+        marginRight: 40,
+    },
+      
+    recipeButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-around', 
+    },
+
+    recipeName: {
+        fontSize : 20,
+        fontWeight : 'bold',
+        color: '#333333',
+    },
+
+    recipeButtons : {
+        flexDirection : 'row',
+        justifyContent : 'center',
+        alignContent : 'center',
+    },
+
+    recipeTime: {
+        fontSize : 15,
+        color : '#555555',
+        textAlign : 'center',
+    },
+      
+    //--------------------------------------------------
+    buttonGetStarted: {
+        backgroundColor: '#FFA500', 
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 20,
+    },
+      
+    buttonText: {
+        color: '#fff', 
+        fontSize: 18,
+        fontWeight: 'bold',
+        textAlign: 'center', 
     },
 });
