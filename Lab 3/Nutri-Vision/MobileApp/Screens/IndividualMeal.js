@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, Dimensions, StatusBar, FlatList, ScrollView, Platform } from 'react-native';
-import { Camera } from 'expo-camera';
-import * as ImagePicker from 'expo-image-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { getMealEntryById, updateMealDataInFirestore } from '../../MealHistory';
 import { useNavigation } from '@react-navigation/native';
 import Svg, { Circle } from 'react-native-svg';
-import { documentId } from '@firebase/firestore';
+import { getProfileByEmail } from '../../ProfileHistory';
+import { fetchUserGoalDetails } from '../../goalsDetail';
 
 
 function IndividualMeal({ route }) {
@@ -15,6 +14,20 @@ function IndividualMeal({ route }) {
   const { documentId } = route.params;
 
   const [mealEntry, setMealEntry] = useState(null);
+  const [goalsDetails, setGoalsDetails] = useState([]);
+
+  useEffect(() => {
+    fetchUserGoalDetails('PAN@GMAIL.COM').then(setGoalsDetails).catch(console.error);
+    if (documentId) {
+      fetchNutritionalInfo(documentId);
+    }
+  }, [documentId]);
+
+   // Goals for macronutrients
+   const goalCalories = goalsDetails.Calories;
+   const goalCarbohydrates = goalsDetails.Carbs;
+   const goalProtein = goalsDetails.Protein;
+   const goalFat = goalsDetails.Fats;
 
   // State to hold the image URI
   const [imageUri, setImageUri] = useState(null); // Initial state is null
@@ -22,13 +35,6 @@ function IndividualMeal({ route }) {
   // Placeholder image URI
   const placeholderImageUri = 'https://via.placeholder.com/150'; // Placeholder URL
 
-  {/* State variables for nutritional information 
-      I think no need to be so detailed,
-      some of the stuff can remove, because ultimately
-      we will take this data from the API, so we will have to change
-      what is displayed according to what kind of nutritional information
-      is provided by the API
-  */}
 
   const [calories, setCalories] = useState('Loading...');
   const [carbohydrates, setCarbohydrates] = useState('Loading...');
@@ -81,6 +87,48 @@ function IndividualMeal({ route }) {
     }
   };
 
+  // Total of each macronutrients consumed
+  const totalCaloriesConsumed = calories;
+  const totalCarbohydratesConsumed = carbohydrates;
+  const totalFatConsumed = totalFat;
+  const totlaProteinConsumed = protein;   
+
+  // Calculating percentages
+  const calculateCaloriePercentage = () => {
+    if (goalCalories > 0){
+        return (totalCaloriesConsumed / goalCalories) * 100;
+    }
+    return 0;
+};
+
+const calculateCarbohydratePercentage = () => {
+    if (goalCarbohydrates > 0){
+        return (totalCarbohydratesConsumed / goalCarbohydrates) * 100;
+    }
+    return 0;
+};
+
+const calculateFatPercentage = () => {
+    if (goalFat > 0){
+        return (totalFatConsumed / goalFat) * 100;
+    }
+    return 0;
+};
+
+const calculateProteinPercentage = () => {
+    if (goalProtein > 0){
+        return (totlaProteinConsumed / goalProtein) * 100;
+    }
+    return 0;
+};
+
+// Calculate the percentages for the Circles
+const caloriePercantage = Math.min(calculateCaloriePercentage(), 100);
+const CarbohydratePercentage = Math.min(calculateCarbohydratePercentage(), 100);
+const FatPercentage = Math.min(calculateFatPercentage(), 100);
+const ProteinPercentage = Math.min(calculateProteinPercentage(), 100);
+
+
   // Trigger the API call on component mount and when route parameters change
   useEffect(() => {
     if (documentId) {
@@ -107,11 +155,6 @@ function IndividualMeal({ route }) {
   const handlePress = (action) => {
     console.log(`Pressed ${action}`);
   };
-
-  const [carbsPercentage, setCarbsPercentage] = useState(60); // Example percentage
-  const [fatsPercentage, setFatsPercentage] = useState(55); // Example percentage
-  const [proteinPercentage, setProteinPercentage] = useState(25); // Example percentage
-
 
   const ProgressCircle = ({ percentage, fillColor, label, value }) => {
     const size = 75; // Diameter of the circle
@@ -153,7 +196,7 @@ function IndividualMeal({ route }) {
             top: '35%',
             transform: [{ translateX: -size * 0.2 }, { translateY: -size * 0.1 }],
         }}>
-            {percentage}%
+            {Math.round(percentage)}%
         </Text>
         {/* Label and Value Text */}
         <Text style={{ fontWeight: 'bold', marginTop: 4 }}>{label}</Text>
@@ -217,9 +260,9 @@ function IndividualMeal({ route }) {
           </View>
           {/* Nutritional information progress circles */}
           <View style={styles.progressCirclesContainer}>
-            <ProgressCircle percentage={carbsPercentage} fillColor="brown" label="Carbohydrates" value={carbohydrates} />
-            <ProgressCircle percentage={fatsPercentage} fillColor="yellow" label="Fats" value={totalFat} />
-            <ProgressCircle percentage={proteinPercentage} fillColor="blue" label="Proteins" value={protein} />
+            <ProgressCircle percentage={CarbohydratePercentage} fillColor="brown" label="Carbohydrates" value={carbohydrates} />
+            <ProgressCircle percentage={FatPercentage} fillColor="yellow" label="Fats" value={totalFat} />
+            <ProgressCircle percentage={ProteinPercentage} fillColor="blue" label="Proteins" value={protein} />
           </View>
 
         </View>

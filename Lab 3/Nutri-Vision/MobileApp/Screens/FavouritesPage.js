@@ -1,15 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, Dimensions, StatusBar, FlatList, ScrollView, Platform } from 'react-native';
-import { Camera } from 'expo-camera';
-import * as ImagePicker from 'expo-image-picker';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { saveMealToFirestore, getFavouriteMealEntries } from '../../MealHistory';
 
 import { useNavigation } from '@react-navigation/native';
-import Svg, { Circle } from 'react-native-svg';
-
-
-
+import SearchBar from '../Components/SearchBar';
 
 function FavouritesPage() {
   const navigation = useNavigation();
@@ -20,34 +14,47 @@ function FavouritesPage() {
   const images = new Array(8).fill(headerImageUri); // Example: 8 images. Adjust the number as needed.
 
   const [favoriteMealEntries, setFavoriteMealEntries] = useState([]);
+  const [filteredEntires, setFilteredEntries] = useState([]);
 
   // Determine if the number of entries is odd
   const isOddNumberOfEntries = favoriteMealEntries.length % 2 !== 0;
 
   useEffect(() => {
-    // Fetch favorite meal entries when the component mounts
+    fetchFavorites();
+  }, []);
+
+  useEffect(() => {
+    console.log('Current favorites:', favoriteMealEntries);
+    console.log('Current filtered entries:', filteredEntires);
+  }, [favoriteMealEntries, filteredEntires]);
+
+    // Fetch favorite meal entries
     const fetchFavorites = async () => {
       try {
         const favorites = await getFavouriteMealEntries(); // Fetch favorite meal entries
         setFavoriteMealEntries(favorites); // Update state with the fetched entries
+        setFilteredEntries(favorites);
       } catch (error) {
         console.error('Error fetching favorite meal entries:', error);
       }
     };
-
-    fetchFavorites();
-  }, []); // Empty dependency array ensures this effect runs only once on mount
 
   const handlePress = (documentId) => {
     navigation.navigate('IndividualMeal', { documentId });
     console.log('Navigating to documentId:', documentId);
   };
 
+  const handleSearch = (query) => {
+    const filtered = favoriteMealEntries.filter(entry => entry.name.toLowerCase().includes(query.toLowerCase()));
+    setFilteredEntries(filtered);
+  }
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'rgba(173, 219, 199, 1)' }}>
+      <SearchBar onSearch={handleSearch} />
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.gridContainer}>
-          {favoriteMealEntries.map((entry, index) => (
+          {filteredEntires.map((entry, index) => (
             <TouchableOpacity
               key={`meal-${index}`}
               style={styles.imageContainer}
