@@ -10,6 +10,7 @@ import Svg, { Circle } from 'react-native-svg';
 
 
 function NutritionalInfoPage({ route, navigation }) {
+  const { content } = route.params;
   const { base64Image } = route.params;
 
   // State to hold the image URI
@@ -74,7 +75,7 @@ function NutritionalInfoPage({ route, navigation }) {
           protein: totalProtein,
           createdAt: new Date(),
           favourite: false,
-          picture:base64Image
+          picture: base64Image
         };
 
         // Save the combined meal data to Firestore

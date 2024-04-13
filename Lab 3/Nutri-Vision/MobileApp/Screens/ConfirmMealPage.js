@@ -8,30 +8,48 @@ import { useNavigation } from '@react-navigation/native';
 
 
 function ConfirmMealPage({ navigation, route }) {
+  const { content } = route.params;
   const { base64Image } = route.params;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [ingredientName, setIngredientName] = useState('');
   const [ingredientMass, setIngredientMass] = useState('');
 
   const [selectedIngredient, setSelectedIngredient] = useState(null);
-
+  /*
   // Placeholder ingredients
   const [ingredients, setIngredients] = useState([
     { id: '1', name: 'Rice', portion: '200g' },
     { id: '2', name: 'Chicken', portion: '150g' },
   ]);
+  */
+
+  //parse ingredient string and return array of ingredient objects
+  const parseIngredients = (ingredientString) => {
+    // Split the string into individual ingredients based on " and "
+    const ingredientParts = ingredientString.split(', ');
+
+    // Map over each part, extracting the portion and name, and return an array of objects
+    return ingredientParts.map((part, index) => {
+      const [portion, ...nameParts] = part.split(' ');
+      const name = nameParts.join(' ');
+      return { id: String(index + 1), name, portion };
+    });
+  };
+
+  const [ingredients, setIngredients] = useState(parseIngredients(content));
+  console.log(content);
 
   const IngredientSeparator = () => (
     <View style={{
-      height: 1, 
-      backgroundColor: 'grey', 
+      height: 1,
+      backgroundColor: 'grey',
       marginTop: 5,
       marginBottom: 5,
       marginLeft: 60, // Adjust this value to control the starting point
       marginRight: 100, // Adjust this value to control the ending point
     }} />
   );
-  
+
 
   const handleAddIngredient = () => {
     console.log("Add button pressed with ingredient name:", ingredientName, "and mass:", ingredientMass);

@@ -58,8 +58,13 @@ const CreateProfile = ({ navigation }) => {
     const [showAvatarSelection, setShowAvatarSelection] = useState(false);
 
     const avatarUrls = [
+        'https://firebasestorage.googleapis.com/v0/b/nutri-vision-78db7.appspot.com/o/Man1.png?alt=media&token=36480a3b-e065-4629-8703-771f5c7c1831',
+        'https://firebasestorage.googleapis.com/v0/b/nutri-vision-78db7.appspot.com/o/Man2.png?alt=media&token=65310e0d-131f-4179-9e8a-d267b641d1e4',
         'https://firebasestorage.googleapis.com/v0/b/nutri-vision-78db7.appspot.com/o/hacker.png?alt=media&token=8691a89d-74d6-452b-ad90-6686e9806c72',
-        'https://firebasestorage.googleapis.com/v0/b/nutri-vision-78db7.appspot.com/o/kitty.png?alt=media&token=72881ff5-6327-4599-8d7d-ec9d4faa33e4',
+        'https://firebasestorage.googleapis.com/v0/b/nutri-vision-78db7.appspot.com/o/Woman1.png?alt=media&token=7ecd59d7-3335-4ad0-ad5d-3438ee1c13ff',
+        'https://firebasestorage.googleapis.com/v0/b/nutri-vision-78db7.appspot.com/o/Woman2.png?alt=media&token=5920e6ee-0341-492c-a116-cd5450dfa15b',
+        'https://firebasestorage.googleapis.com/v0/b/nutri-vision-78db7.appspot.com/o/Woman3.png?alt=media&token=2470a34c-1c9b-44b7-ba9a-5422f7a61873',
+        
       ];
 
 

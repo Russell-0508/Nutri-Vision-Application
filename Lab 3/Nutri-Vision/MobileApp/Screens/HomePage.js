@@ -1,20 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { Alert, StyleSheet, View, Text, TextInput, Platform, Button, Image, SafeAreaView, ScrollView, TouchableOpacity, Linking} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import React, { useEffect, useState } from 'react';
+import { Image, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 //import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import Svg, { Circle, Path } from 'react-native-svg';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import { useNavigation } from '@react-navigation/native';
-import { getProfileByEmail } from '../../ProfileHistory';
 import { getMealHistoryFromFirestore } from '../../MealHistory';
+import { getProfileByEmail } from '../../ProfileHistory';
 import { fetchUserGoalDetails } from '../../goalsDetail';
-import { getStorage, ref, getDownloadURL } from "firebase/storage"
 
 
 export default function HomePage({navigation}) {
-
+    
     const onGetStartedPress = () => {
-        navigation.navigate('Login');
+        console.log('Navigation object:', navigation);
+        navigation.navigate('Community');
     };
 
     const [date, setDate] = useState(new Date());
@@ -271,17 +270,17 @@ export default function HomePage({navigation}) {
 
                     <View style = {styles.recipeHighlight} >
                         <Image
-                            source={require('../assets/images/ChickenRice.jpg')} 
+                            source={require('../assets/images/ChickenRice.jpg')}
                             style={styles.recipeImage}
                         />
-                        <Text style={styles.recipeName}>
-                            CHICKEN RICE
-                        </Text>
+                        <View style = {styles.TextContainer}>
+                            <Text style={styles.recipeName}>CHICKEN RICE</Text>
+                            <Text style={styles.recipeTime}>20 Mins Preparation Time</Text>
+                            <Text style = {styles.difficulty}>Difficulty Level: Easy</Text>
+                        </View>
                     </View>
 
-                    <Text style = {styles.recipeTime}>
-                            20 Mins Preparation Time
-                    </Text>
+
 
 
                     <View style = {styles.recipeButtons}>
@@ -407,13 +406,18 @@ const styles = StyleSheet.create({
     recipeHighlight: {
         flexDirection : 'row',
         alignItems: 'center',
+        marginTop: 8,
+        marginBottom : 5,
+    },
+
+    TextContainer: {
+        flexDirection: 'column',
     },
       
     recipeImage: {
         width: 60, 
         height: 60, 
-        marginBottom: 20, 
-        marginRight: 45,
+        marginRight: 40,
     },
       
     recipeButtons: {
@@ -437,10 +441,9 @@ const styles = StyleSheet.create({
         fontSize : 15,
         color : '#555555',
         textAlign : 'center',
-        marginTop : -15,
-        marginBottom : 18,
     },
       
+    //--------------------------------------------------
     buttonGetStarted: {
         backgroundColor: '#FFA500', 
         paddingVertical: 10,
