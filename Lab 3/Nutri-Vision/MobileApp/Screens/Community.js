@@ -8,7 +8,7 @@ const CommunityScreen = () => {
     const posts = [
       {
         id: 1,
-        title: 'Pancake',
+        title: 'Chicken Rice',
         imageUri: require('../assets/images/ChickenRice.jpg'),
         duration: '>60 mins',
         profile: {
