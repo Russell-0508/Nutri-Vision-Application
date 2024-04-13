@@ -156,16 +156,6 @@ const CreateProfile = ({ navigation }) => {
                         />
                     )}
 
-                    {/* Email input */}
-                    <Text style={styles.label}>Email</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Enter your email"
-                        keyboardType="email-address"
-                        value={email}
-                        onChangeText={setEmail}
-                    />
-
                     {/* Height input */}
                     <Text style={styles.label}>Height (cm)</Text>
                     <TextInput
