@@ -23,6 +23,33 @@ function ProfileScreen({navigation}){
     age: '...',
   });
 
+  const [avatarUrl, setAvatarUrl] = useState();
+
+    useEffect(() => {
+        fetchProfileByEmail();
+    }, []);
+
+    const fetchProfileByEmail = async () => {
+        try {
+            const email = "PAN@GMAIL.COM"; //change this email to read from user.email or smth
+            const profiles = await getProfileByEmail(email); 
+            if (profiles.length > 0) {
+                const profile = profiles[0];
+                // Handling avatarUrl
+                if (profile.avatarUrl) {
+                    setAvatarUrl(profile.avatarUrl); 
+                } else {
+                    console.log('Profile found but no avatar URL present.');
+                }
+
+            } else {
+                console.log('No profile found for the given email:', email);
+            }
+        } catch (error) {
+            console.error("Error fetching profile by email:", error);
+        }
+    };
+
 
   // Fetch profile data from Firestore
   useEffect(() => {
@@ -62,7 +89,7 @@ function ProfileScreen({navigation}){
         <View style={styles.profileHeader}>
         {/* Profile Information Display */}
           <Image
-            source={require('../assets/profile_image.png')}
+            source={{ uri: avatarUrl }}
             style={styles.profileImage}
           />
           <Text style={styles.profileName}>{profileData.name}</Text>
