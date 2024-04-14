@@ -36,3 +36,24 @@ export const fetchUserGoalDetails = async (userEmail) => {
         throw error;
     }
 };
+
+// Function to check if the logged meal matches the user's target calories
+export const checkMealTarget = async (userEmail, mealCalories) => {
+    try {
+        // Fetch user's goal details
+        const goalDetails = await fetchUserGoalDetails(userEmail);
+
+        // Calculate calorie target for each meal
+        const dailyCalories = goalDetails.Calories;
+        const mealTargetCalories = dailyCalories / 3; // Divide the daily calories by 3 for each meal
+
+        // Check if the logged meal's calories are within the target range
+        const isTargetFit = mealCalories <= mealTargetCalories;
+
+        return isTargetFit;
+    } catch (error) {
+        console.error('Error checking meal target:', error);
+        throw error;
+    }
+};
+
