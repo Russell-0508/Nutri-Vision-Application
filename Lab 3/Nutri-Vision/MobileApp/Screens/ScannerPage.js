@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import Alert from 'react-native';
 import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, Dimensions } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
@@ -29,6 +30,14 @@ function extractContent(inputString) {
     // Return a message or null if no match was found
     return 'Content not found';
   }
+}
+
+function containsKeywords(content) {
+  //regex keywords
+  const pattern = /\b(blur.*|obsfucat.*|cannot|unable|image|contain)\b/i;
+
+  //Test the content
+  return pattern.test(content);
 }
 
 function ScannerPage({ navigation }) {
@@ -77,11 +86,18 @@ function ScannerPage({ navigation }) {
           const content = extractContent(apiResponse);
           console.log(content);
 
-          // Navigate to Confirm Meal page and pass the ingredients of the API response content
-          console.log("Navigating to Confirm Meal page...");
-          navigation.navigate('Confirm Meal', { base64Image, content });
-          //const ingredientList = await fetchNutritionalInfo(content);
-          //console.log(ingredientList);
+          if (containsKeywords(content)) {
+            Alert.Alert.alert("Image is blur or has errors. Please rescan.");
+          } else {
+            //Check if content is blur or needs to be retaken
+
+            // Navigate to Confirm Meal page and pass the ingredients of the API response content
+            console.log("Navigating to Confirm Meal page...");
+            navigation.navigate('Confirm Meal', { base64Image, content });
+            //const ingredientList = await fetchNutritionalInfo(content);
+            //console.log(ingredientList);
+          }
+
         } else {
           console.log('No image selected or captured');
         }
@@ -130,30 +146,15 @@ function ScannerPage({ navigation }) {
 
       try {
         // Convert the captured image to base64
-        const resizedImage = await ImageManipulator.manipulateAsync(
-          selectedImageUri,
-          [{ resize: { width: 640, height: 640 } }],
-          { compress: 0.5, format: ImageManipulator.SaveFormat.JPEG }
-        );
-
-        console.log('Resized and compressed image:', resizedImage);
-
-        // Convert the captured image to base64
-        const base64Image = await FileSystem.readAsStringAsync(resizedImage.uri, {
+        const base64Image = await FileSystem.readAsStringAsync(selectedImageUri, {
           encoding: FileSystem.EncodingType.Base64,
         });
 
         // console.log("Base64 Image:", base64Image);
-        if (base64Image) {
-          const apiResponse = await sendImageToAPI(base64Image);
-          console.log(apiResponse);
-          const content = extractContent(apiResponse);
-          console.log(content);
 
-          // Navigate to Confirm Meal page and pass the base64 encoded image
-          console.log("Navigating to Confirm Meal page...");
-          navigation.navigate('Confirm Meal', { base64Image, content });
-        }
+        // Navigate to Confirm Meal page and pass the base64 encoded image
+        console.log("Navigating to Confirm Meal page...");
+        navigation.navigate('Confirm Meal', { base64Image });
       } catch (error) {
         console.error("Error converting image to base64:", error);
       }
