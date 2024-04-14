@@ -217,10 +217,6 @@ const ProteinPercentage = Math.min(calculateProteinPercentage(), 100);
           style={styles.imageStyle}
           resizeMode="contain"
         />
-          {/* Three-dot button */}
-          <TouchableOpacity style={styles.threeDotButton} onPress={() => handlePress('More')}>
-            <MaterialIcons name="more-horiz" size={30} color="black" />
-          </TouchableOpacity>
           {/* Heart button */}
           <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
             <MaterialIcons
