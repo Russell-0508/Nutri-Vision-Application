@@ -151,10 +151,28 @@ function ScannerPage({ navigation }) {
         });
 
         // console.log("Base64 Image:", base64Image);
+        if (base64Image) {
+          const apiResponse = await sendImageToAPI(base64Image);
+          console.log(apiResponse);
+          const content = extractContent(apiResponse);
+          console.log(content);
 
-        // Navigate to Confirm Meal page and pass the base64 encoded image
-        console.log("Navigating to Confirm Meal page...");
-        navigation.navigate('Confirm Meal', { base64Image });
+          if (containsKeywords(content)) {
+            Alert.Alert.alert("Image is blur or has errors. Please rescan.");
+          } else {
+            //Check if content is blur or needs to be retaken
+
+            // Navigate to Confirm Meal page and pass the ingredients of the API response content
+            console.log("Navigating to Confirm Meal page...");
+            navigation.navigate('Confirm Meal', { base64Image, content });
+            //const ingredientList = await fetchNutritionalInfo(content);
+            //console.log(ingredientList);
+          }
+
+        } else {
+          console.log('No image selected or captured');
+        }
+        // console.log('Base64 image:', base64Image);
       } catch (error) {
         console.error("Error converting image to base64:", error);
       }
