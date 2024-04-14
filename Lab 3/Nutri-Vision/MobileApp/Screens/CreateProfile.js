@@ -1,7 +1,7 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { differenceInYears, format } from 'date-fns';
 import { addDoc, collection } from 'firebase/firestore';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import firestore from '../../firebase/config';
 
@@ -19,6 +19,8 @@ const CreateProfile = ({ navigation }) => {
     // State for date picker
     const [dateOfBirth, setDateOfBirth] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const minDate = new Date('1900-01-01');
+    const maxDate = new Date(); // Today's date
 
     const handleCreateProfile = async () => {
         const age = differenceInYears(new Date(), dateOfBirth);
@@ -43,9 +45,10 @@ const CreateProfile = ({ navigation }) => {
         }
     }
 
+
     const onChangeDate = (event, selectedDate) => {
-        const currentDate = selectedDate || dateOfBirth;
-        setShowDatePicker(false);
+        const currentDate = selectedDate || dateOfBirth; // Use selectedDate, fallback to current if null (e.g., user pressed 'Cancel')
+        setShowDatePicker(false);  // Hide picker
         setDateOfBirth(currentDate);
     };
 
@@ -63,7 +66,7 @@ const CreateProfile = ({ navigation }) => {
         'https://firebasestorage.googleapis.com/v0/b/nutri-vision-78db7.appspot.com/o/Woman2.png?alt=media&token=5920e6ee-0341-492c-a116-cd5450dfa15b',
         'https://firebasestorage.googleapis.com/v0/b/nutri-vision-78db7.appspot.com/o/Woman3.png?alt=media&token=2470a34c-1c9b-44b7-ba9a-5422f7a61873',
         
-      ];
+    ];
 
 
     // Preloaded Avatar Icons
@@ -82,6 +85,69 @@ const CreateProfile = ({ navigation }) => {
         setShowAvatarSelection(false);
         console.log('Avatar pressed'); 
     };
+
+    const handleHeightChange = (text) => {
+        const heightNum = parseFloat(text);
+        if (text === "") {
+            setHeight(text);  // Allow clearing the input
+        } else if (heightNum > 0 && heightNum <= 300) {
+            setHeight(text);  // Set height if valid
+        } else if (heightNum < 0) {
+            alert("Height cannot be negative.");
+        } else if (heightNum > 300) {
+            alert("You can't be that tall!");
+        }
+    };
+    
+    const handleWeightChange = (text) => {
+        const weightNum = parseFloat(text);
+        if (text === "") {
+            setWeight(text);  // Allow clearing the input
+        } else if (weightNum > 0 && weightNum <= 1000) {
+            setWeight(text);  // Set weight if valid
+        } else if (weightNum < 0) {
+            alert("Weight cannot be negative.");
+        } else if (weightNum > 1000) {
+            alert("That weight is too high!");
+        }
+    };
+
+
+    const [bmi, setBmi] = useState(null);
+    const [bmiCategory, setBmiCategory] = useState('');
+
+    useEffect(() => {
+        calculateBmi();
+    }, [height, weight]);
+
+    // Calculate BMI
+    const calculateBmi = () => {
+        console.log(`Input Height: ${height} cm`);
+        const heightInMeters = parseFloat(height) / 100;
+        const weightInKilograms = parseFloat(weight);
+        console.log(`Height in meters: ${heightInMeters}, Weight in kilograms: ${weightInKilograms}`);
+
+        if (heightInMeters > 0 && weightInKilograms > 0) {
+          const calculatedBmi = weightInKilograms / (heightInMeters * heightInMeters);
+          setBmi(calculatedBmi.toFixed(2)); // rounded to two decimal places
+
+          console.log(`Calculated BMI: ${calculatedBmi}`);
+
+          // Determine BMI Category
+          if (calculatedBmi < 18.5) {
+            setBmiCategory('Underweight');
+          } else if (calculatedBmi < 25) {
+            setBmiCategory('Normal weight');
+          } else if (calculatedBmi < 30) {
+            setBmiCategory('Overweight');
+          } else {
+            setBmiCategory('Obesity');
+          }
+        } else {
+          setBmi(null);
+          setBmiCategory('');
+        }
+      };
 
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -156,7 +222,8 @@ const CreateProfile = ({ navigation }) => {
                             is24Hour={true}
                             display="default"
                             onChange={onChangeDate}
-                            //maximumDate={new Date()} // Optional: to prevent future dates
+                            minimumDate={minDate}
+                            maximumDate={maxDate}
                         />
                     )}
 
@@ -167,7 +234,7 @@ const CreateProfile = ({ navigation }) => {
                         placeholder="Enter your height"
                         keyboardType="numeric"
                         value={height}
-                        onChangeText={setHeight}
+                        onChangeText={handleHeightChange}
                     />
 
                     {/* Weight input */}
@@ -177,9 +244,17 @@ const CreateProfile = ({ navigation }) => {
                         placeholder="Enter your weight"
                         keyboardType="numeric"
                         value={weight}
-                        onChangeText={setWeight}
+                        onChangeText={handleWeightChange}
                     />
-         
+
+                    {bmi && (
+                        <View style={styles.bmiContainer}>
+                            <Text style={styles.bmiText}>Your BMI: {bmi}</Text>
+                            <Text style={styles.bmiCategoryText}>{bmiCategory}</Text>
+                        </View>
+                    )}
+
+
                     <TouchableOpacity onPress={handleCreateProfile} style={styles.createAccountButton}>
                         <Text style={styles.createAccountButtonText}>Create Profile</Text>
                     </TouchableOpacity>
@@ -323,23 +398,38 @@ const styles = StyleSheet.create({
 
     //--------------------------------------------------------------------------------
 
-  
+
+    bmiContainer: {
+        marginTop: 20,
+        alignItems: 'center',
+    },
+    
+    bmiText: {
+        fontSize: 19,
+        fontWeight: 'bold',
+    },
+    
+    bmiCategoryText: {
+        fontSize: 17,
+        color: '#fff',
+    },
+
     createAccountButton: {
         marginTop: 20,
-        backgroundColor: '#007bff', // Button background color
+        backgroundColor: '#007bff', 
         borderRadius: 20,
         paddingVertical: 10,
         paddingHorizontal: 20,
-        alignItems: 'center', 
-        justifyContent: 'center', 
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     
     createAccountButtonText: {
-        color: '#ffffff', 
+        color: '#ffffff',
         fontSize: 18,
         fontWeight: 'bold',
     },
 
-  });
+});
 
 export default CreateProfile;
