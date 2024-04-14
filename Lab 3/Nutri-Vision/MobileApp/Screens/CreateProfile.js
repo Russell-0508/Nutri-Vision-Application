@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, TextInput, Button, Image, SafeAreaView, ScrollView, TouchableOpacity, Linking} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { differenceInYears, format } from 'date-fns';
 import { addDoc, collection } from 'firebase/firestore';
+import React, { useState } from 'react';
+import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import firestore from '../../firebase/config';
-import { format } from 'date-fns';
-import { differenceInYears } from 'date-fns';
 
 const CreateProfile = ({ navigation }) => {
     const profileCollection = collection(firestore, 'profile');
@@ -96,12 +94,18 @@ const CreateProfile = ({ navigation }) => {
                     </TouchableOpacity>
 
                     {showAvatarSelection && (
-                        <View style={styles.avatarPicker}>
-                            {avatarImages.map((avatar, index) => (
-                                <TouchableOpacity key={index} onPress={() => handleAvatarSelect(index)} style={styles.avatarOption}>
-                                    <Image source={avatar} style={styles.avatar} />
-                                </TouchableOpacity>
-                            ))}
+                         <View style={styles.avatarPicker}>
+                             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.avatarScrollView}>
+                                {avatarImages.map((avatar, index) => (
+                                    <TouchableOpacity
+                                        key={index}
+                                        onPress={() => handleAvatarSelect(index)}
+                                        style={styles.avatarOption}
+                                    >
+                                        <Image source={avatar} style={styles.avatar} />
+                                    </TouchableOpacity>
+                                ))}
+                            </ScrollView>
                         </View>
                     )}
 
