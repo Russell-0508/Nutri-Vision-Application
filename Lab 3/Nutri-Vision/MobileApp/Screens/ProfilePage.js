@@ -2,8 +2,7 @@ import React, { useState, useEffect }from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, SafeAreaView, Modal, Switch } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
-import firestore from '@react-native-firebase/firestore';
-import { collection, getDocs } from 'firebase/firestore';
+import { getFirestore, collection, query, where, onSnapshot } from 'firebase/firestore';
 import { getProfileByEmail } from '../../ProfileHistory';
 
 
@@ -50,27 +49,36 @@ function ProfileScreen({navigation}){
         }
     };
 
-
-  // Fetch profile data from Firestore
   useEffect(() => {
-    const fetchProfileByEmail = async () => {
-      try {
-        const profiles = await getProfileByEmail("PAN@GMAIL.COM"); // Adjust the email case as needed
-        if (profiles.length > 0) {
-          // Assuming the first profile is the one you're interested in
-          setProfileData(profiles[0]);
-        } else {
-          setProfileData({ name: 'No profile found' });
-        }
-      } catch (error) {
-        console.error("Error fetching profile by email:", error);
-        setProfileData({ name: 'Error fetching profile' });
+    const db = getFirestore();
+    const email = "PAN@GMAIL.COM"; // Ideally, this should be dynamic or securely retrieved
+
+    // Create a reference to the collection and query
+    const profilesRef = collection(db, "profile");
+    const q = query(profilesRef, where("email", "==", email));
+
+    // Setting up the onSnapshot listener
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const profiles = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      if (profiles.length > 0) {
+        setProfileData(profiles[0]); // Assuming the first profile is the one you're interested in
+      } else {
+        setProfileData({ name: 'No profile found' }); // Set default data if no profiles are found
       }
-    };
-  
-    fetchProfileByEmail();
+    }, error => {
+      console.error("Error fetching profile by email:", error);
+      setProfileData({ name: 'Error fetching profile' }); // Handle errors
+    });
+
+    return () => unsubscribe(); // Clean up the listener when the component unmounts
   }, []);
 
+
+  
   // Placeholder function for button presses
   const handlePress = (action) => {
     console.log(`Pressed ${action}`);
