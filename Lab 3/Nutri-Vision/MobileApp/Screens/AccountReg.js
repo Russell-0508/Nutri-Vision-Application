@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Linking, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native';
+import { Linking, SafeAreaView, ScrollView, StyleSheet, 
+        Text, TextInput, TouchableOpacity, View, Image, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { auth } from '../../firebase/config';
 
@@ -75,6 +76,18 @@ const AccountReg = ({ navigation }) => {
     };
 
     const handleCreateAccountPress = async () => {
+        // Check for empty fields
+        if (!email.trim()) {
+            Alert.alert('Missing Information', 'Please enter your email.');
+            return;
+        } else if (!password.trim()) {
+            Alert.alert('Missing Information', 'Please enter a password.');
+            return;
+        } else if (!confirmPassword.trim()) {
+            Alert.alert('Missing Information', 'Please confirm your password.');
+            return;
+        }
+
         const passwordsDoMatch = checkPasswordsMatch(); // Check if passwords match
         const isPasswordStrong = passwordStrength && passwordStrength.message === 'Strong';
         

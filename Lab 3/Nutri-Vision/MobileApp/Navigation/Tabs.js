@@ -29,7 +29,8 @@ const historyName = 'History';
 const Tab = createBottomTabNavigator();
 
 
-const Tabs = () => (
+const Tabs = () => {
+    return (
         <Tab.Navigator 
         screenOptions={{
             
@@ -85,6 +86,9 @@ const Tabs = () => (
 
         </Tab.Navigator>
     );
+};
+
+    
 
 
 

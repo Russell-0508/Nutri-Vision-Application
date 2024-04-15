@@ -1,5 +1,7 @@
 import React, { useState, useEffect }from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, SafeAreaView, Modal, Switch } from 'react-native';
+import { 
+  View, Text, Image, ScrollView, TouchableOpacity, 
+  StyleSheet, SafeAreaView, Modal, Switch } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 import { getFirestore, collection, query, where, onSnapshot } from 'firebase/firestore';
@@ -16,7 +18,7 @@ function ProfileScreen({navigation}){
   };
 
   const [profileData, setProfileData] = useState({
-    name: 'Loading...', // Default value while loading
+    name: 'Loading...', 
     height: '...',
     weight: '...',
     age: '...',
@@ -30,7 +32,7 @@ function ProfileScreen({navigation}){
 
     const fetchProfileByEmail = async () => {
         try {
-            const email = "PAN@GMAIL.COM"; //change this email to read from user.email or smth
+            const email = "haolun@gmail.com"; 
             const profiles = await getProfileByEmail(email); 
             if (profiles.length > 0) {
                 const profile = profiles[0];
@@ -40,7 +42,6 @@ function ProfileScreen({navigation}){
                 } else {
                     console.log('Profile found but no avatar URL present.');
                 }
-
             } else {
                 console.log('No profile found for the given email:', email);
             }
@@ -51,7 +52,7 @@ function ProfileScreen({navigation}){
 
   useEffect(() => {
     const db = getFirestore();
-    const email = "PAN@GMAIL.COM"; // Ideally, this should be dynamic or securely retrieved
+    const email = 'haolun@gmail.com'
 
     // Create a reference to the collection and query
     const profilesRef = collection(db, "profile");
@@ -66,12 +67,16 @@ function ProfileScreen({navigation}){
 
       if (profiles.length > 0) {
         setProfileData(profiles[0]); // Assuming the first profile is the one you're interested in
+        if(profiles[0].avatarUrl){
+          setAvatarUrl(profiles[0].avatarUrl);
+        }
       } else {
-        setProfileData({ name: 'No profile found' }); // Set default data if no profiles are found
+        setProfileData({ name: 'No profile found' });
+        console.log('No profile found for the given email: ', email);
       }
     }, error => {
       console.error("Error fetching profile by email:", error);
-      setProfileData({ name: 'Error fetching profile' }); // Handle errors
+      setProfileData({ name: 'Error fetching profile' }); 
     });
 
     return () => unsubscribe(); // Clean up the listener when the component unmounts
@@ -86,8 +91,8 @@ function ProfileScreen({navigation}){
 
   return (
     <View style={{flex: 1, backgroundColor: 'rgb(64, 97, 50)'}}>
-      <SafeAreaView style={{ flex: 1 }}>
       <ScrollView style={styles.container} contentContainerStyle={styles.scrollViewContent}>
+
         {/* Logout Button */}
         <TouchableOpacity
           style={styles.logoutButton}
@@ -95,6 +100,7 @@ function ProfileScreen({navigation}){
           <MaterialIcons name="logout" size={24} color="red" />
         </TouchableOpacity>
         <View style={styles.profileHeader}>
+
         {/* Profile Information Display */}
           <Image
             source={{ uri: avatarUrl }}
@@ -118,9 +124,10 @@ function ProfileScreen({navigation}){
             </View>
           </View>
         </View>
+
+
         <Text style={styles.headerText}>Account</Text>
         <View style={styles.actionsContainer}>
-
           <TouchableOpacity onPress={() => navigation.navigate('Edit Profile')} style={styles.actionItem}>
             <MaterialIcons name="edit" size={20} color="#4CAF50" style={styles.iconStyle}/>
             <Text style={styles.actionText}>Edit Profile</Text>
@@ -160,22 +167,16 @@ function ProfileScreen({navigation}){
             <MaterialIcons name="favorite" size={20} color="#4CAF50" style={styles.iconStyle} />
             <Text style={styles.actionText}>Favourites</Text>
             </TouchableOpacity>
-          {/* More action items */}
         </View>
+
         <Text style={styles.headerText}>Statistics</Text>
         <View style={styles.actionsContainer}>
           <TouchableOpacity onPress={() => navigation.navigate('EditGoals')} style={styles.actionItem}>
             <MaterialIcons name="edit-note" size={20} color="#4CAF50" style={styles.iconStyle} />
             <Text style={styles.actionText}>Edit Goals</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => handlePress('My Progress')} style={styles.actionItem}>
-            <MaterialIcons name="show-chart" size={20} color="#4CAF50" style={styles.iconStyle} />
-            <Text style={styles.actionText}>My Progress</Text>
-          </TouchableOpacity>
         </View>
-        {/* Add more sections as needed */}
       </ScrollView>
-      </SafeAreaView>
     </View>
   );
 };
@@ -186,132 +187,122 @@ const styles = StyleSheet.create({
     backgroundColor: '#f4e5c2',
   },
   bottomContainer: {
-    position: 'absolute',  // Positioning it over the bottom SafeAreaView
-    bottom: 5,             // Aligns it to the bottom
+    position: 'absolute',  
+    bottom: 5,             
     left: 0,
     right: 0,
-    backgroundColor: 'white', // This is the background color of the bottom platform
-    paddingVertical: 20, // Adjust the padding as needed
-    paddingHorizontal: 10, // Adjust the padding as needed
-    // Add a large border radius for rounded corners
+    backgroundColor: 'white', 
+    paddingVertical: 20, 
+    paddingHorizontal: 10, 
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    // Shadows can be adjusted as per your design to give depth
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 10,
-  },
-  safeArea: {
-    backgroundColor: 'white', // The SafeAreaView background color also needs to be white
-    flexGrow: 0, // Ensure it doesn't take more space than necessary
   },
 
   logoutButton: {
     position: 'absolute',
-    top: 20, // Adjust based on your SafeAreaView or header's height
-    right: 20, // Adjust the right position as needed
-    zIndex: 10, // Ensure it's above other elements
+    top: 20, 
+    right: 20, 
+    zIndex: 10, 
   },
 
   profileHeader: {
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
-    // Add more styling
   },
+
   profileImage: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    // Add more styling
   },
+
   profileName: {
     fontSize: 24,
-    fontWeight: '300', // This makes the font thinner; use 'normal' if '300' is not supported
-    color: 'white', // This sets the text color to white
-    marginBottom: 8, // Adds some space below the name
-    // Add more styling
+    fontWeight: '500', 
+    color: 'black', 
+    marginBottom: 8, 
   },
+
   statsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    paddingVertical: 10, // adjust as needed
+    paddingVertical: 10, 
   },
+
   statItem: {
     alignItems: 'center',
-    justifyContent: 'center', // This ensures content is centered vertically within the statItem
-    marginHorizontal: 15, // increased the space between attributes
+    justifyContent: 'center', 
+    marginHorizontal: 15, 
   },
+
   statLabel: {
-    textAlign: 'center', // Ensures the label is centered within its container
-    fontSize: 14, // adjust as needed
-    color: 'white', // adjust as needed
+    textAlign: 'center', 
+    fontSize: 14, 
+    color: 'black', 
     marginBottom: 4,
+    fontWeight: '500'
   },
+
   statValue: {
-    textAlign: 'center', // Ensures the value is centered within its container
-    fontSize: 18, // adjust as needed
-    fontWeight: '300',
-    color: 'white', // adjust as needed
+    textAlign: 'center', 
+    fontSize: 18, 
+    fontWeight: '500',
+    color: 'black', 
   },
+
   separator: {
-    height: '80%', // adjust as needed
+    height: '80%', 
     width: 1,
-    backgroundColor: '#ccc', // adjust as needed for the color of the separator
-    marginHorizontal: 10, // adds horizontal spacing around the separator
+    backgroundColor: '#ccc', 
+    marginHorizontal: 10, 
   },
+
   statItem: {
     marginHorizontal: 15,
-    // Add more styling
   },
+
   headerText: {
-    fontSize: 22, // Adjust the size as needed
-    fontWeight: 'bold', // Adjust weight as needed
-    color: 'white', // Adjust color as needed
-    marginTop: 20, // Space above the header
-    marginBottom: 10, // Space below the header
-    marginLeft: '5%', // Aligns text to match the buttons' margin
+    fontSize: 22, 
+    fontWeight: 'bold', 
+    color: 'black', 
+    marginTop: 20, 
+    marginBottom: 10, 
+    marginLeft: '5%', 
   },
+
   actionsContainer: {
     marginTop: 20,
     paddingHorizontal: 20
   },
+
   actionItem: {
-    flexDirection: 'row', // Align items in a row
-    justifyContent: 'flex-start', // Align items to the start
-    backgroundColor: 'white', // White background for the buttons
-    borderRadius: 5, // If you want rounded corners
-    paddingVertical: 15, // Vertical padding for the content
-    paddingHorizontal: 25, // Horizontal padding for the content
-    borderRadius: 10, // Rounded corners for the button
-    marginTop: 10, // Margin at the top to separate the buttons
-    marginHorizontal: '5%', // Side margins to reduce the width of the button
-    alignItems: 'center', // Center the text inside the button
-    justifyContent: 'center', // Center the text/icon vertically
-    marginVertical: 10, // Space between each button
-    width: '90%', // Adjust as needed
-    alignSelf: 'center', // Center the button itself
-    // Add shadow or border styles
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
+    flexDirection: 'row', 
+    justifyContent: 'flex-start', 
+    backgroundColor: 'white', 
+    borderRadius: 5, 
+    paddingVertical: 15, 
+    paddingHorizontal: 25, 
+    borderRadius: 15, 
+    marginTop: 10, 
+    marginHorizontal: '5%', 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    marginVertical: 10, 
+    width: '90%', 
+    alignSelf: 'center', 
   },
-  shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
+
   iconStyle: {
-    marginRight: 10, // This is your base spacing for icons other than the Edit Profile
+    marginRight: 10, 
   },
+
   actionText: {
-    color: 'black', // Text color
-    fontSize: 18, // Size of the text inside the button
-    fontWeight: 'normal', // Weight of the text
-    // Add font weight or other styling as needed
+    color: 'black', 
+    fontSize: 18, 
+    fontWeight: 'normal', 
+
   },
 
   scrollViewContent: {

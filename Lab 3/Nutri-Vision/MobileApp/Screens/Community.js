@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import SearchBar from '../Components/SearchBar';
 
 const CommunityScreen = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -18,7 +19,7 @@ const CommunityScreen = () => {
       },
       
       {
-        id: 1,
+        id: 2,
         title: 'Pancake',
         imageUri: require('../assets/images/Pancake.jpg'),
         duration: '<20 mins',
@@ -38,21 +39,16 @@ const CommunityScreen = () => {
         },
       },
     ];
+
+    const filteredPosts = posts.filter(post =>
+      post.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
   
     return (
       <ScrollView style={styles.container}>
-        <View style={styles.searchBarContainer}>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search..."
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
-          <Icon name="search" size={24} color="#000" />
-        </View>
-  
+        <SearchBar onSearch={setSearchQuery}/>  
         <View style={styles.postsContainer}>
-          {posts.map((post) => (
+          {filteredPosts.map((post) => (
             <View key={post.id} style={styles.postCard}>
               <Image
                 source={post.profile.imageUri}

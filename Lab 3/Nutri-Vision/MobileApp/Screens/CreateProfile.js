@@ -1,14 +1,16 @@
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { differenceInYears, format } from 'date-fns';
-import { addDoc, collection } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, SafeAreaView, ScrollView, StyleSheet, 
+        Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
+
+import { differenceInYears, format } from 'date-fns';
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 import firestore from '../../firebase/config';
+import { addDoc, collection } from 'firebase/firestore';
 
 const CreateProfile = ({ navigation }) => {
     const profileCollection = collection(firestore, 'profile');
     const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
     const [selectedGender, setSelectedGender] = useState(null);
     const [height, setHeight] = useState('');
     const [weight, setWeight] = useState('');
@@ -23,10 +25,34 @@ const CreateProfile = ({ navigation }) => {
     const maxDate = new Date(); // Today's date
 
     const handleCreateProfile = async () => {
+
+        // Check for empty or invalid fields
+        if (!selectedGender) {
+            Alert.alert("Missing Information", "Please select a gender.");
+            return;
+        }
+        if (!name.trim()) {
+            Alert.alert("Missing Information", "Please enter your name.");
+            return;
+        }
+        // Check if the dateOfBirth is reasonable, e.g., not a future date or too old
+        if (dateOfBirth > new Date() || dateOfBirth < new Date('1900-01-01')) {
+            Alert.alert("Invalid Date", "Please enter a valid date of birth.");
+            return;
+        }
+        if (!height || parseFloat(height) <= 0 || parseFloat(height) > 300) {
+            Alert.alert("Invalid Input", "Please enter a valid height in cm.");
+            return;
+        }
+        if (!weight || parseFloat(weight) <= 0 || parseFloat(weight) > 1000) {
+            Alert.alert("Invalid Input", "Please enter a valid weight in kg.");
+            return;
+        }
+
+
         const age = differenceInYears(new Date(), dateOfBirth);
         const profileData = {
             name,
-            email,
             gender: selectedGender,
             height: parseFloat(height),
             weight: parseFloat(weight),
