@@ -290,6 +290,10 @@ export default function HomePage({navigation}) {
                     </View>
                 </View>
 
+                <View style = {styles.divider} >
+
+                </View>
+
                 <View style={styles.targetSection}>
                     <Text style = {styles.targetTitle}>My Target</Text>
                     <HeartRateTracker
@@ -337,42 +341,41 @@ export default function HomePage({navigation}) {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#36622B', 
+        backgroundColor: '#f4e5c2', 
     },
     
     container: {
         flex: 1,
-        backgroundColor: '#36622B',
+        backgroundColor: '#f4e5c2',
     },
 
     topSection: {
-        flexDirection: 'row', 
-        alignItems: 'center', 
-        padding: 10, // Add padding around the section
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 10,
     },
     avatarContainer: {
         marginRight: 15, // Adds space between the avatar and the text/date picker
     },
     avatar: {
         width: 50,
-        height: 50, 
-        borderRadius: 25, 
+        height: 50,
+        borderRadius: 25,
     },
     titleAndDatePicker: {
-        flex: 1, 
+        flex: 1,
     },
     headerText: {
-        fontSize: 33, 
+        fontSize: 33,
         fontWeight: 'bold',
         marginBottom: 5,
-        color : 'white',
     },
     datePickerRow: {
-        flexDirection: 'row', 
-        alignItems: 'center', 
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     datePickerText: {
-        marginLeft: 10, 
+        marginLeft: 10,
         fontSize : 15,
         fontWeight : 'bold',
     },
@@ -380,7 +383,7 @@ const styles = StyleSheet.create({
     // -----------------------------------------------------------------
     caloriesSection: {
         padding: 16,
-        backgroundColor: '#A0A0A0',
+        backgroundColor: '#FFF',
         alignItems: 'center',
     },
 
@@ -391,17 +394,16 @@ const styles = StyleSheet.create({
     },
 
     progressCirclesContainer: {
-        flexDirection: 'row', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
         width: '100%',
     },
     
 
     targetSection: {
         padding: 16,
-        backgroundColor: '#ffff',
+        backgroundColor: '#fff',
         textAlign : 'center',
         alignItems : 'center',
     },
@@ -417,6 +419,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
 
+    divider: {
+        height: 4,
+        backgroundColor: '#f4e5c2',
+        marginVertical: 3,
+    },
 // ---------------------------------------------------------------------------
     recipe: {
         backgroundColor: '#fff', 
