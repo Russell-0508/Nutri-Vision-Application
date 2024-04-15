@@ -145,8 +145,16 @@ function ScannerPage({ navigation }) {
       console.log("Image URI:", selectedImageUri);
 
       try {
+        const resizedImage = await ImageManipulator.manipulateAsync(
+          selectedImageUri,
+          [{ resize: { width: 640, height: 640 } }],
+          { compress: 0.5, format: ImageManipulator.SaveFormat.JPEG }
+        );
+
+        console.log('Resized and compressed image:', resizedImage);
+
         // Convert the captured image to base64
-        const base64Image = await FileSystem.readAsStringAsync(selectedImageUri, {
+        const base64Image = await FileSystem.readAsStringAsync(resizedImage.uri, {
           encoding: FileSystem.EncodingType.Base64,
         });
 

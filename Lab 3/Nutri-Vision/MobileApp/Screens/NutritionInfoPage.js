@@ -145,7 +145,7 @@ function NutritionalInfoPage({ route, navigation }) {
     // Fetch user's goal details
     const fetchGoalDetails = async () => {
       try {
-        const userEmail = 'PAN@GMAIL.COM';
+        const userEmail = 'haolun@gmail.com';
         const goalDetails = await fetchUserGoalDetails(userEmail);
 
         // Calculate percentages
