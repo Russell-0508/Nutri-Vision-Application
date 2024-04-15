@@ -28,17 +28,18 @@ function FavouritesPage() {
     console.log('Current filtered entries:', filteredEntires);
   }, [favoriteMealEntries, filteredEntires]);
 
-    // Fetch favorite meal entries
+    // Fetch favorite meal entries from Firebase  
     const fetchFavorites = async () => {
       try {
         const favorites = await getFavouriteMealEntries(); 
-        setFavoriteMealEntries(favorites); 
+        setFavoriteMealEntries(favorites); // Update state with the fetched entries
         setFilteredEntries(favorites);
       } catch (error) {
         console.error('Error fetching favorite meal entries:', error);
       }
     };
 
+    //Clicking on feach favourite meal entry leads to Individual Meal page which displays the macro nutrients of the specific meal by its documentId
   const handlePress = (documentId) => {
     navigation.navigate('IndividualMeal', { documentId });
     console.log('Navigating to documentId:', documentId);
