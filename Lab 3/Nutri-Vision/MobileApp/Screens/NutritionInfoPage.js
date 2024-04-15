@@ -1,7 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, Dimensions, StatusBar, FlatList, ScrollView, Platform } from 'react-native';
-import { Camera } from 'expo-camera';
-import * as ImagePicker from 'expo-image-picker';
+import React, { useState, useEffect } from 'react';
+import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity, Image, StatusBar} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { saveMealToFirestore, updateMealDataInFirestore } from '../../MealHistory';
 import { fetchNutritionalInfo } from '../../CalorieNinjaAPI';
@@ -14,11 +12,11 @@ function NutritionalInfoPage({ route, navigation }) {
   const { base64Image } = route.params;
 
   // State to hold the image URI
-  const [imageUri, setImageUri] = useState(null); // Initial state is null
+  const [imageUri, setImageUri] = useState(null); 
 
 
   // Placeholder image URI
-  const placeholderImageUri = 'https://via.placeholder.com/150'; // Placeholder URL
+  const placeholderImageUri = 'https://via.placeholder.com/150'; 
 
   // State variables for nutritional information
   const [calories, setCalories] = useState('Loading...');
@@ -44,7 +42,6 @@ function NutritionalInfoPage({ route, navigation }) {
 
         // Iterate through each item in the API response
         data.items.forEach(item => {
-          // Sum the nutritional values 
           totalCalories += item.calories;
           totalCarbohydrates += item.carbohydrates_total_g;
           totalFats += item.fat_total_g;
@@ -69,7 +66,6 @@ function NutritionalInfoPage({ route, navigation }) {
 
         checkMealTarget('haolun@gmail.com', totalCalories) 
         .then(result => {
-          // console.log(result);
           setIsTargetFit(result);
         })
 
@@ -94,7 +90,7 @@ function NutritionalInfoPage({ route, navigation }) {
           .catch(error => console.error('Error saving combined meal:', error));
       })
       .catch(error => console.error('Error fetching nutritional info:', error));
-  }, [base64Image, ingredients]); // Make sure to include 'ingredients' in the dependency array
+  }, [base64Image, ingredients]); 
 
   // For toggling favourites 
   const [isFavorite, setIsFavorite] = useState(false);
@@ -137,9 +133,9 @@ function NutritionalInfoPage({ route, navigation }) {
     }
   };
 
-  const [carbsPercentage, setCarbsPercentage] = useState(0); // Example percentage
-  const [fatsPercentage, setFatsPercentage] = useState(0); // Example percentage
-  const [proteinPercentage, setProteinPercentage] = useState(0); // Example percentage
+  const [carbsPercentage, setCarbsPercentage] = useState(0); 
+  const [fatsPercentage, setFatsPercentage] = useState(0); 
+  const [proteinPercentage, setProteinPercentage] = useState(0); 
 
   useEffect(() => {
     // Fetch user's goal details
@@ -168,9 +164,9 @@ function NutritionalInfoPage({ route, navigation }) {
   }, [carbohydrates, fats, protein]);
 
   const ProgressCircle = ({ percentage, fillColor, label }) => {
-    const size = 75; // Diameter of the circle
-    const strokeWidth = 5; // Width of the circle border
-    const radius = (size / 2) - (strokeWidth * 2); // Radius of the circle
+    const size = 75; 
+    const strokeWidth = 5; 
+    const radius = (size / 2) - (strokeWidth * 2); 
     const circumference = 2 * Math.PI * radius;
     const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
@@ -178,7 +174,7 @@ function NutritionalInfoPage({ route, navigation }) {
       <View style={{ alignItems: 'center', margin: 10 }}>
         <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
           <Circle
-            stroke="#ddd" // This is the color for the "unfilled" part of the circle
+            stroke="#ddd" 
             fill="none"
             cx={size / 2}
             cy={size / 2}
@@ -218,9 +214,9 @@ function NutritionalInfoPage({ route, navigation }) {
         {/* Heart button */}
         <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
           <MaterialIcons
-            name={isFavorite ? "favorite" : "favorite-border"} // Change icon based on state
+            name={isFavorite ? "favorite" : "favorite-border"} 
             size={30}
-            color={heartColor} // Change color based on state
+            color={heartColor} 
           />
         </TouchableOpacity>
       </View>
@@ -355,7 +351,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  // Style for the text of labels
   labelText: {
     fontSize: 20,
     color: 'rgb(0, 0 ,0)',
@@ -364,7 +359,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-  // Style for the text of values
   valueText: {
     fontSize: 18,
     color: 'rgb(0, 0 , 0)',
@@ -382,18 +376,17 @@ const styles = StyleSheet.create({
   },
 
   progressCircleContainer: {
-    alignItems: 'center', // Center-align the progress circle and label
+    alignItems: 'center',
   },
 
   progressLabel: {
-    marginTop: 8, // Space between the circle and the label text
-    fontSize: 14, // Adjust based on your design needs
-    color: 'rgb(127, 127, 127)', // Label text color
-    fontWeight: 'bold', // Make the label text bold
+    marginTop: 8, 
+    fontSize: 14, 
+    color: 'rgb(127, 127, 127)', 
+    fontWeight: 'bold', 
   },
 
   progressCircleCarbs: {
-    // Placeholder for the progress circle component
     height: 75,
     width: 75,
     borderRadius: 50,
@@ -403,7 +396,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   progressCircleFats: {
-    // Placeholder for the progress circle component
     height: 75,
     width: 75,
     borderRadius: 50,
@@ -413,7 +405,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   progressCircleProtein: {
-    // Placeholder for the progress circle component
     height: 75,
     width: 75,
     borderRadius: 50,

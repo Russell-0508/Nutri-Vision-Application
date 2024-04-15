@@ -1,20 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-    View,
-    StyleSheet,
-    Image,
-    Text,
-    TouchableOpacity,
-    SafeAreaView,
-    ScrollView,
-    TextInput,
-    StatusBar,
-} from 'react-native';
+import { View, StyleSheet, Image, Text, TouchableOpacity,
+        SafeAreaView, ScrollView, StatusBar } from 'react-native';
 
-import { useNavigation } from "@react-navigation/native"
 import { getMealHistoryFromFirestore } from '../../MealHistory';
 import SearchBar from '../Components/SearchBar';
-
 import DateTimePicker from '@react-native-community/datetimepicker';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
@@ -70,12 +59,12 @@ function History({ navigation }) {
     };
 
     useEffect(() => {
-        fetchMealEntriesForDate(date); // Initial fetch for today's entries
+        fetchMealEntriesForDate(date); 
     }, [date]);
 
     const fetchMealEntriesForDate = async (date) => {
         try {
-            const dateString = date.toISOString().split('T')[0]; // Convert date to YYYY-MM-DD format
+            const dateString = date.toISOString().split('T')[0]; 
             const entries = await getMealHistoryFromFirestore(dateString);
             setMealEntries(entries);
             setFilteredEntries(entries);
@@ -123,7 +112,7 @@ function History({ navigation }) {
 
                     {/* Displays entries according to date */}
                     <View style={{marginTop: 10}}>
-                        {filteredEntires.length === 0 ? ( // Check if there are no meal entries
+                        {filteredEntires.length === 0 ? ( 
                             <Text style={styles.noMealsText}>No meals logged yet</Text>
                         ) : (
                             filteredEntires.map((entry, index) => (

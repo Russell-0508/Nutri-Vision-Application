@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, 
         StatusBar, FlatList, Modal, TextInput } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { saveMealToFirestore } from '../../MealHistory';
-import { useNavigation } from '@react-navigation/native';
-
 
 function ConfirmMealPage({ navigation, route }) {
+
   const { content } = route.params;
   const { base64Image } = route.params;
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -94,7 +92,7 @@ function ConfirmMealPage({ navigation, route }) {
   const handlePress = (item) => {
     setSelectedIngredient(item);
     setIngredientName(item.name);
-    setIngredientMass(item.portion.replace('g', '')); // Assuming 'portion' is always in grams
+    setIngredientMass(item.portion.replace('g', '')); 
   };
 
   const handleUpdateIngredient = () => {
@@ -190,7 +188,7 @@ function ConfirmMealPage({ navigation, route }) {
           renderItem={renderIngredientItem}
           keyExtractor={item => item.id}
           ListFooterComponent={AddIngredientButton}
-          ItemSeparatorComponent={IngredientSeparator} // Add this line
+          ItemSeparatorComponent={IngredientSeparator} 
           style={styles.ingredientsList}
         />
         <ConfirmMealButton />

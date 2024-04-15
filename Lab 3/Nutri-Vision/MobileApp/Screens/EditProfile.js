@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, SafeAreaView, ScrollView, Alert } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, 
+        SafeAreaView, ScrollView, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { getFirestore, collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { getProfileByEmail } from '../../ProfileHistory';
 import { differenceInYears, format } from 'date-fns';
 
-const EditProfilePage = ({ navigation }) => {
+const EditProfilePage = () => {
     const db = getFirestore();
 
     const [name, setName] = useState('');
@@ -44,9 +44,9 @@ const EditProfilePage = ({ navigation }) => {
     }, []);
 
     const onChangeDate = (event, selectedDate) => {
-        const currentDate = selectedDate || date; // Fallback to current date if nothing is selected
-        setShowDatePicker(false); // Hide the picker once a date is selected
-        setDate(currentDate); // Update the state with the new date
+        const currentDate = selectedDate || date; 
+        setShowDatePicker(false); 
+        setDate(currentDate); 
     };
 
 
@@ -290,10 +290,10 @@ const styles = StyleSheet.create({
       width: 120, 
       borderRadius: 60, 
       borderWidth: 3, 
-      borderColor: '#ffffff', // Adjust the border color
+      borderColor: '#ffffff', 
       justifyContent: 'center',
       alignItems: 'center',
-      overflow: 'hidden', // Ensures the image doesn't bleed outside the border
+      overflow: 'hidden', 
     },
     avatar: {
       width: 110,
@@ -312,8 +312,8 @@ const styles = StyleSheet.create({
     },
 
     inputWrapper: {
-        flexDirection: 'row', // Arrange items in a row
-        alignItems: 'center', // Center items vertically
+        flexDirection: 'row',
+        alignItems: 'center', 
         borderWidth: 1,
         borderColor: 'gray',
         backgroundColor: '#FFF',
@@ -327,9 +327,9 @@ const styles = StyleSheet.create({
         borderColor: 'gray',
         padding: 10,
         marginBottom: 10,
-        borderRadius: 5, // Match input styles for consistency
-        backgroundColor: '#FFF', // Keeping it white to resemble an input field
-        alignItems: 'center', // Center the text horizontally
+        borderRadius: 5, 
+        backgroundColor: '#FFF',
+        alignItems: 'center', 
     },
 
     // Additional styling for the date display text
@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
   
     createAccountButton: {
         marginTop: 20,
-        backgroundColor: '#007bff', // Button background color
+        backgroundColor: '#007bff', 
         borderRadius: 20,
         paddingVertical: 10,
         paddingHorizontal: 20,
