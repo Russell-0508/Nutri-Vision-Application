@@ -67,7 +67,7 @@ function NutritionalInfoPage({ route, navigation }) {
         setFats(totalFats);
         setProtein(totalProtein);
 
-        checkMealTarget('PAN@GMAIL.COM', totalCalories) 
+        checkMealTarget('haolun@gmail.com', totalCalories) 
         .then(result => {
           // console.log(result);
           setIsTargetFit(result);
@@ -145,7 +145,7 @@ function NutritionalInfoPage({ route, navigation }) {
     // Fetch user's goal details
     const fetchGoalDetails = async () => {
       try {
-        const userEmail = 'PAN@GMAIL.COM';
+        const userEmail = 'haolun@gmail.com';
         const goalDetails = await fetchUserGoalDetails(userEmail);
 
         // Calculate percentages
