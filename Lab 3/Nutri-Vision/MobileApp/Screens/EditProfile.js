@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, SafeAreaView, ScrollView, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { format } from 'date-fns';
 import { getFirestore, collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { getProfileByEmail } from '../../ProfileHistory';
+import { differenceInYears, format } from 'date-fns';
 
 const EditProfilePage = ({ navigation }) => {
     const db = getFirestore();
@@ -43,6 +43,12 @@ const EditProfilePage = ({ navigation }) => {
         fetchProfileByEmail();
     }, []);
 
+    const onChangeDate = (event, selectedDate) => {
+        const currentDate = selectedDate || date; // Fallback to current date if nothing is selected
+        setShowDatePicker(false); // Hide the picker once a date is selected
+        setDate(currentDate); // Update the state with the new date
+    };
+
 
     const handleEditProfile = async () => {
         try {
@@ -60,13 +66,16 @@ const EditProfilePage = ({ navigation }) => {
 
             const profileDoc = querySnapshot.docs[0];
             const profileRef = profileDoc.ref;
+            const age = differenceInYears(new Date(), date);
 
             // Update the profile
             await updateDoc(profileRef, {
                 name,
                 gender: selectedGender,
                 height: parseFloat(height), 
-                weight: parseFloat(weight), 
+                weight: parseFloat(weight),
+                dateOfBirth: date,
+                age 
             });
 
             Alert.alert("Profile updated successfully.");

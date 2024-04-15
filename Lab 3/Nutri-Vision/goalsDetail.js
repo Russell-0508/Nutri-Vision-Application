@@ -46,6 +46,8 @@ export const checkMealTarget = async (userEmail, mealCalories) => {
         // Calculate calorie target for each meal
         const dailyCalories = goalDetails.Calories;
         const mealTargetCalories = dailyCalories / 3; // Divide the daily calories by 3 for each meal
+        console.log('Meal Target Calories:', mealTargetCalories);
+        console.log('Calories logged', mealCalories);
 
         // Check if the logged meal's calories are within the target range
         const isTargetFit = mealCalories <= mealTargetCalories;
