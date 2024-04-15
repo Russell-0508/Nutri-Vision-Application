@@ -62,6 +62,10 @@ function Login({ navigation }) {
         setIsPasswordVisible(!isPasswordVisible);
     }
 
+    const forgetPassword = () => {
+        Alert.alert("Please contact the SEITRAMS team!");
+    }
+
     return (
         <View style={styles.background}>
             <View style={{ height: 0 }}>
@@ -125,6 +129,17 @@ function Login({ navigation }) {
                             }}
                         />
                     </TouchableOpacity>
+
+                    <View style= {styles.forgetComponent}>
+                        <TouchableOpacity
+                            onPress={forgetPassword} 
+                            style={styles.forgetPassword}>
+                            <Text style={styles.forgetText}>
+                                Forget Your Password?
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                    
                     <View style={{ marginTop: 50 }}>
                         <TouchableOpacity
                             onPress={LoginFunction} //()=>navigation.navigate("CreateProfile")
@@ -143,18 +158,22 @@ function Login({ navigation }) {
                             alignSelf: 'center',
                             fontSize: 18,
                         }}> Don't have an account? </Text>
+                        <Text></Text>
                         <TouchableOpacity
                             onPress={() => navigation.navigate("AccountRegistration")}
                             style={styles.buttonContainer}>
                             <Text style={{
                                 fontSize: 18,
                                 alignSelf: 'center',
-                                color: 'white'
+                                color: 'white',
+
                             }}>
                                 Create an account
                             </Text>
                         </TouchableOpacity>
                     </View>
+
+
 
                 </ScrollView>
             </SafeAreaView>
@@ -177,7 +196,6 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         backgroundColor: 'gray'
     },
-
 
     login: {
         color: 'white',
@@ -210,6 +228,7 @@ const styles = StyleSheet.create({
 
     },
 
+
     titletext: {
         fontSize: 25,
         fontWeight: '600',
@@ -218,6 +237,16 @@ const styles = StyleSheet.create({
         textAlign: 'left',
     },
 
+    forgetComponent: {
+        padding: 10,
+        borderRadius: 10,
+        alignSelf: 'center',
+    },
+
+    forgetText: {
+        fontSize : 16,
+        marginLeft : 10,
+    }
 
 
 })

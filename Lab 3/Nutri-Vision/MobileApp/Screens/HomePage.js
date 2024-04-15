@@ -1,13 +1,12 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
 import React, { useEffect, useState } from 'react';
-import { Image, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-//import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import { Image, Platform, SafeAreaView, ScrollView, 
+        StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import { getMealHistoryFromFirestore } from '../../MealHistory';
 import { getProfileByEmail } from '../../ProfileHistory';
 import { fetchUserGoalDetails } from '../../goalsDetail';
-
 
 export default function HomePage({navigation}) {
 
@@ -124,8 +123,7 @@ export default function HomePage({navigation}) {
                 // Fetch and set goals details
                 const goals = await fetchUserGoalDetails(email);
                 setGoalsDetails(goals);
-                console.log('Goal Details:', goals); //why undefined?
-
+                console.log('Goal Details:', goals); 
             } else {
                 console.log('No profile found for the given email:', email);
             }
@@ -331,8 +329,6 @@ export default function HomePage({navigation}) {
                         </TouchableOpacity>
                     </View>
                 </View>
-
-  
             </ScrollView>
         </SafeAreaView>
     );
