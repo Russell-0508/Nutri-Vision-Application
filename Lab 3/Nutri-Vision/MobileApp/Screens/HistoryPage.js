@@ -73,6 +73,7 @@ function History({ navigation }) {
         fetchMealEntriesForDate(date); // Initial fetch for today's entries
     }, [date]);
 
+    //Fetch meal entries from Firebase according to the date created 
     const fetchMealEntriesForDate = async (date) => {
         try {
             const dateString = date.toISOString().split('T')[0]; // Convert date to YYYY-MM-DD format

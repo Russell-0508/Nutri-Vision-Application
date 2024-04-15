@@ -15,13 +15,6 @@ function ConfirmMealPage({ navigation, route }) {
   const [ingredientMass, setIngredientMass] = useState('');
 
   const [selectedIngredient, setSelectedIngredient] = useState(null);
-  /*
-  // Placeholder ingredients
-  const [ingredients, setIngredients] = useState([
-    { id: '1', name: 'Rice', portion: '200g' },
-    { id: '2', name: 'Chicken', portion: '150g' },
-  ]);
-  */
 
   //parse ingredient string and return array of ingredient objects
   const parseIngredients = (ingredientString) => {
@@ -51,6 +44,7 @@ function ConfirmMealPage({ navigation, route }) {
   );
 
 
+  //Function to add ingredient  name and mass to the existing ingredients list 
   const handleAddIngredient = () => {
     console.log("Add button pressed with ingredient name:", ingredientName, "and mass:", ingredientMass);
     const newIngredient = {
@@ -64,7 +58,7 @@ function ConfirmMealPage({ navigation, route }) {
     setIsModalVisible(false);
   };
 
-
+  //Function to handle the update and deletion of ingredient list entries 
   const EditIngredientModal = () => (
     <Modal
       animationType="slide"
@@ -106,6 +100,7 @@ function ConfirmMealPage({ navigation, route }) {
     setIngredientMass(item.portion.replace('g', '')); // Assuming 'portion' is always in grams
   };
 
+  //Function to handle the updating of ingredient's name and mass 
   const handleUpdateIngredient = () => {
     const updatedIngredients = ingredients.map(ing => {
       if (ing.id === selectedIngredient.id) {
@@ -118,6 +113,7 @@ function ConfirmMealPage({ navigation, route }) {
     setSelectedIngredient(null);
   };
 
+  //Function to delete the ingredient entry from ingredients list 
   const handleDeleteIngredient = () => {
     const filteredIngredients = ingredients.filter(ing => ing.id !== selectedIngredient.id);
     setIngredients(filteredIngredients);
@@ -147,6 +143,7 @@ function ConfirmMealPage({ navigation, route }) {
     </View>
   );
 
+  //When 'Confirm Meal' button is pressed, it navigates to Nutritional Info Page and passes the ingredients list entries and the image of the food as base64Image
   const handleConfirmMeal = () => {
     const query = ingredients.map(ingredient => `${ingredient.portion} ${ingredient.name}`).join(' , ');
     navigation.navigate('Nutritional Info', { ingredients: query, base64Image });

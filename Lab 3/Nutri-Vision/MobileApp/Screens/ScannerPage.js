@@ -59,6 +59,7 @@ function ScannerPage({ navigation }) {
   }, []);
 
 
+  //Function to take picture using Expo Camera module, and compressees image to ensure that the image is less than 10MB to be stored in Firebase 
   const takePicture = async () => {
     console.log("Taking picture...");
     // console.log("cameraRef.current:", cameraRef.current);
@@ -75,7 +76,7 @@ function ScannerPage({ navigation }) {
 
         console.log('Resized and compressed image:', resizedImage);
 
-        // Convert the captured image to base64
+        // Convert the captured image to base64 for storing to Firebase
         const base64Image = await FileSystem.readAsStringAsync(resizedImage.uri, {
           encoding: FileSystem.EncodingType.Base64,
         });
@@ -114,7 +115,7 @@ function ScannerPage({ navigation }) {
     }
   };
 
-
+//Request permission to access camera and gallery from user 
   if (hasPermission === null || galleryPermission === null) {
     return <View />;
   }
@@ -130,6 +131,8 @@ function ScannerPage({ navigation }) {
   const cameraSize = windowWidth + 190; //camera size
   const topOffset = (windowHeight - cameraSize) / 2;
 
+  //Function for users to pick an image from their gallery and upload to the app for meal logging.
+  //Image is also resized and compressed to ensure that it can be stored in Firebase for each unique meal Id 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -153,7 +156,7 @@ function ScannerPage({ navigation }) {
 
         console.log('Resized and compressed image:', resizedImage);
 
-        // Convert the captured image to base64
+        // Convert the compressed image to base64
         const base64Image = await FileSystem.readAsStringAsync(resizedImage.uri, {
           encoding: FileSystem.EncodingType.Base64,
         });
