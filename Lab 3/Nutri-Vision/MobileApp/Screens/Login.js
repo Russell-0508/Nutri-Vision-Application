@@ -89,7 +89,6 @@ function Login({ navigation }) {
                     <View style={styles.textinputcontainer}>
                         <TextInput
                             ref={textInputRef}
-                            //styles={styles.textinput}
                             placeholder='*******@gmail.com'
                             value={email}
                             onChangeText={setEmail}
@@ -111,7 +110,6 @@ function Login({ navigation }) {
                     </View>
                     <View style={styles.textinputcontainer}>
                         <TextInput
-                            //styles={styles.textinput}
                             placeholder='**********'
                             secureTextEntry={!isPasswordVisible}
                             value={password}
@@ -142,7 +140,7 @@ function Login({ navigation }) {
                     
                     <View style={{ marginTop: 50 }}>
                         <TouchableOpacity
-                            onPress={LoginFunction} //()=>navigation.navigate("CreateProfile")
+                            onPress={LoginFunction} 
                             style={styles.buttonContainer}>
                             <Text style={{
                                 fontSize: 18,

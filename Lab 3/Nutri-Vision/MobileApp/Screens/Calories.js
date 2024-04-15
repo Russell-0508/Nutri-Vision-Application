@@ -1,17 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { 
-    View, 
-    Text, 
-    SafeAreaView, 
-    ScrollView, 
-    TouchableOpacity, 
-    StyleSheet, 
-    StatusBar,
-    Platform,
-} from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, 
+    TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
 
 import { getMealHistoryFromFirestore } from '../../MealHistory';
-
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';

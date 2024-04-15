@@ -1,10 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, Dimensions, StatusBar, FlatList, ScrollView, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity, Image, StatusBar, ScrollView } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { getMealEntryById, updateMealDataInFirestore } from '../../MealHistory';
-import { useNavigation } from '@react-navigation/native';
 import Svg, { Circle } from 'react-native-svg';
-import { getProfileByEmail } from '../../ProfileHistory';
 import { fetchUserGoalDetails } from '../../goalsDetail';
 
 
@@ -53,11 +51,11 @@ function IndividualMeal({ route }) {
       }
 
       const mealEntry = await getMealEntryById(documentId);
-      console.log('Fetched meal entry:', mealEntry); // Log the fetched data
+      console.log('Fetched meal entry:', mealEntry); 
 
       setMealEntry(mealEntry);
-      setIsFavorite(mealEntry.favourite); // Set isFavorite state based on fetched data
-      setHeartColor(mealEntry.favourite ? "red" : "black"); // Set heart color based on fetched data
+      setIsFavorite(mealEntry.favourite); 
+      setHeartColor(mealEntry.favourite ? "red" : "black"); 
       const attributesToDisplay = ['calories', 'carbohydrates', 'cholesterol', 'fiber', 'protein', 'saturatedFat', 'sodium', 'sugar', 'totalFat','picture'];
       attributesToDisplay.forEach(attribute => {
         if (mealEntry[attribute] !== 0) {
@@ -134,7 +132,7 @@ const ProteinPercentage = Math.min(calculateProteinPercentage(), 100);
     if (documentId) {
       fetchNutritionalInfo(documentId);
     }
-  }, [documentId]); // Empty dependency array to run only on component mount
+  }, [documentId]); 
 
   // Update favourites attribute in database when heart icon is pressed
   const toggleFavorite = async () => {
@@ -157,9 +155,9 @@ const ProteinPercentage = Math.min(calculateProteinPercentage(), 100);
   };
 
   const ProgressCircle = ({ percentage, fillColor, label, value }) => {
-    const size = 75; // Diameter of the circle
-    const strokeWidth = 5; // Width of the circle border
-    const radius = (size / 2) - (strokeWidth * 2); // Radius of the circle
+    const size = 75; 
+    const strokeWidth = 5; 
+    const radius = (size / 2) - (strokeWidth * 2); 
     const circumference = 2 * Math.PI * radius;
     const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
@@ -191,7 +189,7 @@ const ProteinPercentage = Math.min(calculateProteinPercentage(), 100);
         <Text style={{
             position: 'absolute',
             fontWeight: 'bold',
-            fontSize: 14, // Adjust the font size as needed
+            fontSize: 14, 
             left: '55%',
             top: '35%',
             transform: [{ translateX: -size * 0.2 }, { translateY: -size * 0.1 }],
@@ -220,9 +218,9 @@ const ProteinPercentage = Math.min(calculateProteinPercentage(), 100);
           {/* Heart button */}
           <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
             <MaterialIcons
-              name={isFavorite ? "favorite" : "favorite-border"} // Change icon based on state
+              name={isFavorite ? "favorite" : "favorite-border"} 
               size={30}
-              color={heartColor} // Change color based on state
+              color={heartColor} 
             />
           </TouchableOpacity>
         </View>
@@ -359,7 +357,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  // Style for the text of labels
   labelText: {
     fontSize: 20,
     color: 'rgb(0, 0 ,0)',
@@ -368,7 +365,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-  // Style for the text of values
   valueText: {
     fontSize: 18,
     color: 'rgb(0, 0 , 0)',
@@ -387,14 +383,13 @@ const styles = StyleSheet.create({
 
 
   progressLabel: {
-    marginTop: 8, // Space between the circle and the label text
-    fontSize: 14, // Adjust based on your design needs
-    color: 'rgb(127, 127, 127)', // Label text color
-    fontWeight: 'bold', // Make the label text bold
+    marginTop: 8, 
+    fontSize: 14, 
+    color: 'rgb(127, 127, 127)', 
+    fontWeight: 'bold', 
   },
 
   progressCircleCarbs: {
-    // Placeholder for the progress circle component
     height: 75,
     width: 75,
     borderRadius: 50,
@@ -404,7 +399,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   progressCircleFats: {
-    // Placeholder for the progress circle component
     height: 75,
     width: 75,
     borderRadius: 50,
@@ -414,7 +408,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   progressCircleProtein: {
-    // Placeholder for the progress circle component
     height: 75,
     width: 75,
     borderRadius: 50,

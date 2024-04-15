@@ -87,13 +87,13 @@ export default function HomePage({navigation}) {
 
     // Allows the component to interact with external system (Firestore database)
     useEffect(() => {
-        fetchMealEntriesForDate(date); // Initial fetch for today's entries
+        fetchMealEntriesForDate(date); 
     }, [date]);
 
 
     const fetchMealEntriesForDate = async (date) => {
         try {
-            const dateString = date.toISOString().split('T')[0]; // Convert date to YYYY-MM-DD Format
+            const dateString = date.toISOString().split('T')[0]; 
             const entries = await getMealHistoryFromFirestore(dateString);
             setMealEntries(entries);
         } catch(error) {
@@ -109,7 +109,7 @@ export default function HomePage({navigation}) {
 
     const fetchProfileByEmail = async () => {
         try {
-            const email = "haolun@gmail.com"; //change this email to read from user.email or smth
+            const email = "haolun@gmail.com"; 
             const profiles = await getProfileByEmail(email); 
             if (profiles.length > 0) {
                 const profile = profiles[0];
@@ -134,9 +134,9 @@ export default function HomePage({navigation}) {
 
 
     const ProgressCircle = ({ percentage, fillColor, label }) => {
-        const size = 75; // Diameter of the circle
-        const strokeWidth = 5; // Width of the circle border
-        const radius = (size / 2) - (strokeWidth * 2); // Radius of the circle
+        const size = 75; 
+        const strokeWidth = 5; 
+        const radius = (size / 2) - (strokeWidth * 2); 
         const circumference = 2 * Math.PI * radius;
         const strokeDashoffset = circumference - (percentage / 100) * circumference;
       
@@ -144,7 +144,7 @@ export default function HomePage({navigation}) {
           <View style={{ alignItems: 'center', margin: 10 }}>
             <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
               <Circle
-                stroke="#ddd" // This is the color for the "unfilled" part of the circle
+                stroke="#ddd" 
                 fill="none"
                 cx={size / 2}
                 cy={size / 2}
@@ -171,9 +171,9 @@ export default function HomePage({navigation}) {
       };
 
     const CalorieProgressCircle = ({ percentage, calories }) => {
-        const size = 180; // Diameter of the calorie circle
-        const strokeWidth = 12; // Width of the calorie circle border
-        const radius = (size / 2) - (strokeWidth * 2); // Radius of the calorie circle
+        const size = 180; 
+        const strokeWidth = 12; 
+        const radius = (size / 2) - (strokeWidth * 2); 
         const circumference = 2 * Math.PI * radius;
         const strokeDashoffset = circumference - (percentage / 100) * circumference;
     
@@ -181,7 +181,7 @@ export default function HomePage({navigation}) {
             <View style={{ alignItems: 'center', justifyContent: 'center', marginVertical: 20 }}>
                 <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
                     <Circle
-                        stroke="#eee" // Background circle color
+                        stroke="#eee" 
                         fill="none"
                         cx={size / 2}
                         cy={size / 2}
@@ -189,7 +189,7 @@ export default function HomePage({navigation}) {
                         strokeWidth={strokeWidth}
                     />
                     <Circle
-                        stroke="#FFA726" // Fill circle color
+                        stroke="#FFA726" 
                         fill="none"
                         cx={size / 2}
                         cy={size / 2}
@@ -254,7 +254,6 @@ export default function HomePage({navigation}) {
                     <View style={styles.avatarContainer}>
                         <Image
                             source={{ uri: avatarUrl }}
-                            //source={require('../assets/hacker.png')}
                             style={styles.avatar}
                         />
                      </View>
@@ -299,7 +298,6 @@ export default function HomePage({navigation}) {
                         fillColor="#FF4500" 
                         label = "Heart Rate"
                     />
-
                 </View>
 
                 <View style = {styles.recipe}>
@@ -319,10 +317,6 @@ export default function HomePage({navigation}) {
                             <Text style = {styles.difficulty}>Difficulty Level: Easy</Text>
                         </View>
                     </View>
-
-
-
-
                     <View style = {styles.recipeButtons}>
                         <TouchableOpacity onPress = {onGetStartedPress} style = {styles.buttonGetStarted}>
                             <Text style = {styles.buttonText}>Get Started</Text>
@@ -351,7 +345,7 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     avatarContainer: {
-        marginRight: 15, // Adds space between the avatar and the text/date picker
+        marginRight: 15, 
     },
     avatar: {
         width: 50,

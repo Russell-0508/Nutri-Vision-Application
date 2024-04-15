@@ -1,13 +1,4 @@
-import { 
-    View, 
-    ImageBackground, 
-    StyleSheet, 
-    Image, 
-    Text, 
-    Dimensions, 
-    Button,
-    TouchableOpacity,
-} from 'react-native';
+import { View,  StyleSheet, Image, Text, TouchableOpacity } from 'react-native';
 
 import { useNavigation } from "@react-navigation/native"
 
@@ -84,7 +75,5 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     }
 })
-
-
 
 export default LandingUI;

@@ -8,10 +8,10 @@ import SearchBar from '../Components/SearchBar';
 function FavouritesPage() {
   const navigation = useNavigation();
   // Placeholder image URI
-  const headerImageUri = 'https://via.placeholder.com/150'; // Update this to your desired image URL
+  const headerImageUri = 'https://via.placeholder.com/150'; 
 
   // Simulate a dynamic list of images
-  const images = new Array(8).fill(headerImageUri); // Example: 8 images. Adjust the number as needed.
+  const images = new Array(8).fill(headerImageUri); 
 
   const [favoriteMealEntries, setFavoriteMealEntries] = useState([]);
   const [filteredEntires, setFilteredEntries] = useState([]);
@@ -31,8 +31,8 @@ function FavouritesPage() {
     // Fetch favorite meal entries
     const fetchFavorites = async () => {
       try {
-        const favorites = await getFavouriteMealEntries(); // Fetch favorite meal entries
-        setFavoriteMealEntries(favorites); // Update state with the fetched entries
+        const favorites = await getFavouriteMealEntries(); 
+        setFavoriteMealEntries(favorites); 
         setFilteredEntries(favorites);
       } catch (error) {
         console.error('Error fetching favorite meal entries:', error);
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   },
   gridContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap', // Allows items to wrap to the next line
+    flexWrap: 'wrap', 
     justifyContent: 'space-around',
     paddingTop: 20,
   },
@@ -95,8 +95,8 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   image: {
-    width: '100%', // Use the full width of the container
-    height: 150, // Set a fixed height for the images
+    width: '100%', 
+    height: 150, 
   },
   imageText: {
     marginTop: 8,

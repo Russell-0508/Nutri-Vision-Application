@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { Linking, SafeAreaView, ScrollView, StyleSheet, 
         Text, TextInput, TouchableOpacity, View, Image, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { auth } from '../../firebase/config';
 
+import { auth } from '../../firebase/config';
 import FacebookLogo from '../assets/images/facebook-logo.jpg';
 import GoogleLogo from '../assets/images/google-logo.jpg';
-
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
 const AccountReg = ({ navigation }) => {
@@ -71,7 +70,7 @@ const AccountReg = ({ navigation }) => {
             setPasswordMismatchError("Passwords do not match");
             return false;
         }
-        setPasswordMismatchError(""); // Clear any existing error message
+        setPasswordMismatchError(""); 
         return true;
     };
 
@@ -88,7 +87,7 @@ const AccountReg = ({ navigation }) => {
             return;
         }
 
-        const passwordsDoMatch = checkPasswordsMatch(); // Check if passwords match
+        const passwordsDoMatch = checkPasswordsMatch(); 
         const isPasswordStrong = passwordStrength && passwordStrength.message === 'Strong';
         
         if (!termsAccepted) {
@@ -102,12 +101,6 @@ const AccountReg = ({ navigation }) => {
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
-                /*const userRef = doc(firestore, "users", user.uid);
-                await setDoc(userRef, {
-                    displayName: name,
-                    email: email,
-                    uid: user.uid,
-                });*/
             } catch (error) {
                 console.log("Account creation failed D:");
                 console.log(error.message);
@@ -150,7 +143,7 @@ const AccountReg = ({ navigation }) => {
                         placeholder='Enter Your Email'
                         keyboardType="email-address"
                         value={email}
-                        onChangeText={setEmail} //Update email state
+                        onChangeText={setEmail} 
                     />
 
 
@@ -160,7 +153,7 @@ const AccountReg = ({ navigation }) => {
                         <TextInput
                             style={styles.input}
                             placeholder='Enter Your Password'
-                            secureTextEntry={!passwordVisible} // Hide password by default
+                            secureTextEntry={!passwordVisible} 
                             value={password} 
                             onChangeText={(newPassword) => {
                                 setPassword(newPassword);
@@ -190,9 +183,9 @@ const AccountReg = ({ navigation }) => {
                         <TextInput
                             style={styles.input}
                             placeholder='Re-Enter Your Password'
-                            secureTextEntry={!confirmPasswordVisible} // Hide confirm password by default
+                            secureTextEntry={!confirmPasswordVisible} 
                             value={confirmPassword}
-                            onChangeText={setConfirmPassword} // Update confirm password state
+                            onChangeText={setConfirmPassword} 
                         />
 
                         {/* Toggle Password Visibility Button for Confirm Password */}
@@ -237,7 +230,6 @@ const AccountReg = ({ navigation }) => {
                             <Text style={[styles.signInButtonText, styles.facebookText]}>Sign in With Facebook</Text>
                         </TouchableOpacity>
                     </View>
-
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -379,11 +371,11 @@ const styles = StyleSheet.create({
     
     },
     signInWithGoogle: {
-        backgroundColor: '#fff', // Google button with white background
+        backgroundColor: '#fff', 
     },
 
     signInWithFacebook: {
-        backgroundColor: '#3b5998', // Facebook button with blue background
+        backgroundColor: '#3b5998', 
     },
 
     logo: {
