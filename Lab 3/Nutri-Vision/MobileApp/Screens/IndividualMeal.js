@@ -17,7 +17,7 @@ function IndividualMeal({ route }) {
   const [goalsDetails, setGoalsDetails] = useState([]);
 
   useEffect(() => {
-    fetchUserGoalDetails('PAN@GMAIL.COM').then(setGoalsDetails).catch(console.error);
+    fetchUserGoalDetails('haolun@gmail.com').then(setGoalsDetails).catch(console.error);
     if (documentId) {
       fetchNutritionalInfo(documentId);
     }
