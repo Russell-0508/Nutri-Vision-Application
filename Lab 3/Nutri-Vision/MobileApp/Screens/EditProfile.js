@@ -10,36 +10,13 @@ const EditProfilePage = ({ navigation }) => {
     const db = getFirestore();
 
     const [name, setName] = useState('');
-    const [email, setEmail] = useState('PAN@GMAIL.COM'); 
+    const [email, setEmail] = useState('haolun@gmail.com'); 
     const [selectedGender, setSelectedGender] = useState('');
     const [height, setHeight] = useState('');
     const [weight, setWeight] = useState('');
     const [date, setDate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [profileId, setProfileId] = useState('');
-
-    // Check for empty or invalid fields
-    if (!name.trim()) {
-        Alert.alert("Missing Information", "Please enter your name.");
-        return;
-    }
-    if (!selectedGender) {
-        Alert.alert("Missing Information", "Please select a gender.");
-        return;
-    }
-    // Check if the dateOfBirth is reasonable, e.g., not a future date or too old
-    if (date > new Date() || dateOfBirth < new Date('1900-01-01')) {
-        Alert.alert("Invalid Date", "Please enter a valid date of birth.");
-        return;
-    }
-    if (!height || parseFloat(height) <= 0 || parseFloat(height) > 300) {
-        Alert.alert("Invalid Input", "Please enter a valid height in cm.");
-        return;
-    }
-    if (!weight || parseFloat(weight) <= 0 || parseFloat(weight) > 1000) {
-        Alert.alert("Invalid Input", "Please enter a valid weight in kg.");
-        return;
-    }
 
     // Fetch profile from Firestore
     useEffect(() => {
@@ -74,6 +51,30 @@ const EditProfilePage = ({ navigation }) => {
 
 
     const handleEditProfile = async () => {
+
+        // Check for empty or invalid fields
+        if (!name.trim()) {
+            Alert.alert("Missing Information", "Please enter your name.");
+            return;
+        }
+        if (!selectedGender) {
+            Alert.alert("Missing Information", "Please select a gender.");
+            return;
+        }
+        // Check if the dateOfBirth is reasonable, e.g., not a future date or too old
+        if (!(date instanceof Date && !isNaN(date))) {
+            Alert.alert("Invalid Date", "Please enter a valid date of birth.");
+            return;
+        }
+        if (!height || parseFloat(height) <= 0 || parseFloat(height) > 300) {
+            Alert.alert("Invalid Input", "Please enter a valid height in cm.");
+            return;
+        }
+        if (!weight || parseFloat(weight) <= 0 || parseFloat(weight) > 1000) {
+            Alert.alert("Invalid Input", "Please enter a valid weight in kg.");
+            return;
+        }
+
         try {
             // Reference to the profiles collection
             const profilesRef = collection(db, "profile");
@@ -101,7 +102,7 @@ const EditProfilePage = ({ navigation }) => {
                 age 
             });
 
-            Alert.alert("Profile updated successfully.");
+            Alert.alert("Profile updated successfully!");
         } catch (error) {
             console.error("Error updating profile:", error);
             Alert.alert("Error updating profile. Please try again.");
@@ -118,15 +119,6 @@ const EditProfilePage = ({ navigation }) => {
                         placeholder="Enter Your Name"
                         value={name}
                         onChangeText={setName}
-                    />
-
-                    <Text style={styles.label}>Email</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Enter Your Email"
-                        value={email}
-                        onChangeText={setEmail}
-                        keyboardType="email-address"
                     />
 
                     <Text style={styles.label}>Gender</Text>

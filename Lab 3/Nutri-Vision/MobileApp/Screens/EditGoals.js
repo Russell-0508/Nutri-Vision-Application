@@ -16,7 +16,7 @@ const EditGoals = ({ navigation }) => {
 
     const handleNextPress = async () => {
         if (selectedGoal) {
-            const userEmail = "PAN@GMAIL.COM"; // Substitute with dynamic user email if available
+            const userEmail = "haolun@gmail.com"; 
             const profilesColRef = collection(db, 'profile');
             const q = query(profilesColRef, where("email", "==", userEmail));
 
@@ -30,6 +30,7 @@ const EditGoals = ({ navigation }) => {
                     await updateDoc(userDoc.ref, { goals: selectedGoal });
                     
                     console.log('Goal updated successfully:', selectedGoal);
+                    global.lastGoalUpdateTime = new Date();
                     navigation.navigate('Tabs'); // Navigate to the next screen after goal update
                 } else {
                     console.log('Profile not found.');

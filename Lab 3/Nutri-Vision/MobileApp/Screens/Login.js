@@ -158,7 +158,7 @@ function Login({ navigation }) {
                             alignSelf: 'center',
                             fontSize: 18,
                         }}> Don't have an account? </Text>
-                        <Text style = {styles.divider}></Text>
+                        <Text></Text>
                         <TouchableOpacity
                             onPress={() => navigation.navigate("AccountRegistration")}
                             style={styles.buttonContainer}>
@@ -196,12 +196,6 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         backgroundColor: 'gray'
     },
-
-    
-    divider : {
-        weight : 3,
-    },
-
 
     login: {
         color: 'white',

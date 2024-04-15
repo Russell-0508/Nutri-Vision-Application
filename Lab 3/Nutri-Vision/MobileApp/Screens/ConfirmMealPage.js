@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, Dimensions, StatusBar, FlatList, ScrollView, Modal, TextInput } from 'react-native';
-import { Camera } from 'expo-camera';
-import * as ImagePicker from 'expo-image-picker';
+import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, 
+        StatusBar, FlatList, Modal, TextInput } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { saveMealToFirestore } from '../../MealHistory';
 import { useNavigation } from '@react-navigation/native';
@@ -15,14 +14,7 @@ function ConfirmMealPage({ navigation, route }) {
   const [ingredientMass, setIngredientMass] = useState('');
 
   const [selectedIngredient, setSelectedIngredient] = useState(null);
-  /*
-  // Placeholder ingredients
-  const [ingredients, setIngredients] = useState([
-    { id: '1', name: 'Rice', portion: '200g' },
-    { id: '2', name: 'Chicken', portion: '150g' },
-  ]);
-  */
-
+ 
   //parse ingredient string and return array of ingredient objects
   const parseIngredients = (ingredientString) => {
     // Split the string into individual ingredients based on " and "
@@ -45,11 +37,10 @@ function ConfirmMealPage({ navigation, route }) {
       backgroundColor: 'grey',
       marginTop: 5,
       marginBottom: 5,
-      marginLeft: 60, // Adjust this value to control the starting point
-      marginRight: 100, // Adjust this value to control the ending point
+      marginLeft: 60, 
+      marginRight: 100, 
     }} />
   );
-
 
   const handleAddIngredient = () => {
     console.log("Add button pressed with ingredient name:", ingredientName, "and mass:", ingredientMass);
@@ -133,7 +124,6 @@ function ConfirmMealPage({ navigation, route }) {
       </View>
     </TouchableOpacity >
   );
-
 
   const AddIngredientButton = () => (
     <View>
