@@ -92,6 +92,8 @@ const CreateProfile = ({ navigation }) => {
             setHeight(text);  // Allow clearing the input
         } else if (heightNum > 0 && heightNum <= 300) {
             setHeight(text);  // Set height if valid
+        } else if (heightNum == 0) {
+            alert("Height cannot be 0");
         } else if (heightNum < 0) {
             alert("Height cannot be negative.");
         } else if (heightNum > 300) {
@@ -105,6 +107,8 @@ const CreateProfile = ({ navigation }) => {
             setWeight(text);  // Allow clearing the input
         } else if (weightNum > 0 && weightNum <= 1000) {
             setWeight(text);  // Set weight if valid
+        } else if (weightNum == 0) {
+            alert("Weight cannot be 0");
         } else if (weightNum < 0) {
             alert("Weight cannot be negative.");
         } else if (weightNum > 1000) {
@@ -250,8 +254,15 @@ const CreateProfile = ({ navigation }) => {
                     {bmi && (
                         <View style={styles.bmiContainer}>
                             <Text style={styles.bmiText}>Your BMI: {bmi}</Text>
-                            <Text style={styles.bmiCategoryText}>{bmiCategory}</Text>
-                        </View>
+                            <Text style={[
+                                styles.bmiCategoryText,
+                                bmiCategory === 'Normal weight' && styles.normalWeight,
+                                bmiCategory === 'Underweight' && styles.underweight,
+                                    (bmiCategory === 'Overweight' || bmiCategory === 'Obesity') && styles.overweight, // Combined overweight and obesity for the same color
+                            ]}>
+                                {bmiCategory}
+                            </Text>
+                            </View>
                     )}
 
 
@@ -269,7 +280,7 @@ const styles = StyleSheet.create({
     //Safe Area for IOS devices
     safeArea: {
         flex: 1,
-        backgroundColor: '#36622B', 
+        backgroundColor: '#f4e5c2', 
     },
 
     chooseAvatar : {
@@ -339,34 +350,34 @@ const styles = StyleSheet.create({
 
     photoContainer: {
         alignItems: 'center',
-        marginVertical: 20, 
+        marginVertical: 20,
     },
 
     avatarContainer: {
-      marginVertical: 20,
-      height: 120, 
-      width: 120, 
-      borderRadius: 60, 
-      borderWidth: 3, 
-      borderColor: '#ffffff', // Adjust the border color
-      justifyContent: 'center',
-      alignItems: 'center',
-      overflow: 'hidden', // Ensures the image doesn't bleed outside the border
+        marginVertical: 20,
+        height: 120,
+        width: 120,
+        borderRadius: 60,
+        borderWidth: 3,
+        borderColor: '#ffffff', // Adjust the border color
+        justifyContent: 'center',
+        alignItems: 'center',
+        overflow: 'hidden', // Ensures the image doesn't bleed outside the border
     },
     avatar: {
-      width: 110,
-      height: 110,
-      borderRadius: 55,
+        width: 110,
+        height: 110,
+        borderRadius: 55,
     },
     //--------------------------------------------------------------------------------
 
 
     input: {
-      flex: 1,
-      paddingVertical: 10,
-      paddingLeft : 10,
-      backgroundColor: '#FFF',
-      borderRadius : 10,
+        flex: 1,
+        paddingVertical: 10,
+        paddingLeft : 10,
+        backgroundColor: '#FFF',
+        borderRadius : 10,
     },
 
     inputWrapper: {
@@ -411,12 +422,23 @@ const styles = StyleSheet.create({
     
     bmiCategoryText: {
         fontSize: 17,
-        color: '#fff',
+    },
+    normalWeight: {
+        color: 'green',
+    },
+    underweight: {
+        color: 'orange',
+    },
+    overweight: {
+        color: 'red',
+    },
+    obesity: {
+        color: 'red',
     },
 
     createAccountButton: {
         marginTop: 20,
-        backgroundColor: '#007bff', 
+        backgroundColor: '#007bff',
         borderRadius: 20,
         paddingVertical: 10,
         paddingHorizontal: 20,
