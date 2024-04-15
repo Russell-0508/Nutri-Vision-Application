@@ -93,7 +93,7 @@ function History({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <StatusBar backgroundColor="#406132" barStyle="light-content" />
+            <StatusBar backgroundColor="grey" barStyle="light-content" />
             <SafeAreaView>
                 <ScrollView>
                     <View style={styles.topContainer}>

@@ -192,7 +192,7 @@ function ConfirmMealPage({ navigation, route }) {
           <Button title="Add" onPress={handleAddIngredient} />
         </View>
       </Modal>
-      <StatusBar backgroundColor="rgba(173, 219, 199, 1)" barStyle="light-content" />
+      <StatusBar backgroundColor="white" barStyle="light-content" />
       <View style={styles.nutritionalInfoContainer}>
         <Text style={styles.ingredientsHeaderText}>Ingredients</Text>
         <FlatList

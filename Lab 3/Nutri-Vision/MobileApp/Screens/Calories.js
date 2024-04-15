@@ -120,7 +120,7 @@ function Calories({navigation}) {
 
     return (
         <View style={styles.container}>
-            <StatusBar backgroundColor='#406132' barStyle='light-content'/>
+            <StatusBar backgroundColor='white' barStyle='light-content'/>
             <SafeAreaView>
                 <ScrollView style={styles.background}>
                     <View style={styles.topContainer}>
