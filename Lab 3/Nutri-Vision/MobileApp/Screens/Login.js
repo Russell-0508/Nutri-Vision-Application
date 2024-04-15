@@ -1,12 +1,10 @@
 import React, { useRef, useState } from 'react';
 import {
     View,
-    ImageBackground,
     StyleSheet,
     Image,
     Text,
     Dimensions,
-    Button,
     TouchableOpacity,
     SafeAreaView,
     ScrollView,
@@ -15,11 +13,6 @@ import {
 } from 'react-native';
 
 import Svg, { Path } from 'react-native-svg';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { useNavigation } from "@react-navigation/native"
-// import { Stack, useRouter } from 'expo-router';
-// import { COLORS, icons, images, SIZES } from ' ./constants';
-
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase/config";
 
@@ -34,12 +27,12 @@ function Login({ navigation }) {
     const [password, setPassword] = useState(null);
 
     const LoginFunction = async () => {
+
+        
         try {
             // Attempt to sign in
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             console.log("Login success!");
-            // Sign in was successful
-            //return { isNewUser: false, user: userCredential.user };
             navigation.navigate('CreateProfile');
         } catch (error) {
             Alert.alert("Login failed, please ensure your email and password are entered correctly.");
@@ -48,6 +41,7 @@ function Login({ navigation }) {
             console.log("Login failed D:");
         }
     }
+
     // Logic when Email button is pressed
     const textInputRef = useRef(null);
     const [isEmailIconActive, setIsEmailIconActive] = useState(false);
