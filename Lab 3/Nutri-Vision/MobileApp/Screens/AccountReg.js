@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
-import { Linking, SafeAreaView, ScrollView, StyleSheet, 
-        Text, TextInput, TouchableOpacity, View, Image, Alert } from 'react-native';
+import {
+    Alert,
+    Image,
+    Linking, SafeAreaView, ScrollView, StyleSheet,
+    Text, TextInput, TouchableOpacity, View
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { auth } from '../../firebase/config';
 
@@ -102,12 +106,6 @@ const AccountReg = ({ navigation }) => {
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
-                /*const userRef = doc(firestore, "users", user.uid);
-                await setDoc(userRef, {
-                    displayName: name,
-                    email: email,
-                    uid: user.uid,
-                });*/
             } catch (error) {
                 console.log("Account creation failed D:");
                 console.log(error.message);
