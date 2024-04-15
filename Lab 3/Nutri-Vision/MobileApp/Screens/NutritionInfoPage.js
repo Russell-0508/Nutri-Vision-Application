@@ -67,7 +67,7 @@ function NutritionalInfoPage({ route, navigation }) {
         setFats(totalFats);
         setProtein(totalProtein);
 
-        checkMealTarget('PAN@GMAIL.COM', totalCalories) 
+        checkMealTarget('haolun@gmail.com', totalCalories) 
         .then(result => {
           // console.log(result);
           setIsTargetFit(result);
