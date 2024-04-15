@@ -10,13 +10,33 @@ const CommunityScreen = () => {
         id: 1,
         title: 'Chicken Rice',
         imageUri: require('../assets/images/ChickenRice.jpg'),
-        duration: '>60 mins',
+        duration: '<60 mins',
         profile: {
           name: 'Russell',
           imageUri: require('../assets/images/Man1.png'),
         },
       },
-      // ...more posts
+      
+      {
+        id: 1,
+        title: 'Pancake',
+        imageUri: require('../assets/images/Pancake.jpg'),
+        duration: '<20 mins',
+        profile: {
+          name: 'Randy',
+          imageUri: require('../assets/images/Woman1.png'),
+        },
+      },
+      {
+        id: 3,
+        title: 'Spaghetti',
+        imageUri: require('../assets/images/Spaghetti.jpg'),
+        duration: '<30 mins',
+        profile: {
+          name: 'Bob',
+          imageUri: require('../assets/images/Man2.png'),
+        },
+      },
     ];
   
     return (
@@ -38,6 +58,7 @@ const CommunityScreen = () => {
                 source={post.profile.imageUri}
                 style={styles.profileImage}
               />
+              <Text style={styles.profileName}>{post.profile.name}</Text>
               <Image
                 source={post.imageUri}
                 style={styles.foodImage}
@@ -46,10 +67,13 @@ const CommunityScreen = () => {
                 <Text style={styles.title}>{post.title}</Text>
                 <Text style={styles.duration}>{post.duration}</Text>
               </View>
-              <TouchableOpacity style={styles.likeButton}>
-                <Icon name="heart-o" size={20} color="#fff" />
+
+              <TouchableOpacity
+                style={styles.getStartedButton}
+              >
+                <Text style={styles.getStartedButtonText}>Get Started</Text>
               </TouchableOpacity>
-              <Text style={styles.profileName}>{post.profile.name}</Text>
+
             </View>
           ))}
         </View>
@@ -60,7 +84,7 @@ const CommunityScreen = () => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#f5f5f5',
+      backgroundColor: '#f4e5c2',
     },
     searchBarContainer: {
       padding: 10,
@@ -102,19 +126,30 @@ const CommunityScreen = () => {
       marginBottom: 10,
     },
     title: {
-      fontSize: 18,
+      fontSize: 20,
       fontWeight: 'bold',
     },
     duration: {
       fontSize: 14,
-    },
-    likeButton: {
-      position: 'absolute',
-      top: 15,
-      right: 15,
+      fontWeight: 'bold'
     },
     profileName: {
       fontSize: 16,
+    },
+
+    getStartedButton: {
+      backgroundColor: '#FFA500',
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      borderRadius: 20,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  
+    getStartedButtonText: {
+      color: '#fff',
+      fontSize: 18,
+      fontWeight: 'bold',
     },
   });
   
