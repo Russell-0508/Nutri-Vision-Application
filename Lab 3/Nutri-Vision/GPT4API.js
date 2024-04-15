@@ -1,29 +1,4 @@
-/*const openai = new OpenAI({
-    apiKey: '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'
-});
-
-(async () => {
-    const response = await openai.chat.completions.create({
-        model: "gpt-4-vision-preview",
-        messages: [
-          {
-            role: "user",
-            content: [
-              //Prompt Engineering
-              { type: "text", text: "Identify Foods in this image, Frame your answer in the following way: Pork chop 500g, Rice 300g, Coleslaw 100g without using words like estimation or approximation" },
-              {
-                type: "image_url",
-                image_url: {
-                  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
-                },
-              },
-            ],
-          },
-        ],
-      });
-      console.log(response.choices[0]);
-})*/
-
+// OpenAI API 
 
 export async function sendImageToAPI(base64Image) {
   const api_key = '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' // Assuming you've stored this securely

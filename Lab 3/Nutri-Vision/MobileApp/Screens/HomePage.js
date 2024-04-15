@@ -110,7 +110,7 @@ export default function HomePage({navigation}) {
 
     const fetchProfileByEmail = async () => {
         try {
-            const email = "PAN@GMAIL.COM"; //change this email to read from user.email or smth
+            const email = "haolun@gmail.com"; //change this email to read from user.email or smth
             const profiles = await getProfileByEmail(email); 
             if (profiles.length > 0) {
                 const profile = profiles[0];

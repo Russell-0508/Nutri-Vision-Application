@@ -16,7 +16,7 @@ const GoalsReg = ({ navigation }) => {
 
     const handleNextPress = async () => {
         if (selectedGoal) {
-            const userEmail = "PAN@GMAIL.COM"; // Substitute with dynamic user email if available
+            const userEmail = "haolun@gmail.com"; // Substitute with dynamic user email if available
             const profilesColRef = collection(db, 'profile');
             const q = query(profilesColRef, where("email", "==", userEmail));
 
