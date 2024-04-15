@@ -22,7 +22,7 @@ const EditProfilePage = ({ navigation }) => {
     useEffect(() => {
         const fetchProfileByEmail = async () => {
             try {
-                const profiles = await getProfileByEmail("PAN@GMAIL.COM");
+                const profiles = await getProfileByEmail("haolun@gmail.com");
                 if (profiles.length > 0) {
                     const profile = profiles[0];
                     setName(profile.name);

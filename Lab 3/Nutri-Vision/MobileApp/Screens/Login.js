@@ -1,25 +1,9 @@
 import React, { useRef, useState } from 'react';
 import {
-    View,
-    ImageBackground,
-    StyleSheet,
-    Image,
-    Text,
-    Dimensions,
-    Button,
-    TouchableOpacity,
-    SafeAreaView,
-    ScrollView,
-    TextInput,
-    Alert
-} from 'react-native';
+    View, StyleSheet, Image, Text, Dimensions, TouchableOpacity,
+    SafeAreaView, ScrollView, TextInput, Alert } from 'react-native';
 
 import Svg, { Path } from 'react-native-svg';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { useNavigation } from "@react-navigation/native"
-// import { Stack, useRouter } from 'expo-router';
-// import { COLORS, icons, images, SIZES } from ' ./constants';
-
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase/config";
 
@@ -34,20 +18,34 @@ function Login({ navigation }) {
     const [password, setPassword] = useState(null);
 
     const LoginFunction = async () => {
+        // checks for empty email and password
+        if(!email || !password) {
+            Alert.alert(
+                "Missing Information",
+                "Please enter both an email and a password to log in",
+                [{text: "OK"}]
+            );
+            return; 
+        }
+        
         try {
             // Attempt to sign in
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             console.log("Login success!");
-            // Sign in was successful
-            //return { isNewUser: false, user: userCredential.user };
-            navigation.navigate('CreateProfile');
+            if(email === 'haolun@gmail.com'){
+                navigation.navigate('CreateProfile');
+            }
+            
         } catch (error) {
-            Alert.alert("Login failed, please ensure your email and password are entered correctly.");
-            Alert.alert("Please register if you are a new user");
+            Alert.alert(
+                "Login Failed",
+                "Please ensure your email and password are entered correctly or register if you are a new user"
+            );
             navigation.navigate('Login');
             console.log("Login failed D:");
         }
     }
+
     // Logic when Email button is pressed
     const textInputRef = useRef(null);
     const [isEmailIconActive, setIsEmailIconActive] = useState(false);
