@@ -172,10 +172,9 @@ const EditProfilePage = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-    //Safe Area for IOS devices
     safeArea: {
         flex: 1,
-        backgroundColor: '#36622B', 
+        backgroundColor: '#f4e5c2',
     },
 
     chooseAvatar : {
