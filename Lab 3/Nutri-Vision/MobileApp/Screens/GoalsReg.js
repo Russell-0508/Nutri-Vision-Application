@@ -88,7 +88,7 @@ const GoalsReg = ({ navigation }) => {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#f4e5c2', 
+        backgroundColor: '#f4e5c2',
     },
 
     container: {
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     },
 
     header: {
-        fontSize: 27, 
+        fontSize: 27,
         fontWeight: 'bold',
         alignItems : 'center',
         justifyContent: 'center',

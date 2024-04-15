@@ -183,7 +183,7 @@ function ProfileScreen({navigation}){
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'rgb(64, 97, 50)',
+    backgroundColor: '#f4e5c2',
   },
   bottomContainer: {
     position: 'absolute',  // Positioning it over the bottom SafeAreaView

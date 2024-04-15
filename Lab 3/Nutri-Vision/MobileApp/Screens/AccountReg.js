@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, Button, Image, SafeAreaView, ScrollView, TouchableOpacity, Linking } from 'react-native';
+import { Linking, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { firestore, auth } from '../../firebase/config';
+import { auth } from '../../firebase/config';
+
+import FacebookLogo from '../assets/images/facebook-logo.jpg';
+import GoogleLogo from '../assets/images/google-logo.jpg';
 
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
@@ -57,7 +60,7 @@ const AccountReg = ({ navigation }) => {
     
         setPasswordStrength({
             message: strengthMessage,
-            ...strength, 
+            ...strength,
         });
     };
 
@@ -206,6 +209,22 @@ const AccountReg = ({ navigation }) => {
 
                     {/* Display password mismatch error */}
                     {passwordMismatchError ? <Text style={styles.error}>{passwordMismatchError}</Text> : null}
+
+                    <Text style = {styles.orText}>OR</Text>
+
+                    {/* Other Sign In Options */}
+                    <View style={styles.signInButtonsContainer}>
+                        <TouchableOpacity style={[styles.signInButton, styles.signInWithGoogle]}>
+                            <Image source={GoogleLogo} style={styles.logo} />
+                            <Text style={[styles.signInButtonText, styles.googleText]}>Sign in With Google</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={[styles.signInButton, styles.signInWithFacebook]}>
+                            <Image source={FacebookLogo} style={styles.logo} />
+                            <Text style={[styles.signInButtonText, styles.facebookText]}>Sign in With Facebook</Text>
+                        </TouchableOpacity>
+                    </View>
+
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -215,7 +234,7 @@ const AccountReg = ({ navigation }) => {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#36622B',
+        backgroundColor: '#f4e5c2',
     },
 
     container: {
@@ -321,6 +340,54 @@ const styles = StyleSheet.create({
         color: '#ffffff',
         fontSize: 18,
         fontWeight: 'bold',
+    },
+
+    signInButtonsContainer: {
+        paddingBottom: 20,
+    },
+    
+    signInButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 15,
+        borderRadius: 5,
+        marginHorizontal: 20,
+        marginBottom: 10,
+    },
+    
+    orText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#666',
+        textAlign: 'center',
+        marginTop: 100,
+        marginBottom : 15,
+    
+    },
+    signInWithGoogle: {
+        backgroundColor: '#fff', // Google button with white background
+    },
+
+    signInWithFacebook: {
+        backgroundColor: '#3b5998', // Facebook button with blue background
+    },
+
+    logo: {
+        width: 27,
+        height: 27,
+        marginRight: 10,
+    },
+    
+    signInButtonText: {
+        fontSize: 16,
+    },
+    googleText: {
+        color: '#4285F4',
+    },
+
+    facebookText: {
+        color: '#fff',
     },
 });
 
