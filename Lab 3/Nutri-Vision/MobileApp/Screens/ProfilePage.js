@@ -2,8 +2,7 @@ import React, { useState, useEffect }from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, SafeAreaView, Modal, Switch } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
-import firestore from '@react-native-firebase/firestore';
-import { collection, getDocs } from 'firebase/firestore';
+import { getFirestore, collection, query, where, onSnapshot } from 'firebase/firestore';
 import { getProfileByEmail } from '../../ProfileHistory';
 
 
@@ -23,27 +22,63 @@ function ProfileScreen({navigation}){
     age: '...',
   });
 
+  const [avatarUrl, setAvatarUrl] = useState();
 
-  // Fetch profile data from Firestore
-  useEffect(() => {
+    useEffect(() => {
+        fetchProfileByEmail();
+    }, []);
+
     const fetchProfileByEmail = async () => {
-      try {
-        const profiles = await getProfileByEmail("PAN@GMAIL.COM"); // Adjust the email case as needed
-        if (profiles.length > 0) {
-          // Assuming the first profile is the one you're interested in
-          setProfileData(profiles[0]);
-        } else {
-          setProfileData({ name: 'No profile found' });
+        try {
+            const email = "PAN@GMAIL.COM"; //change this email to read from user.email or smth
+            const profiles = await getProfileByEmail(email); 
+            if (profiles.length > 0) {
+                const profile = profiles[0];
+                // Handling avatarUrl
+                if (profile.avatarUrl) {
+                    setAvatarUrl(profile.avatarUrl); 
+                } else {
+                    console.log('Profile found but no avatar URL present.');
+                }
+
+            } else {
+                console.log('No profile found for the given email:', email);
+            }
+        } catch (error) {
+            console.error("Error fetching profile by email:", error);
         }
-      } catch (error) {
-        console.error("Error fetching profile by email:", error);
-        setProfileData({ name: 'Error fetching profile' });
-      }
     };
-  
-    fetchProfileByEmail();
+
+  useEffect(() => {
+    const db = getFirestore();
+    const email = "PAN@GMAIL.COM"; // Ideally, this should be dynamic or securely retrieved
+
+    // Create a reference to the collection and query
+    const profilesRef = collection(db, "profile");
+    const q = query(profilesRef, where("email", "==", email));
+
+    // Setting up the onSnapshot listener
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const profiles = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      if (profiles.length > 0) {
+        setProfileData(profiles[0]); // Assuming the first profile is the one you're interested in
+      } else {
+        setProfileData({ name: 'No profile found' }); // Set default data if no profiles are found
+      }
+    }, error => {
+      console.error("Error fetching profile by email:", error);
+      setProfileData({ name: 'Error fetching profile' }); // Handle errors
+    });
+
+    return () => unsubscribe(); // Clean up the listener when the component unmounts
   }, []);
 
+
+  
   // Placeholder function for button presses
   const handlePress = (action) => {
     console.log(`Pressed ${action}`);
@@ -62,7 +97,7 @@ function ProfileScreen({navigation}){
         <View style={styles.profileHeader}>
         {/* Profile Information Display */}
           <Image
-            source={require('../assets/profile_image.png')}
+            source={{ uri: avatarUrl }}
             style={styles.profileImage}
           />
           <Text style={styles.profileName}>{profileData.name}</Text>
