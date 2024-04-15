@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { View, TextInput, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome'; // Ensure you have FontAwesome or similar installed
+import Icon from 'react-native-vector-icons/FontAwesome'; 
 
 const SearchBar = ({ onSearch }) => {
     const [searchQuery, setSearchQuery] = useState('');
 
     const handleSearch = () => {
-        onSearch(searchQuery); // Propagate the search query to the parent component
+        onSearch(searchQuery); 
     };
 
     return (

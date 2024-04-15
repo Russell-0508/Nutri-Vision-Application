@@ -4,7 +4,6 @@ import { Image, SafeAreaView, ScrollView, StyleSheet,
 
 import { differenceInYears, format } from 'date-fns';
 import DateTimePicker from '@react-native-community/datetimepicker';
-
 import firestore from '../../firebase/config';
 import { addDoc, collection } from 'firebase/firestore';
 
@@ -22,7 +21,7 @@ const CreateProfile = ({ navigation }) => {
     const [dateOfBirth, setDateOfBirth] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
     const minDate = new Date('1900-01-01');
-    const maxDate = new Date(); // Today's date
+    const maxDate = new Date();
 
     const handleCreateProfile = async () => {
 
@@ -65,7 +64,7 @@ const CreateProfile = ({ navigation }) => {
         try {
             const docRef = await addDoc(profileCollection, profileData);
             console.log('Profile created with ID:', docRef.id);
-            navigation.navigate('GoalsReg'); // Navigate to the next screen after profile creation
+            navigation.navigate('GoalsReg');
         } catch (error) {
             console.error('Error creating profile:', error);
         }
@@ -73,8 +72,8 @@ const CreateProfile = ({ navigation }) => {
 
 
     const onChangeDate = (event, selectedDate) => {
-        const currentDate = selectedDate || dateOfBirth; // Use selectedDate, fallback to current if null (e.g., user pressed 'Cancel')
-        setShowDatePicker(false);  // Hide picker
+        const currentDate = selectedDate || dateOfBirth; 
+        setShowDatePicker(false); 
         setDateOfBirth(currentDate);
     };
 
@@ -115,9 +114,9 @@ const CreateProfile = ({ navigation }) => {
     const handleHeightChange = (text) => {
         const heightNum = parseFloat(text);
         if (text === "") {
-            setHeight(text);  // Allow clearing the input
+            setHeight(text);  
         } else if (heightNum > 0 && heightNum <= 300) {
-            setHeight(text);  // Set height if valid
+            setHeight(text);
         } else if (heightNum == 0) {
             alert("Height cannot be 0");
         } else if (heightNum < 0) {
@@ -130,9 +129,9 @@ const CreateProfile = ({ navigation }) => {
     const handleWeightChange = (text) => {
         const weightNum = parseFloat(text);
         if (text === "") {
-            setWeight(text);  // Allow clearing the input
+            setWeight(text);  
         } else if (weightNum > 0 && weightNum <= 1000) {
-            setWeight(text);  // Set weight if valid
+            setWeight(text);
         } else if (weightNum == 0) {
             alert("Weight cannot be 0");
         } else if (weightNum < 0) {
@@ -159,7 +158,7 @@ const CreateProfile = ({ navigation }) => {
 
         if (heightInMeters > 0 && weightInKilograms > 0) {
           const calculatedBmi = weightInKilograms / (heightInMeters * heightInMeters);
-          setBmi(calculatedBmi.toFixed(2)); // rounded to two decimal places
+          setBmi(calculatedBmi.toFixed(2)); 
 
           console.log(`Calculated BMI: ${calculatedBmi}`);
 
@@ -303,7 +302,6 @@ const CreateProfile = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
-    //Safe Area for IOS devices
     safeArea: {
         flex: 1,
         backgroundColor: '#f4e5c2', 
@@ -385,10 +383,10 @@ const styles = StyleSheet.create({
         width: 120,
         borderRadius: 60,
         borderWidth: 3,
-        borderColor: '#ffffff', // Adjust the border color
+        borderColor: '#ffffff', 
         justifyContent: 'center',
         alignItems: 'center',
-        overflow: 'hidden', // Ensures the image doesn't bleed outside the border
+        overflow: 'hidden', 
     },
     avatar: {
         width: 110,
@@ -407,8 +405,8 @@ const styles = StyleSheet.create({
     },
 
     inputWrapper: {
-        flexDirection: 'row', // Arrange items in a row
-        alignItems: 'center', // Center items vertically
+        flexDirection: 'row', 
+        alignItems: 'center', 
         borderWidth: 1,
         borderColor: 'gray',
         backgroundColor: '#FFF',
@@ -422,12 +420,11 @@ const styles = StyleSheet.create({
         borderColor: 'gray',
         padding: 10,
         marginBottom: 10,
-        borderRadius: 5, // Match input styles for consistency
-        backgroundColor: '#FFF', // Keeping it white to resemble an input field
-        alignItems: 'center', // Center the text horizontally
+        borderRadius: 5, 
+        backgroundColor: '#FFF', 
+        alignItems: 'center', 
     },
 
-    // Additional styling for the date display text
     datePickerText: {
         fontSize: 17,
         color: '#000', 

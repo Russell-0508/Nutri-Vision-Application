@@ -1,7 +1,6 @@
 import React, { useState, useEffect }from 'react';
-import { 
-  View, Text, Image, ScrollView, TouchableOpacity, 
-  StyleSheet, SafeAreaView, Modal, Switch } from 'react-native';
+import { View, Text, Image, ScrollView, TouchableOpacity, 
+        StyleSheet, Modal, Switch } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 import { getFirestore, collection, query, where, onSnapshot } from 'firebase/firestore';
@@ -66,7 +65,7 @@ function ProfileScreen({navigation}){
       }));
 
       if (profiles.length > 0) {
-        setProfileData(profiles[0]); // Assuming the first profile is the one you're interested in
+        setProfileData(profiles[0]); 
         if(profiles[0].avatarUrl){
           setAvatarUrl(profiles[0].avatarUrl);
         }
@@ -79,10 +78,8 @@ function ProfileScreen({navigation}){
       setProfileData({ name: 'Error fetching profile' }); 
     });
 
-    return () => unsubscribe(); // Clean up the listener when the component unmounts
+    return () => unsubscribe(); 
   }, []);
-
-
   
   // Placeholder function for button presses
   const handlePress = (action) => {
@@ -306,7 +303,7 @@ const styles = StyleSheet.create({
   },
 
   scrollViewContent: {
-    paddingBottom: 40, // Adjust this value as needed to accommodate your bottom tab/navigation
+    paddingBottom: 40, 
   },
 //--------------
   centeredView: {
@@ -329,8 +326,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    height: 200, // Set the height to your desired value
-    width: 300, // Set the width to your desired value
+    height: 200, 
+    width: 300,
   },
   modalText: {
     marginBottom: 15,
