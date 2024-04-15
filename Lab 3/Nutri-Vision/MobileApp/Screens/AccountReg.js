@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
 
     createAccountButton: {
         marginTop: 20,
-        backgroundColor: '#007bff', // Button background color
+        backgroundColor: '#FFA500',
         borderRadius: 20,
         paddingVertical: 10,
         paddingHorizontal: 20,
@@ -337,8 +337,8 @@ const styles = StyleSheet.create({
     },
 
     createAccountButtonText: {
-        color: '#ffffff',
-        fontSize: 18,
+        color: '#000',
+        fontSize: 19,
         fontWeight: 'bold',
     },
 
