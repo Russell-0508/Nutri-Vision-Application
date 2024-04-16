@@ -29,7 +29,6 @@ function ConfirmMealPage({ navigation, route }) {
   const [ingredients, setIngredients] = useState(parseIngredients(content));
   console.log(content);
 
-  //Function to separate ingredients in ingredients list
   const IngredientSeparator = () => (
     <View style={{
       height: 1,
@@ -119,7 +118,7 @@ function ConfirmMealPage({ navigation, route }) {
     setSelectedIngredient(null);
   };
 
-  //Function to showcase ingredient items
+
   const renderIngredientItem = ({ item }) => (
     <TouchableOpacity onPress={() => handlePress(item)}>
       <View style={styles.ingredientItem}>
@@ -129,7 +128,6 @@ function ConfirmMealPage({ navigation, route }) {
     </TouchableOpacity >
   );
 
-  //Button to add ingredients
   const AddIngredientButton = () => (
     <View>
       {/* Add a separator view at the top of the footer component */}
@@ -148,7 +146,6 @@ function ConfirmMealPage({ navigation, route }) {
     navigation.navigate('Nutritional Info', { ingredients: query, base64Image });
   };
 
-  //Confirm meal button
   const ConfirmMealButton = () => (
     <TouchableOpacity style={styles.confirmMealButton} onPress={handleConfirmMeal}>
       <Text style={styles.confirmMealText}>Confirm Meal</Text>

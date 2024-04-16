@@ -12,12 +12,10 @@ function ProfileScreen({navigation}){
   const [showNotificationsModal, setShowNotificationsModal] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
 
-  //Function to handle notifications
   const toggleNotifications = () => {
     setNotificationsEnabled(!notificationsEnabled);
   };
 
-  //Function to display profile information
   const [profileData, setProfileData] = useState({
     name: 'Loading...', 
     height: '...',
@@ -25,15 +23,12 @@ function ProfileScreen({navigation}){
     age: '...',
   });
 
-
-  //Function to set profile avatar
   const [avatarUrl, setAvatarUrl] = useState();
 
     useEffect(() => {
         fetchProfileByEmail();
     }, []);
 
-    //Function to fetch profile from firestore using email
     const fetchProfileByEmail = async () => {
         try {
             const email = "haolun@gmail.com"; 
@@ -86,7 +81,7 @@ function ProfileScreen({navigation}){
     return () => unsubscribe(); 
   }, []);
   
-  // Function for logging button presses
+  // Placeholder function for button presses
   const handlePress = (action) => {
     console.log(`Pressed ${action}`);
   };

@@ -170,7 +170,6 @@ function NutritionalInfoPage({ route, navigation }) {
     fetchGoalDetails();
   }, [carbohydrates, fats, protein]);
 
-  //Function to create macros progression circle
   const ProgressCircle = ({ percentage, fillColor, label }) => {
     const size = 75; 
     const strokeWidth = 5; 

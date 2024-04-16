@@ -49,7 +49,7 @@ const EditProfilePage = () => {
         setDate(currentDate); 
     };
 
-    //Function to handle various profile updates
+
     const handleEditProfile = async () => {
 
         // Check for empty or invalid fields
