@@ -9,13 +9,17 @@ import { getProfileByEmail } from '../../ProfileHistory';
 
 function ProfileScreen({navigation}){
 
+  //Function to show notification modal
   const [showNotificationsModal, setShowNotificationsModal] = useState(false);
+  //Function to set notifications
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
 
+  //Function to handle notifications
   const toggleNotifications = () => {
     setNotificationsEnabled(!notificationsEnabled);
   };
 
+  //Function to display profile information
   const [profileData, setProfileData] = useState({
     name: 'Loading...', 
     height: '...',
@@ -23,12 +27,15 @@ function ProfileScreen({navigation}){
     age: '...',
   });
 
+
+  //Function to set profile avatar
   const [avatarUrl, setAvatarUrl] = useState();
 
     useEffect(() => {
         fetchProfileByEmail();
     }, []);
 
+    //Function to fetch profile from firestore using email
     const fetchProfileByEmail = async () => {
         try {
             const email = "haolun@gmail.com"; 
@@ -50,7 +57,9 @@ function ProfileScreen({navigation}){
     };
 
   useEffect(() => {
+    //Function to get firestore date
     const db = getFirestore();
+    //Set email
     const email = 'haolun@gmail.com'
 
     // Create a reference to the collection and query
@@ -81,7 +90,7 @@ function ProfileScreen({navigation}){
     return () => unsubscribe(); 
   }, []);
   
-  // Placeholder function for button presses
+  // Function for logging button presses
   const handlePress = (action) => {
     console.log(`Pressed ${action}`);
   };

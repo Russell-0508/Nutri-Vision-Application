@@ -7,6 +7,7 @@ import { getProfileByEmail } from '../../ProfileHistory';
 import { differenceInYears, format } from 'date-fns';
 
 const EditProfilePage = () => {
+
     // Create connection to Firestore via collection reference
     const db = getFirestore();
 
@@ -45,13 +46,15 @@ const EditProfilePage = () => {
         fetchProfileByEmail();
     }, []);
 
+    //Function to change date
     const onChangeDate = (event, selectedDate) => {
         const currentDate = selectedDate || date; 
         setShowDatePicker(false); 
         setDate(currentDate); 
     };
 
-    // function to handle the edit profile button click
+
+    //Function to handle various profile updates
     const handleEditProfile = async () => {
 
         // Check for empty or invalid fields
