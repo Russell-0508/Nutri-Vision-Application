@@ -10,19 +10,21 @@ function FavouritesPage() {
   // Placeholder image URI
   const headerImageUri = 'https://via.placeholder.com/150'; 
 
-  // Simulate a dynamic list of images
+  //Function to simulate a dynamic list of images
   const images = new Array(8).fill(headerImageUri); 
 
+  //Function to set favourite and filtered entries
   const [favoriteMealEntries, setFavoriteMealEntries] = useState([]);
   const [filteredEntires, setFilteredEntries] = useState([]);
 
-  // Determine if the number of entries is odd
+  //Function to determine if the number of entries is odd
   const isOddNumberOfEntries = favoriteMealEntries.length % 2 !== 0;
 
   useEffect(() => {
     fetchFavorites();
   }, []);
 
+//Function to log favourites and filtered entries
   useEffect(() => {
     console.log('Current favorites:', favoriteMealEntries);
     console.log('Current filtered entries:', filteredEntires);
@@ -39,12 +41,13 @@ function FavouritesPage() {
       }
     };
 
-    //Clicking on feach favourite meal entry leads to Individual Meal page which displays the macro nutrients of the specific meal by its documentId
+  //Clicking on feach favourite meal entry leads to Individual Meal page which displays the macro nutrients of the specific meal by its documentId
   const handlePress = (documentId) => {
     navigation.navigate('IndividualMeal', { documentId });
     console.log('Navigating to documentId:', documentId);
   };
 
+  //Function to handle search
   const handleSearch = (query) => {
     const filtered = favoriteMealEntries.filter(entry => entry.name.toLowerCase().includes(query.toLowerCase()));
     setFilteredEntries(filtered);
