@@ -7,8 +7,8 @@ import { getProfileByEmail } from '../../ProfileHistory';
 import { differenceInYears, format } from 'date-fns';
 
 const EditProfilePage = () => {
+    //FUnctions to set profile values
     const db = getFirestore();
-
     const [name, setName] = useState('');
     const [email, setEmail] = useState('haolun@gmail.com'); 
     const [selectedGender, setSelectedGender] = useState('');
@@ -43,13 +43,14 @@ const EditProfilePage = () => {
         fetchProfileByEmail();
     }, []);
 
+    //Function to change date
     const onChangeDate = (event, selectedDate) => {
         const currentDate = selectedDate || date; 
         setShowDatePicker(false); 
         setDate(currentDate); 
     };
 
-
+    //Function to handle various profile updates
     const handleEditProfile = async () => {
 
         // Check for empty or invalid fields
