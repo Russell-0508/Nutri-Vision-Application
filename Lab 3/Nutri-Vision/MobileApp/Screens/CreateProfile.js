@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Image, SafeAreaView, ScrollView, StyleSheet, 
+import { Image, SafeAreaView, ScrollView, StyleSheet,
         Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
-
 import { differenceInYears, format } from 'date-fns';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import firestore from '../../firebase/config';
 import { addDoc, collection } from 'firebase/firestore';
 
 const CreateProfile = ({ navigation }) => {
+
+    // Create connection to Firestore via collection reference
     const profileCollection = collection(firestore, 'profile');
+    
+    // State for form fields
     const [name, setName] = useState('');
     const [selectedGender, setSelectedGender] = useState(null);
     const [height, setHeight] = useState('');
@@ -48,8 +51,10 @@ const CreateProfile = ({ navigation }) => {
             return;
         }
 
-
+        //calculate age from current date and dateOfBirth
         const age = differenceInYears(new Date(), dateOfBirth);
+        
+        // Create profile data object
         const profileData = {
             name,
             gender: selectedGender,
@@ -60,7 +65,7 @@ const CreateProfile = ({ navigation }) => {
             age: age,
             avatarUrl: avatarUrls[selectedAvatarIndex],
         };
-      
+    
         try {
             const docRef = await addDoc(profileCollection, profileData);
             console.log('Profile created with ID:', docRef.id);
@@ -70,10 +75,9 @@ const CreateProfile = ({ navigation }) => {
         }
     }
 
-
     const onChangeDate = (event, selectedDate) => {
-        const currentDate = selectedDate || dateOfBirth; 
-        setShowDatePicker(false); 
+        const currentDate = selectedDate || dateOfBirth;
+        setShowDatePicker(false);
         setDateOfBirth(currentDate);
     };
 
@@ -83,6 +87,7 @@ const CreateProfile = ({ navigation }) => {
 
     const [showAvatarSelection, setShowAvatarSelection] = useState(false);
 
+    // Preloaded Avatar URLs that is stored in Firebase Storage
     const avatarUrls = [
         'https://firebasestorage.googleapis.com/v0/b/nutri-vision-78db7.appspot.com/o/Man1.png?alt=media&token=36480a3b-e065-4629-8703-771f5c7c1831',
         'https://firebasestorage.googleapis.com/v0/b/nutri-vision-78db7.appspot.com/o/Man2.png?alt=media&token=65310e0d-131f-4179-9e8a-d267b641d1e4',
@@ -304,7 +309,7 @@ const CreateProfile = ({ navigation }) => {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#f4e5c2', 
+        backgroundColor: '#f4e5c2',
     },
 
     chooseAvatar : {
@@ -337,14 +342,13 @@ const styles = StyleSheet.create({
     },
 
     label: {
-        fontSize: 14, 
-        color: '#000', 
-        fontWeight: 'bold', 
-        marginBottom: 3, 
+        fontSize: 14,
+        color: '#000',
+        fontWeight: 'bold',
+        marginBottom: 3,
         marginTop: 8,
     },
 
-    //--------------------------------------------------------------------------------
     genderContainer: {
         flexDirection: 'row',
         justifyContent: 'space-around',
@@ -359,7 +363,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     genderButtonSelected: {
-        backgroundColor: '#007bff', 
+        backgroundColor: '#007bff',
     },
     genderButtonText: {
         textAlign: 'center',
@@ -367,10 +371,8 @@ const styles = StyleSheet.create({
         fontWeight : 'bold',
     },
     genderButtonTextSelected: {
-        color: '#fff', 
+        color: '#fff',
     },
-
-    //--------------------------------------------------------------------------------
 
     photoContainer: {
         alignItems: 'center',
@@ -383,18 +385,16 @@ const styles = StyleSheet.create({
         width: 120,
         borderRadius: 60,
         borderWidth: 3,
-        borderColor: '#ffffff', 
+        borderColor: '#ffffff',
         justifyContent: 'center',
         alignItems: 'center',
-        overflow: 'hidden', 
+        overflow: 'hidden',
     },
     avatar: {
         width: 110,
         height: 110,
         borderRadius: 55,
     },
-    //--------------------------------------------------------------------------------
-
 
     input: {
         flex: 1,
@@ -405,32 +405,28 @@ const styles = StyleSheet.create({
     },
 
     inputWrapper: {
-        flexDirection: 'row', 
-        alignItems: 'center', 
+        flexDirection: 'row',
+        alignItems: 'center',
         borderWidth: 1,
         borderColor: 'gray',
         backgroundColor: '#FFF',
         borderRadius : 10,
     },
 
-    //--------------------------------------------------------------------------------
-
     datePickerToggle: {
         borderWidth: 1,
         borderColor: 'gray',
         padding: 10,
         marginBottom: 10,
-        borderRadius: 5, 
-        backgroundColor: '#FFF', 
-        alignItems: 'center', 
+        borderRadius: 5,
+        backgroundColor: '#FFF',
+        alignItems: 'center',
     },
 
     datePickerText: {
         fontSize: 17,
-        color: '#000', 
+        color: '#000',
     },
-
-    //--------------------------------------------------------------------------------
 
 
     bmiContainer: {
