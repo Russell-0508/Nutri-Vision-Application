@@ -7,7 +7,11 @@ import firestore from '../../firebase/config';
 import { addDoc, collection } from 'firebase/firestore';
 
 const CreateProfile = ({ navigation }) => {
+
+    // Create connection to Firestore via collection reference
     const profileCollection = collection(firestore, 'profile');
+    
+    // State for form fields
     const [name, setName] = useState('');
     const [selectedGender, setSelectedGender] = useState(null);
     const [height, setHeight] = useState('');
@@ -47,8 +51,10 @@ const CreateProfile = ({ navigation }) => {
             return;
         }
 
-
+        //calculate age from current date and dateOfBirth
         const age = differenceInYears(new Date(), dateOfBirth);
+        
+        // Create profile data object
         const profileData = {
             name,
             gender: selectedGender,
@@ -69,7 +75,6 @@ const CreateProfile = ({ navigation }) => {
         }
     }
 
-
     const onChangeDate = (event, selectedDate) => {
         const currentDate = selectedDate || dateOfBirth;
         setShowDatePicker(false);
@@ -82,6 +87,7 @@ const CreateProfile = ({ navigation }) => {
 
     const [showAvatarSelection, setShowAvatarSelection] = useState(false);
 
+    // Preloaded Avatar URLs that is stored in Firebase Storage
     const avatarUrls = [
         'https://firebasestorage.googleapis.com/v0/b/nutri-vision-78db7.appspot.com/o/Man1.png?alt=media&token=36480a3b-e065-4629-8703-771f5c7c1831',
         'https://firebasestorage.googleapis.com/v0/b/nutri-vision-78db7.appspot.com/o/Man2.png?alt=media&token=65310e0d-131f-4179-9e8a-d267b641d1e4',

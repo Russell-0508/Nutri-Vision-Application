@@ -6,6 +6,7 @@ import { getFirestore, collection, query, where, getDocs, updateDoc, doc, getDoc
 const db = getFirestore();
 
 const EditGoals = ({ navigation }) => {
+    
     const [selectedGoal, setSelectedGoal] = useState(null);
     const goals = ['Gain Weight', 'Lose Weight', 'Get Fitter', 'Eat Healthier', "I don't know yet"];
 
@@ -15,11 +16,12 @@ const EditGoals = ({ navigation }) => {
     };
 
     const handleNextPress = async () => {
+
+        // Check if a goal is selected
         if (selectedGoal) {
             const userEmail = "haolun@gmail.com"; 
             const profilesColRef = collection(db, 'profile');
             const q = query(profilesColRef, where("email", "==", userEmail));
-
             try {
                 const querySnapshot = await getDocs(q);
                 if (!querySnapshot.empty) {
@@ -45,7 +47,7 @@ const EditGoals = ({ navigation }) => {
         }
     };
 
-
+    // Function to fetch user profile by email
     async function fetchUserProfileByEmail(email) {
         const profilesRef = collection(db, 'profile');
         const q = query(profilesRef, where("email", "==", email));
