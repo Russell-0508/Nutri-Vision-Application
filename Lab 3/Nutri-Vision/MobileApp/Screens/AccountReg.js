@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, Button, Image, SafeAreaView, ScrollView, TouchableOpacity, Linking} from 'react-native';
+import { Linking, SafeAreaView, ScrollView, StyleSheet, 
+        Text, TextInput, TouchableOpacity, View, Image, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
+import { auth } from '../../firebase/config';
+import FacebookLogo from '../assets/images/facebook-logo.jpg';
+import GoogleLogo from '../assets/images/google-logo.jpg';
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
-const AccountReg = ({ navigation}) => {
+const AccountReg = ({ navigation }) => {
+
+    // Defining state for email
+    const [email, setEmail] = useState('');
 
     // Defining state for Password Checker
     const [password, setPassword] = useState('');
@@ -11,23 +19,93 @@ const AccountReg = ({ navigation}) => {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
     const [passwordMismatchError, setPasswordMismatchError] = useState('');
+    const [passwordStrength, setPasswordStrength] = useState({ message: '' });
+
+
+    // Function to check password strength
+    const checkPasswordStrength = (newPassword) => {
+        const strength = {
+            length: newPassword.length >= 8,
+            hasUpper: /[A-Z]/.test(newPassword),
+            hasLower: /[a-z]/.test(newPassword),
+            hasNumber: /[0-9]/.test(newPassword),
+            hasSpecial: /[^A-Za-z0-9]/.test(newPassword),
+        };
+    
+        let strengthMessage = '';
+        let strengthCount = 0;
+    
+        for (let check in strength) {
+            if (strength[check]) {
+                strengthCount++;
+            }
+        }
+    
+        switch (strengthCount) {
+            case 0:
+            case 1:
+            case 2:
+                strengthMessage = 'Weak';
+                break;
+            case 3:
+            case 4:
+                strengthMessage = 'Moderate';
+                break;
+            case 5:
+                strengthMessage = 'Strong';
+                break;
+            default:
+                strengthMessage = 'Weak';
+        }
+    
+        setPasswordStrength({
+            message: strengthMessage,
+            ...strength,
+        });
+    };
+
 
     const checkPasswordsMatch = () => {
         if (password !== confirmPassword) {
             setPasswordMismatchError("Passwords do not match");
             return false;
         }
-        setPasswordMismatchError(""); // Clear any existing error message
+        setPasswordMismatchError(""); 
         return true;
     };
 
-    const handleCreateAccountPress = () => {
-        const passwordsDoMatch = checkPasswordsMatch(); // Check if passwords match
+    const handleCreateAccountPress = async () => {
+        // Check for empty fields
+        if (!email.trim()) {
+            Alert.alert('Missing Information', 'Please enter your email.');
+            return;
+        } else if (!password.trim()) {
+            Alert.alert('Missing Information', 'Please enter a password.');
+            return;
+        } else if (!confirmPassword.trim()) {
+            Alert.alert('Missing Information', 'Please confirm your password.');
+            return;
+        }
+
+        const passwordsDoMatch = checkPasswordsMatch(); 
+        const isPasswordStrong = passwordStrength && passwordStrength.message === 'Strong';
+        
         if (!termsAccepted) {
             alert('Please read and accept the Terms and Conditions to proceed.');
             return;
-        } else if (passwordsDoMatch) {
-            console.log("Creating account...");
+        } else if (!isPasswordStrong) {
+            alert('Please use a Stronger Password.');
+            return;
+        }
+        else if (passwordsDoMatch) {
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+            } catch (error) {
+                console.log("Account creation failed D:");
+                console.log(error.message);
+            }
+
             navigation.navigate('Login');
         } else {
             //the error message is set by checkPasswordsMatch,
@@ -35,7 +113,7 @@ const AccountReg = ({ navigation}) => {
         }
     };
 
-    
+
     const handlePressTerms = () => {
         // URL
         const url = 'https://www.google.com.sg/';
@@ -51,7 +129,7 @@ const AccountReg = ({ navigation}) => {
             <ScrollView style={styles.scrollView}>
                 <View style={styles.container}>
 
-                    <View style = {styles.headerContainer}>
+                    <View style={styles.headerContainer}>
                         <Text style={styles.headerText}>
                             Create Account
                         </Text>
@@ -61,9 +139,11 @@ const AccountReg = ({ navigation}) => {
                     {/* Email Input */}
                     <Text style={styles.label}>Email</Text>
                     <TextInput
-                        style = {styles.input}
+                        style={styles.input}
                         placeholder='Enter Your Email'
                         keyboardType="email-address"
+                        value={email}
+                        onChangeText={setEmail} 
                     />
 
 
@@ -71,11 +151,14 @@ const AccountReg = ({ navigation}) => {
                     <Text style={styles.label}>Password</Text>
                     <View style={styles.inputWrapper}>
                         <TextInput
-                            style = {styles.input}
+                            style={styles.input}
                             placeholder='Enter Your Password'
-                            secureTextEntry={!passwordVisible} // Hide password by default
+                            secureTextEntry={!passwordVisible} 
                             value={password} 
-                            onChangeText={setPassword} // Update password state
+                            onChangeText={(newPassword) => {
+                                setPassword(newPassword);
+                                checkPasswordStrength(newPassword); 
+                            }}
                         />
                         {/* Toggle Password Visibility Button for Password */}
                         <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
@@ -83,18 +166,29 @@ const AccountReg = ({ navigation}) => {
                         </TouchableOpacity>
                     </View>
 
+                    {passwordStrength.message && (
+                        <Text style={[
+                            styles.passwordStrength,
+                            passwordStrength.message === 'Weak' && styles.weakPassword,
+                            passwordStrength.message === 'Moderate' && styles.moderatePassword,
+                            passwordStrength.message === 'Strong' && styles.strongPassword,
+                        ]}>
+                            Password strength: {passwordStrength.message}
+                        </Text>
+                    )}
+
                     {/* Confirm Password Input */}
                     <Text style={styles.label}>Confirm Password</Text>
-                    <View style = {styles.inputWrapper} >
+                    <View style={styles.inputWrapper} >
                         <TextInput
-                            style = {styles.input}
+                            style={styles.input}
                             placeholder='Re-Enter Your Password'
-                            secureTextEntry={!confirmPasswordVisible} // Hide confirm password by default
-                            value={confirmPassword} 
-                            onChangeText={setConfirmPassword} // Update confirm password state
+                            secureTextEntry={!confirmPasswordVisible} 
+                            value={confirmPassword}
+                            onChangeText={setConfirmPassword} 
                         />
 
-                    {/* Toggle Password Visibility Button for Confirm Password */}
+                        {/* Toggle Password Visibility Button for Confirm Password */}
                         <TouchableOpacity onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)}>
                             <Icon name={confirmPasswordVisible ? 'visibility-off' : 'visibility'} size={24} color="grey" />
                         </TouchableOpacity>
@@ -106,31 +200,46 @@ const AccountReg = ({ navigation}) => {
                             style={[styles.checkboxBase, termsAccepted && styles.checkboxChecked]}
                             onPress={() => setTermsAccepted(!termsAccepted)}
                         >
-                        {termsAccepted && <Icon name="check" size={24} color="#fff" />}
+                            {termsAccepted && <Icon name="check" size={24} color="#fff" />}
                         </TouchableOpacity>
                         <TouchableOpacity onPress={handlePressTerms}>
                             <Text style={styles.linkText}>Terms and Conditions**</Text>
                         </TouchableOpacity>
                     </View>
 
-            
+
                     <TouchableOpacity onPress={handleCreateAccountPress} style={styles.createAccountButton}>
                         <Text style={styles.createAccountButtonText}>Create Account</Text>
                     </TouchableOpacity>
-                
+
 
                     {/* Display password mismatch error */}
                     {passwordMismatchError ? <Text style={styles.error}>{passwordMismatchError}</Text> : null}
-            </View>
-        </ScrollView>
-    </SafeAreaView>
+
+                    <Text style = {styles.orText}>OR</Text>
+
+                    {/* Other Sign In Options */}
+                    <View style={styles.signInButtonsContainer}>
+                        <TouchableOpacity style={[styles.signInButton, styles.signInWithGoogle]}>
+                            <Image source={GoogleLogo} style={styles.logo} />
+                            <Text style={[styles.signInButtonText, styles.googleText]}>Sign in With Google</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={[styles.signInButton, styles.signInWithFacebook]}>
+                            <Image source={FacebookLogo} style={styles.logo} />
+                            <Text style={[styles.signInButtonText, styles.facebookText]}>Sign in With Facebook</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </ScrollView>
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#36622B', 
+        backgroundColor: '#f4e5c2',
     },
 
     container: {
@@ -139,23 +248,23 @@ const styles = StyleSheet.create({
     },
 
     headerContainer: {
-        flex : 1,
+        flex: 1,
         alignItems: 'center',
-        position : 'relative',
-        justifyContent: 'center', 
+        position: 'relative',
+        justifyContent: 'center',
         padding: 10,
     },
-    
+
     headerText: {
-        fontSize: 30, 
+        fontSize: 30,
         fontWeight: 'bold',
     },
-    
+
 
     label: {
-        fontSize: 14, 
-        color: '#000', 
-        fontWeight: 'bold', 
+        fontSize: 14,
+        color: '#000',
+        fontWeight: 'bold',
         marginBottom: 3,
         marginTop: 8,
     },
@@ -163,20 +272,34 @@ const styles = StyleSheet.create({
     //--------------------------------------------------------------------------------
 
     input: {
-      flex: 1,
-      paddingVertical: 10,
-      paddingLeft : 10,
-      backgroundColor: '#FFF',
-      borderRadius : 15,
+        flex: 1,
+        paddingVertical: 10,
+        paddingLeft: 10,
+        backgroundColor: '#FFF',
+        borderRadius: 15,
     },
 
     inputWrapper: {
-        flexDirection: 'row', 
-        alignItems: 'center', 
+        flexDirection: 'row',
+        alignItems: 'center',
         borderWidth: 1,
         borderColor: 'gray',
         backgroundColor: '#FFF',
-        borderRadius : 15,
+        borderRadius: 15,
+    },
+
+    passwordStrength: {
+        marginTop: 4,
+    },
+    
+    weakPassword: {
+        color: 'red',
+    },
+    moderatePassword: {
+        color: 'orange',
+    },
+    strongPassword: {
+        color: 'green',
     },
 
     //--------------------------------------------------------------------------------
@@ -184,7 +307,7 @@ const styles = StyleSheet.create({
 
     linkText: {
         color: 'blue',
-        textDecorationLine : 'underline',
+        textDecorationLine: 'underline',
     },
 
     termsRow: {
@@ -210,19 +333,67 @@ const styles = StyleSheet.create({
 
     createAccountButton: {
         marginTop: 20,
-        backgroundColor: '#007bff', // Button background color
+        backgroundColor: '#FFA500',
         borderRadius: 20,
         paddingVertical: 10,
         paddingHorizontal: 20,
-        alignItems: 'center', 
-        justifyContent: 'center', 
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-    
+
     createAccountButtonText: {
-        color: '#ffffff', 
-        fontSize: 18,
+        color: '#000',
+        fontSize: 19,
         fontWeight: 'bold',
     },
-  });
 
-  export default AccountReg;
+    signInButtonsContainer: {
+        paddingBottom: 20,
+    },
+    
+    signInButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 15,
+        borderRadius: 5,
+        marginHorizontal: 20,
+        marginBottom: 10,
+    },
+    
+    orText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#666',
+        textAlign: 'center',
+        marginTop: 100,
+        marginBottom : 15,
+    
+    },
+    signInWithGoogle: {
+        backgroundColor: '#fff', 
+    },
+
+    signInWithFacebook: {
+        backgroundColor: '#3b5998', 
+    },
+
+    logo: {
+        width: 27,
+        height: 27,
+        marginRight: 10,
+    },
+    
+    signInButtonText: {
+        fontSize: 16,
+    },
+    googleText: {
+        color: '#4285F4',
+    },
+
+    facebookText: {
+        color: '#fff',
+    },
+});
+
+export default AccountReg;

@@ -1,154 +1,195 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, Button, Image, SafeAreaView, ScrollView, TouchableOpacity, Linking} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, 
+        SafeAreaView, ScrollView, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { getFirestore, collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
+import { getProfileByEmail } from '../../ProfileHistory';
+import { differenceInYears, format } from 'date-fns';
 
+const EditProfilePage = () => {
+    const db = getFirestore();
 
-const EditProfilePage = ({ navigation }) => {
-
-    const handleCreateAccountPress = () => {
-        navigation.navigate('GoalsReg');
-    };
-
-    // Defining State for Gender Selection
-    const [selectedGender, setSelectedGender] = useState(null);
-
-    // Defining state for Date Picker Method
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('haolun@gmail.com'); 
+    const [selectedGender, setSelectedGender] = useState('');
+    const [height, setHeight] = useState('');
+    const [weight, setWeight] = useState('');
     const [date, setDate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
-    const [isDateSelected, setIsDateSelected] = useState(false); // Track if a date has been selected
-    
+    const [profileId, setProfileId] = useState('');
+
+    // Fetch profile from Firestore
+    useEffect(() => {
+        const fetchProfileByEmail = async () => {
+            try {
+                const profiles = await getProfileByEmail("haolun@gmail.com");
+                if (profiles.length > 0) {
+                    const profile = profiles[0];
+                    setName(profile.name);
+                    setEmail(profile.email);
+                    setSelectedGender(profile.gender);
+                    setHeight(profile.height.toString());
+                    setWeight(profile.weight.toString());
+                    setDate(profile.dateOfBirth.toDate());
+                    setProfileId(profile.id);
+                } else {
+                    console.log('No profile found');
+                }
+            } catch (error) {
+                console.error("Error fetching profile by email:", error);
+            }
+        };
+
+        fetchProfileByEmail();
+    }, []);
+
     const onChangeDate = (event, selectedDate) => {
-        const currentDate = selectedDate || date;
-        setDate(currentDate);
-        setIsDateSelected(true); // Optionally hide picker after selection
-        setShowDatePicker(false);
+        const currentDate = selectedDate || date; 
+        setShowDatePicker(false); 
+        setDate(currentDate); 
     };
 
-    const [showAvatarSelection, setShowAvatarSelection] = useState(false);
-    const [selectedAvatarIndex, setSelectedAvatarIndex] = useState(0); // Default to first avatar
+    //Function to handle various profile updates
+    const handleEditProfile = async () => {
 
-    // Preloaded Avatar Icons
-    const avatarImages = [
-        require('../assets/hacker.png'),
-        require('../assets/kitty.png'),
-        require('../assets/splash.png'),
+        // Check for empty or invalid fields
+        if (!name.trim()) {
+            Alert.alert("Missing Information", "Please enter your name.");
+            return;
+        }
+        if (!selectedGender) {
+            Alert.alert("Missing Information", "Please select a gender.");
+            return;
+        }
+        // Check if the dateOfBirth is reasonable, e.g., not a future date or too old
+        if (!(date instanceof Date && !isNaN(date))) {
+            Alert.alert("Invalid Date", "Please enter a valid date of birth.");
+            return;
+        }
+        if (!height || parseFloat(height) <= 0 || parseFloat(height) > 300) {
+            Alert.alert("Invalid Input", "Please enter a valid height in cm.");
+            return;
+        }
+        if (!weight || parseFloat(weight) <= 0 || parseFloat(weight) > 1000) {
+            Alert.alert("Invalid Input", "Please enter a valid weight in kg.");
+            return;
+        }
 
-    ];
+        try {
+            // Reference to the profiles collection
+            const profilesRef = collection(db, "profile");
 
-    const handleAvatarSelect = (index) => {
-        setSelectedAvatarIndex(index);
-        setShowAvatarSelection(false);
-        console.log('Avatar pressed'); 
+            // Query for the profile with the matching email
+            const q = query(profilesRef, where("email", "==", email));
+
+            const querySnapshot = await getDocs(q);
+            if (querySnapshot.empty) {
+                Alert.alert("No profile found with the given email.");
+                return;
+            }
+
+            const profileDoc = querySnapshot.docs[0];
+            const profileRef = profileDoc.ref;
+            const age = differenceInYears(new Date(), date);
+
+            // Update the profile
+            await updateDoc(profileRef, {
+                name,
+                gender: selectedGender,
+                height: parseFloat(height), 
+                weight: parseFloat(weight),
+                dateOfBirth: date,
+                age 
+            });
+
+            Alert.alert("Profile updated successfully!");
+        } catch (error) {
+            console.error("Error updating profile:", error);
+            Alert.alert("Error updating profile. Please try again.");
+        }
     };
 
     return (
         <SafeAreaView style={styles.safeArea}>
             <ScrollView style={styles.scrollView}>
                 <View style={styles.container}>
-                    <Text style = {styles.chooseAvatar}>Choose Your Avatar</Text>
+                    <Text style={styles.label}>Name</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter Your Name"
+                        value={name}
+                        onChangeText={setName}
+                    />
 
-                    <TouchableOpacity onPress={() => setShowAvatarSelection(!showAvatarSelection)} style={styles.avatarSelectButton}>
-                        <Image source={avatarImages[selectedAvatarIndex]} style={styles.avatar} />
-                    </TouchableOpacity>
-
-                    {showAvatarSelection && (
-                        <View style={styles.avatarPicker}>
-                            {avatarImages.map((avatar, index) => (
-                                <TouchableOpacity key={index} onPress={() => handleAvatarSelect(index)} style={styles.avatarOption}>
-                                    <Image source={avatar} style={styles.avatar} />
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-                    )}
-
-
-                    {/* Gender Selection */}
-                    <Text style={styles.genderLabel}>Gender: </Text>
+                    <Text style={styles.label}>Gender</Text>
                     <View style={styles.genderContainer}>
-                        {['Male', 'Female', 'Prefer Not to Say'].map((gender) => (
+                        {['Male', 'Female', 'Other'].map((gender) => (
                             <TouchableOpacity
                                 key={gender}
                                 style={[
                                     styles.genderButton,
-                                    selectedGender === gender && styles.genderButtonSelected
+                                    selectedGender === gender && styles.genderButtonSelected,
                                 ]}
                                 onPress={() => setSelectedGender(gender)}
                             >
-                                <Text style={[
-                                    styles.genderButtonText,
-                                    selectedGender === gender && styles.genderButtonTextSelected
-                                ]}>
+                                <Text
+                                    style={[
+                                        styles.genderButtonText,
+                                        selectedGender === gender && styles.genderButtonTextSelected,
+                                    ]}
+                                >
                                     {gender}
                                 </Text>
                             </TouchableOpacity>
                         ))}
                     </View>
 
-                    {/* Name Input */}
-                    <Text style={styles.label}>Your Name</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Enter Your Name"
-                    />
-
-                    {/* DOB Selection */}
-                    <Text style = {styles.label} >Date of Birth</Text>
-                    <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePickerToggle}>
-                        <Text style={styles.datePickerText}>
-                            {isDateSelected ? date.toLocaleDateString() : "DD/MM/YYYY"}
-                        </Text>
+                    <Text style={styles.label}>Date of Birth</Text>
+                    <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.input}>
+                        <Text style={styles.textInput}>{format(date, 'dd/MM/yyyy')}</Text>
                     </TouchableOpacity>
-
-                    {/* Email Input */}
-                    {/*<Text style={styles.label}>Email</Text>
-                    <TextInput
-                        style = {styles.input}
-                        placeholder='Enter Your Email'
-                        keyboardType="email-address"
-                            />*/}
-
                     {showDatePicker && (
                         <DateTimePicker
-                            testID="dateTimePicker"
                             value={date}
                             mode="date"
                             display="default"
                             onChange={onChangeDate}
                         />
                     )}
-            
-                    {/* Height and Weight */}
-                    <Text style = {styles.label} >Height</Text>
+
+                    <Text style={styles.label}>Height (cm)</Text>
                     <TextInput
-                        style = {styles.input}
-                        placeholder='Enter Your Height ( in cm )'
-                        keyboardType='number-pad'
+                        style={styles.input}
+                        placeholder="Enter Your Height"
+                        value={height}
+                        onChangeText={setHeight}
+                        keyboardType="numeric"
                     />
 
-                    <Text style = {styles.label} >Weight</Text>
+                    <Text style={styles.label}>Weight (kg)</Text>
                     <TextInput
-                        style = {styles.input}
-                        placeholder='Enter Your Weight ( in kg )'
-                        keyboardType='number-pad'
+                        style={styles.input}
+                        placeholder="Enter Your Weight"
+                        value={weight}
+                        onChangeText={setWeight}
+                        keyboardType="numeric"
                     />
-
-
-                    <TouchableOpacity onPress={handleCreateAccountPress} style={styles.createAccountButton}>
-                        <Text style={styles.createAccountButtonText}>Edit Profile</Text>
-                    </TouchableOpacity>
-                
-            </View>
-        </ScrollView>
-    </SafeAreaView>
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity onPress={handleEditProfile} style={styles.button}>
+                            <Text style={styles.buttonText}>Save Changes</Text>
+                        </TouchableOpacity>
+                    </View>
+                    
+                </View>
+            </ScrollView>
+        </SafeAreaView>
     );
-}
+};
 
 const styles = StyleSheet.create({
-    //Safe Area for IOS devices
     safeArea: {
         flex: 1,
-        backgroundColor: '#36622B', 
+        backgroundColor: '#f4e5c2',
     },
 
     chooseAvatar : {
@@ -158,6 +199,7 @@ const styles = StyleSheet.create({
         textAlign : 'center',
     },
     avatarSelectButton: {
+        borderWidth: 1,
         alignItems: 'center',
         marginBottom: 20,
     },
@@ -173,6 +215,27 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         borderRadius: 50,
+    },
+
+    button: {
+        borderRadius: 20,
+        marginTop: 50,
+        paddingVertical: 10,
+        paddingHorizontal: 17,
+        backgroundColor: '#007bff',
+        width: 200,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+
+    buttonContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    buttonText: {
+        color: 'white'
     },
     
     container: {
@@ -227,10 +290,10 @@ const styles = StyleSheet.create({
       width: 120, 
       borderRadius: 60, 
       borderWidth: 3, 
-      borderColor: '#ffffff', // Adjust the border color
+      borderColor: '#ffffff', 
       justifyContent: 'center',
       alignItems: 'center',
-      overflow: 'hidden', // Ensures the image doesn't bleed outside the border
+      overflow: 'hidden', 
     },
     avatar: {
       width: 110,
@@ -249,8 +312,8 @@ const styles = StyleSheet.create({
     },
 
     inputWrapper: {
-        flexDirection: 'row', // Arrange items in a row
-        alignItems: 'center', // Center items vertically
+        flexDirection: 'row',
+        alignItems: 'center', 
         borderWidth: 1,
         borderColor: 'gray',
         backgroundColor: '#FFF',
@@ -264,9 +327,9 @@ const styles = StyleSheet.create({
         borderColor: 'gray',
         padding: 10,
         marginBottom: 10,
-        borderRadius: 5, // Match input styles for consistency
-        backgroundColor: '#FFF', // Keeping it white to resemble an input field
-        alignItems: 'center', // Center the text horizontally
+        borderRadius: 5, 
+        backgroundColor: '#FFF',
+        alignItems: 'center', 
     },
 
     // Additional styling for the date display text
@@ -280,7 +343,7 @@ const styles = StyleSheet.create({
   
     createAccountButton: {
         marginTop: 20,
-        backgroundColor: '#007bff', // Button background color
+        backgroundColor: '#007bff', 
         borderRadius: 20,
         paddingVertical: 10,
         paddingHorizontal: 20,

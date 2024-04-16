@@ -1,20 +1,31 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, Dimensions, StatusBar, FlatList, ScrollView, Platform } from 'react-native';
-import { Camera } from 'expo-camera';
-import * as ImagePicker from 'expo-image-picker';
+import React, { useState, useEffect } from 'react';
+import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity, Image, StatusBar, ScrollView } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { getMealEntryById, updateMealDataInFirestore } from '../../MealHistory';
-import { useNavigation } from '@react-navigation/native';
 import Svg, { Circle } from 'react-native-svg';
-import { documentId } from '@firebase/firestore';
+import { fetchUserGoalDetails } from '../../goalsDetail';
 
 
 function IndividualMeal({ route }) {
 
   // This will read the data passed from the navigate function in the HistoryPage.js
   const { documentId } = route.params;
-
+  //Set initial meal entry to null, and initial goal details to  empty 
   const [mealEntry, setMealEntry] = useState(null);
+  const [goalsDetails, setGoalsDetails] = useState([]);
+
+  useEffect(() => {
+    fetchUserGoalDetails('haolun@gmail.com').then(setGoalsDetails).catch(console.error);
+    if (documentId) {
+      fetchNutritionalInfo(documentId);
+    }
+  }, [documentId]);
+
+  // Goals for macronutrients
+  const goalCalories = goalsDetails.Calories;
+  const goalCarbohydrates = goalsDetails.Carbs;
+  const goalProtein = goalsDetails.Protein;
+  const goalFat = goalsDetails.Fats;
 
   // State to hold the image URI
   const [imageUri, setImageUri] = useState(null); // Initial state is null
@@ -22,14 +33,7 @@ function IndividualMeal({ route }) {
   // Placeholder image URI
   const placeholderImageUri = 'https://via.placeholder.com/150'; // Placeholder URL
 
-  {/* State variables for nutritional information 
-      I think no need to be so detailed,
-      some of the stuff can remove, because ultimately
-      we will take this data from the API, so we will have to change
-      what is displayed according to what kind of nutritional information
-      is provided by the API
-  */}
-
+  //Set the macro nutrients values
   const [calories, setCalories] = useState('Loading...');
   const [carbohydrates, setCarbohydrates] = useState('Loading...');
   const [protein, setProtein] = useState('Loading...');
@@ -40,6 +44,9 @@ function IndividualMeal({ route }) {
   // State for heart button color
   const [heartColor, setHeartColor] = useState("black");
 
+  // This function fetches nutritional info by the meal document Id from Firebase.
+  // It then sets the heart colour according to the boolean 'favourite' attribute in Firebase. If favourite == true, heart is red; else heart is black.
+  // It displays the values of calories, carbs, proteins and fats of the specific meal Id, and its corresponding image 
   const fetchNutritionalInfo = async (documentId) => {
     try {
       if (!documentId) {
@@ -47,12 +54,12 @@ function IndividualMeal({ route }) {
       }
 
       const mealEntry = await getMealEntryById(documentId);
-      console.log('Fetched meal entry:', mealEntry); // Log the fetched data
+      console.log('Fetched meal entry:', mealEntry); 
 
       setMealEntry(mealEntry);
       setIsFavorite(mealEntry.favourite); // Set isFavorite state based on fetched data
       setHeartColor(mealEntry.favourite ? "red" : "black"); // Set heart color based on fetched data
-      const attributesToDisplay = ['calories', 'carbohydrates', 'cholesterol', 'fiber', 'protein', 'saturatedFat', 'sodium', 'sugar', 'totalFat'];
+      const attributesToDisplay = ['calories', 'carbohydrates', 'protein', 'totalFat', 'picture'];
       attributesToDisplay.forEach(attribute => {
         if (mealEntry[attribute] !== 0) {
           switch (attribute) {
@@ -68,6 +75,8 @@ function IndividualMeal({ route }) {
             case 'totalFat':
               setTotalFat(mealEntry[attribute]);
               break;
+            case 'picture':
+              setImageUri(mealEntry[attribute]);
             default:
               break;
           }
@@ -79,12 +88,54 @@ function IndividualMeal({ route }) {
     }
   };
 
+  // Total of each macronutrients consumed
+  const totalCaloriesConsumed = calories;
+  const totalCarbohydratesConsumed = carbohydrates;
+  const totalFatConsumed = totalFat;
+  const totlaProteinConsumed = protein;
+
+  // Calculating percentages of macros 
+  const calculateCaloriePercentage = () => {
+    if (goalCalories > 0) {
+      return (totalCaloriesConsumed / goalCalories) * 100;
+    }
+    return 0;
+  };
+
+  const calculateCarbohydratePercentage = () => {
+    if (goalCarbohydrates > 0) {
+      return (totalCarbohydratesConsumed / goalCarbohydrates) * 100;
+    }
+    return 0;
+  };
+
+  const calculateFatPercentage = () => {
+    if (goalFat > 0) {
+      return (totalFatConsumed / goalFat) * 100;
+    }
+    return 0;
+  };
+
+  const calculateProteinPercentage = () => {
+    if (goalProtein > 0) {
+      return (totlaProteinConsumed / goalProtein) * 100;
+    }
+    return 0;
+  };
+
+  // Calculate the percentages for the Circles
+  const caloriePercantage = Math.min(calculateCaloriePercentage(), 100);
+  const CarbohydratePercentage = Math.min(calculateCarbohydratePercentage(), 100);
+  const FatPercentage = Math.min(calculateFatPercentage(), 100);
+  const ProteinPercentage = Math.min(calculateProteinPercentage(), 100);
+
+
   // Trigger the API call on component mount and when route parameters change
   useEffect(() => {
     if (documentId) {
       fetchNutritionalInfo(documentId);
     }
-  }, [documentId]); // Empty dependency array to run only on component mount
+  }, [documentId]); 
 
   // Update favourites attribute in database when heart icon is pressed
   const toggleFavorite = async () => {
@@ -106,23 +157,19 @@ function IndividualMeal({ route }) {
     console.log(`Pressed ${action}`);
   };
 
-  const [carbsPercentage, setCarbsPercentage] = useState(60); // Example percentage
-  const [fatsPercentage, setFatsPercentage] = useState(55); // Example percentage
-  const [proteinPercentage, setProteinPercentage] = useState(25); // Example percentage
-
-
-  const ProgressCircle = ({ percentage, fillColor, label }) => {
-    const size = 75; // Diameter of the circle
-    const strokeWidth = 5; // Width of the circle border
-    const radius = (size / 2) - (strokeWidth * 2); // Radius of the circle
+  //To display the percentage of macros in a circle chart 
+  const ProgressCircle = ({ percentage, fillColor, label, value }) => {
+    const size = 75; 
+    const strokeWidth = 5; 
+    const radius = (size / 2) - (strokeWidth * 2); 
     const circumference = 2 * Math.PI * radius;
     const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
     return (
-      <View style={{ alignItems: 'center', margin: 10 }}>
+      <View style={{ alignItems: 'center', margin: 10, position: 'relative' }}>
         <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
           <Circle
-            stroke="#ddd" // This is the color for the "unfilled" part of the circle
+            stroke="#ddd"
             fill="none"
             cx={size / 2}
             cy={size / 2}
@@ -142,16 +189,24 @@ function IndividualMeal({ route }) {
             transform={`rotate(-90, ${size / 2}, ${size / 2})`}
           />
         </Svg>
-        <Text style={{ position: 'absolute', fontWeight: 'bold', top: size * 0.35 }}>{percentage}%</Text>
-        <Text style={{ fontWeight: 'bold', top: size * 0.85 }}>{label}</Text>
+        {/* Percentage Text with absolute positioning */}
+        <Text style={{
+          position: 'absolute',
+          fontWeight: 'bold',
+          fontSize: 14, // Adjust the font size as needed
+          left: '55%',
+          top: '35%',
+          transform: [{ translateX: -size * 0.2 }, { translateY: -size * 0.1 }],
+        }}>
+          {Math.round(percentage)}%
+        </Text>
+        {/* Label and Value Text */}
+        <Text style={{ fontWeight: 'bold', marginTop: 4 }}>{label}</Text>
       </View>
     );
   };
 
 
-  // Placeholder mass and calories 
-  const foodItemMass = "250g";
-  const foodItemCalories = "450 Calories";
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -160,20 +215,16 @@ function IndividualMeal({ route }) {
         <View style={styles.imageContainer}>
           {/* Image placeholder */}
           <Image
-            source={{ uri: imageUri || placeholderImageUri }}
+            source={{ uri: `data:image/png;base64,${imageUri}` || placeholderImageUri }}
             style={styles.imageStyle}
             resizeMode="contain"
           />
-          {/* Three-dot button */}
-          <TouchableOpacity style={styles.threeDotButton} onPress={() => handlePress('More')}>
-            <MaterialIcons name="more-horiz" size={30} color="black" />
-          </TouchableOpacity>
           {/* Heart button */}
           <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
             <MaterialIcons
-              name={isFavorite ? "favorite" : "favorite-border"} // Change icon based on state
+              name={isFavorite ? "favorite" : "favorite-border"} 
               size={30}
-              color={heartColor} // Change color based on state
+              color={heartColor} 
             />
           </TouchableOpacity>
         </View>
@@ -207,9 +258,9 @@ function IndividualMeal({ route }) {
           </View>
           {/* Nutritional information progress circles */}
           <View style={styles.progressCirclesContainer}>
-            <ProgressCircle percentage={carbsPercentage} fillColor="brown" label="Carbohydrates" />
-            <ProgressCircle percentage={fatsPercentage} fillColor="yellow" label="Fats" />
-            <ProgressCircle percentage={proteinPercentage} fillColor="blue" label="Proteins" />
+            <ProgressCircle percentage={CarbohydratePercentage} fillColor="brown" label="Carbohydrates" value={carbohydrates} />
+            <ProgressCircle percentage={FatPercentage} fillColor="yellow" label="Fats" value={totalFat} />
+            <ProgressCircle percentage={ProteinPercentage} fillColor="blue" label="Proteins" value={protein} />
           </View>
 
         </View>
@@ -248,10 +299,10 @@ const styles = StyleSheet.create({
   nutritionalInfoContainer: {
     backgroundColor: 'white',
     borderRadius: 40,
-    padding: 16,
-    margin: -50,
-    marginLeft: 0,
+    padding: 10,
+    paddingBottom: 160,
     marginTop: 10,
+    marginBottom: 100,
     flex: 1,
     justifyContent: 'flex-start',
   },
@@ -288,7 +339,7 @@ const styles = StyleSheet.create({
     padding: 20,
     marginHorizontal: 20,
     marginTop: 10,
-    marginRight: 70,
+    marginRight: 30,
     marginLeft: 20,
     alignSelf: 'stretch',
     alignItems: 'flex-start',
@@ -310,7 +361,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  // Style for the text of labels
   labelText: {
     fontSize: 20,
     color: 'rgb(0, 0 ,0)',
@@ -319,7 +369,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-  // Style for the text of values
   valueText: {
     fontSize: 18,
     color: 'rgb(0, 0 , 0)',
@@ -332,23 +381,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    marginTop: 10,
-    marginRight: 50,
+    marginTop: 80,
+    marginRight: 20,
   },
 
-  progressCircleContainer: {
-    alignItems: 'center', // Center-align the progress circle and label
-  },
 
   progressLabel: {
-    marginTop: 8, // Space between the circle and the label text
-    fontSize: 14, // Adjust based on your design needs
-    color: 'rgb(127, 127, 127)', // Label text color
-    fontWeight: 'bold', // Make the label text bold
+    marginTop: 8, 
+    fontSize: 14, 
+    color: 'rgb(127, 127, 127)', 
+    fontWeight: 'bold', 
   },
 
   progressCircleCarbs: {
-    // Placeholder for the progress circle component
     height: 75,
     width: 75,
     borderRadius: 50,
@@ -358,7 +403,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   progressCircleFats: {
-    // Placeholder for the progress circle component
     height: 75,
     width: 75,
     borderRadius: 50,
@@ -368,7 +412,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   progressCircleProtein: {
-    // Placeholder for the progress circle component
     height: 75,
     width: 75,
     borderRadius: 50,
@@ -376,10 +419,6 @@ const styles = StyleSheet.create({
     borderColor: 'blue',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  progressValue:
-  {
-    fontWeight: 'bold',
   },
 
 

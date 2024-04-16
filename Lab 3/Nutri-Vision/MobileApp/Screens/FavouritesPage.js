@@ -1,59 +1,70 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, Dimensions, StatusBar, FlatList, ScrollView, Platform } from 'react-native';
-import { Camera } from 'expo-camera';
-import * as ImagePicker from 'expo-image-picker';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { saveMealToFirestore, getFavouriteMealEntries } from '../../MealHistory';
 
 import { useNavigation } from '@react-navigation/native';
-import Svg, { Circle } from 'react-native-svg';
-
-
-
+import SearchBar from '../Components/SearchBar';
 
 function FavouritesPage() {
   const navigation = useNavigation();
   // Placeholder image URI
-  const headerImageUri = 'https://via.placeholder.com/150'; // Update this to your desired image URL
+  const headerImageUri = 'https://via.placeholder.com/150'; 
 
-  // Simulate a dynamic list of images
-  const images = new Array(8).fill(headerImageUri); // Example: 8 images. Adjust the number as needed.
+  //Function to simulate a dynamic list of images
+  const images = new Array(8).fill(headerImageUri); 
 
+  //Function to set favourite and filtered entries
   const [favoriteMealEntries, setFavoriteMealEntries] = useState([]);
+  const [filteredEntires, setFilteredEntries] = useState([]);
 
-  // Determine if the number of entries is odd
+  //Function to determine if the number of entries is odd
   const isOddNumberOfEntries = favoriteMealEntries.length % 2 !== 0;
 
   useEffect(() => {
-    // Fetch favorite meal entries when the component mounts
+    fetchFavorites();
+  }, []);
+
+//Function to log favourites and filtered entries
+  useEffect(() => {
+    console.log('Current favorites:', favoriteMealEntries);
+    console.log('Current filtered entries:', filteredEntires);
+  }, [favoriteMealEntries, filteredEntires]);
+
+    // Fetch favorite meal entries from Firebase  
     const fetchFavorites = async () => {
       try {
-        const favorites = await getFavouriteMealEntries(); // Fetch favorite meal entries
+        const favorites = await getFavouriteMealEntries(); 
         setFavoriteMealEntries(favorites); // Update state with the fetched entries
+        setFilteredEntries(favorites);
       } catch (error) {
         console.error('Error fetching favorite meal entries:', error);
       }
     };
 
-    fetchFavorites();
-  }, []); // Empty dependency array ensures this effect runs only once on mount
-
+  //Clicking on feach favourite meal entry leads to Individual Meal page which displays the macro nutrients of the specific meal by its documentId
   const handlePress = (documentId) => {
     navigation.navigate('IndividualMeal', { documentId });
     console.log('Navigating to documentId:', documentId);
   };
 
+  //Function to handle search
+  const handleSearch = (query) => {
+    const filtered = favoriteMealEntries.filter(entry => entry.name.toLowerCase().includes(query.toLowerCase()));
+    setFilteredEntries(filtered);
+  }
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'rgba(173, 219, 199, 1)' }}>
+      <SearchBar onSearch={handleSearch} />
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.gridContainer}>
-          {favoriteMealEntries.map((entry, index) => (
+          {filteredEntires.map((entry, index) => (
             <TouchableOpacity
               key={`meal-${index}`}
               style={styles.imageContainer}
               onPress={() => handlePress(entry.id)}
             >
-              <Image source={{ uri: entry.imageUri }} style={styles.image} resizeMode="contain" />
+              <Image source={{ uri: `data:image/png;base64,${entry.picture}` }} style={styles.image} resizeMode="contain" />
               <Text style={styles.imageText}>{entry.name}</Text>
             </TouchableOpacity>
           ))}
@@ -78,7 +89,7 @@ const styles = StyleSheet.create({
   },
   gridContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap', // Allows items to wrap to the next line
+    flexWrap: 'wrap', 
     justifyContent: 'space-around',
     paddingTop: 20,
   },
@@ -88,8 +99,8 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   image: {
-    width: '100%', // Use the full width of the container
-    height: 150, // Set a fixed height for the images
+    width: '100%', 
+    height: 150, 
   },
   imageText: {
     marginTop: 8,

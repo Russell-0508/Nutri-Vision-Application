@@ -1,37 +1,49 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, Dimensions, StatusBar, FlatList, ScrollView, Modal, TextInput } from 'react-native';
-import { Camera } from 'expo-camera';
-import * as ImagePicker from 'expo-image-picker';
+import React, { useState } from 'react';
+import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, 
+        StatusBar, FlatList, Modal, TextInput } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { saveMealToFirestore } from '../../MealHistory';
-import { useNavigation } from '@react-navigation/native';
 
+function ConfirmMealPage({ navigation, route }) {
 
-function ConfirmMealPage({ navigation }) {
+  const { content } = route.params;
+  const { base64Image } = route.params;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [ingredientName, setIngredientName] = useState('');
   const [ingredientMass, setIngredientMass] = useState('');
 
   const [selectedIngredient, setSelectedIngredient] = useState(null);
 
-  // Placeholder ingredients
-  const [ingredients, setIngredients] = useState([
-    { id: '1', name: 'Rice', portion: '200g' },
-    { id: '2', name: 'Chicken', portion: '150g' },
-  ]);
+  //parse ingredient string and return array of ingredient objects
+  const parseIngredients = (ingredientString) => {
+    // Split the string into individual ingredients based on " and "
+    const ingredientParts = ingredientString.split(', ');
 
+    // Map over each part, extracting the portion and name, and return an array of objects
+    return ingredientParts.map((part, index) => {
+      const [portion, ...nameParts] = part.split(' ');
+      const name = nameParts.join(' ');
+      return { id: String(index + 1), name, portion };
+    });
+  };
+
+  const [ingredients, setIngredients] = useState(parseIngredients(content));
+  console.log(content);
+
+  //Function to separate ingredients in ingredients list
   const IngredientSeparator = () => (
     <View style={{
-      height: 1, 
-      backgroundColor: 'grey', 
+      height: 1,
+      backgroundColor: 'grey',
       marginTop: 5,
       marginBottom: 5,
-      marginLeft: 60, // Adjust this value to control the starting point
-      marginRight: 100, // Adjust this value to control the ending point
+      marginLeft: 60, 
+      marginRight: 100, 
     }} />
   );
-  
-  
+
+
+
+  //Function to add ingredient  name and mass to the existing ingredients list 
   const handleAddIngredient = () => {
     console.log("Add button pressed with ingredient name:", ingredientName, "and mass:", ingredientMass);
     const newIngredient = {
@@ -45,7 +57,7 @@ function ConfirmMealPage({ navigation }) {
     setIsModalVisible(false);
   };
 
-
+  //Function to handle the update and deletion of ingredient list entries 
   const EditIngredientModal = () => (
     <Modal
       animationType="slide"
@@ -84,9 +96,10 @@ function ConfirmMealPage({ navigation }) {
   const handlePress = (item) => {
     setSelectedIngredient(item);
     setIngredientName(item.name);
-    setIngredientMass(item.portion.replace('g', '')); // Assuming 'portion' is always in grams
+    setIngredientMass(item.portion.replace('g', '')); 
   };
 
+  //Function to handle the updating of ingredient's name and mass 
   const handleUpdateIngredient = () => {
     const updatedIngredients = ingredients.map(ing => {
       if (ing.id === selectedIngredient.id) {
@@ -99,13 +112,14 @@ function ConfirmMealPage({ navigation }) {
     setSelectedIngredient(null);
   };
 
+  //Function to delete the ingredient entry from ingredients list 
   const handleDeleteIngredient = () => {
     const filteredIngredients = ingredients.filter(ing => ing.id !== selectedIngredient.id);
     setIngredients(filteredIngredients);
     setSelectedIngredient(null);
   };
 
-
+  //Function to showcase ingredient items
   const renderIngredientItem = ({ item }) => (
     <TouchableOpacity onPress={() => handlePress(item)}>
       <View style={styles.ingredientItem}>
@@ -115,7 +129,7 @@ function ConfirmMealPage({ navigation }) {
     </TouchableOpacity >
   );
 
-
+  //Button to add ingredients
   const AddIngredientButton = () => (
     <View>
       {/* Add a separator view at the top of the footer component */}
@@ -127,13 +141,14 @@ function ConfirmMealPage({ navigation }) {
       <IngredientSeparator />
     </View>
   );
-  
 
+  //When 'Confirm Meal' button is pressed, it navigates to Nutritional Info Page and passes the ingredients list entries and the image of the food as base64Image
   const handleConfirmMeal = () => {
     const query = ingredients.map(ingredient => `${ingredient.portion} ${ingredient.name}`).join(' , ');
-    navigation.navigate('Nutritional Info', { ingredients: query });
+    navigation.navigate('Nutritional Info', { ingredients: query, base64Image });
   };
 
+  //Confirm meal button
   const ConfirmMealButton = () => (
     <TouchableOpacity style={styles.confirmMealButton} onPress={handleConfirmMeal}>
       <Text style={styles.confirmMealText}>Confirm Meal</Text>
@@ -174,7 +189,7 @@ function ConfirmMealPage({ navigation }) {
           <Button title="Add" onPress={handleAddIngredient} />
         </View>
       </Modal>
-      <StatusBar backgroundColor="rgba(173, 219, 199, 1)" barStyle="light-content" />
+      <StatusBar backgroundColor="white" barStyle="light-content" />
       <View style={styles.nutritionalInfoContainer}>
         <Text style={styles.ingredientsHeaderText}>Ingredients</Text>
         <FlatList
@@ -182,10 +197,9 @@ function ConfirmMealPage({ navigation }) {
           renderItem={renderIngredientItem}
           keyExtractor={item => item.id}
           ListFooterComponent={AddIngredientButton}
-          ItemSeparatorComponent={IngredientSeparator} // Add this line
+          ItemSeparatorComponent={IngredientSeparator} 
           style={styles.ingredientsList}
         />
-
         <ConfirmMealButton />
       </View>
     </SafeAreaView>
@@ -277,7 +291,7 @@ const styles = StyleSheet.create({
   ingredientPortion: {
     fontSize: 16,
     color: 'rgb(127, 127, 127)',
-    marginRight: 120,
+    marginRight: 100,
     flex: 1,
     textAlign: 'right',
   },
@@ -294,12 +308,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 15,
     paddingHorizontal: 10,
-    marginLeft: 60,
+    marginLeft: 65,
   },
   addIngredientText: {
     fontSize: 16,
     color: 'black',
-    marginRight: 130,
+    marginRight: 150,
   },
   confirmMealButton: {
     backgroundColor: 'grey',

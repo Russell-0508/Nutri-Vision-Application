@@ -10,6 +10,7 @@ import EditProfilePage from './MobileApp/Screens/EditProfile';
 import FavouritesPage from './MobileApp/Screens/FavouritesPage';
 import HistoryPage from './MobileApp/Screens/HistoryPage';
 import IndividualMeal from './MobileApp/Screens/IndividualMeal';
+import EditGoals from './MobileApp/Screens/EditGoals';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack'; 
 import { NavigationContainer } from '@react-navigation/native'; 
@@ -38,13 +39,14 @@ export default function App() {
       <Stack.Screen name='Login' component={Login} />
       <Stack.Screen name='AccountRegistration' component={AccountReg}/>
       <Stack.Screen name='CreateProfile' component = { CreateProfile } />
-      <Stack.Screen name='GoalsReg' component={GoalsReg} />
+      <Stack.Screen name='GoalsReg' component={GoalsReg} options={{ title: 'Goals Registration' }}/>
       <Stack.Screen name='Tabs' component={Tabs} options={{headerShown: false}}/>
       <Stack.Screen name='Nutritional Info' component={NutritionalInfoPage} />
       <Stack.Screen name='Confirm Meal' component={ConfirmMealPage} />
       <Stack.Screen name='Edit Profile' component={EditProfilePage} />
       <Stack.Screen name='Favourites' component={FavouritesPage} />
       <Stack.Screen name='IndividualMeal' component={IndividualMeal} />
+      <Stack.Screen name ='EditGoals' component={EditGoals}/>
         
       </Stack.Navigator>
     </NavigationContainer>

@@ -3,6 +3,8 @@ import firestore from './firebase/config';
 
 const mealHistoryCollection = collection(firestore, 'MealHistory');
 
+//Function to write a record consisting of the meal entry details to Firebase Meal History Collection
+//Randomly generates a unique meal Id for each record saved
 export const saveMealToFirestore = async (mealData) => {
     try {
         // Add a new document to the 'MealHistory' collection
@@ -15,19 +17,7 @@ export const saveMealToFirestore = async (mealData) => {
     }
 };
 
-// export const getMealHistoryFromFirestore = async () => {
-//     try {
-//         // Get all documents from the 'MealHistory' collection
-//         const querySnapshot = await getDocs(mealHistoryCollection);
-//         const mealHistory = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-//         console.log('Meal history:', mealHistory);
-//         return mealHistory;
-//     } catch (error) {
-//         console.error('Error fetching meal history:', error);
-//         throw error;
-//     }
-// };
-
+//Function to retrieve meal entry data from Firebase based on the creation date of meal entries 
 export const getMealHistoryFromFirestore = async (date) => {
     try {
         // Convert the date string to a JavaScript Date object
@@ -60,6 +50,7 @@ export const getMealHistoryFromFirestore = async (date) => {
     }
 };
 
+//Function to retrieve meal entry data from Firebase based on a specific meal Id  
 export const getMealEntryById = async (mealId) => {
     try {
         // Get the document reference for the specific meal entry
@@ -84,6 +75,8 @@ export const getMealEntryById = async (mealId) => {
     }
 };
 
+//Function to retrieve favourite meal entry data from Firebase based on the 'favourite' attribute.
+//Data of meal entries where 'favourite' == true will be retrieved   
 export const getFavouriteMealEntries = async () => {
     try {
   
@@ -108,6 +101,7 @@ export const getFavouriteMealEntries = async () => {
     }
   };
 
+  //Function to update meal entry data in Firebase for a specific meal entry based on its meal Id  
 export const updateMealDataInFirestore = (mealId, updatedData) => {
     // Reference to the specific meal document using its ID
     const mealRef = doc(mealHistoryCollection, mealId);
@@ -122,6 +116,7 @@ export const updateMealDataInFirestore = (mealId, updatedData) => {
         });
 };
 
+//Function to delete a particular meal entry record from Firebase based on its meal Id  
 export const deleteMealDataInFirestore = (mealId) => {
     // Reference to the specific meal document using its ID
     const mealRef = doc(mealHistoryCollection, mealId);

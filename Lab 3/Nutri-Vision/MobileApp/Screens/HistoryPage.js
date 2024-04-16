@@ -1,19 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-    View,
-    StyleSheet,
-    Image,
-    Text,
-    TouchableOpacity,
-    SafeAreaView,
-    ScrollView,
-    TextInput,
-    StatusBar,
-} from 'react-native';
+import { View, StyleSheet, Image, Text, TouchableOpacity,
+        SafeAreaView, ScrollView, StatusBar } from 'react-native';
 
-import { useNavigation } from "@react-navigation/native"
 import { getMealHistoryFromFirestore } from '../../MealHistory';
-
+import SearchBar from '../Components/SearchBar';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
@@ -22,8 +12,7 @@ screenWidth = 500
 
 
 {/* This is the Entry element, which takes in title, description, and displays it all */ }
-function Entry({ title, description, navigation, documentId }) {
-
+function Entry({ title, description, navigation, documentId}) {
     const handleNextEntryPress = () => {
         navigation.navigate('IndividualMeal', { documentId: documentId })
         console.log('Navigatiing to documentId: ', { documentId: documentId })
@@ -55,6 +44,7 @@ function History({ navigation }) {
     const [date, setDate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [mealEntries, setMealEntries] = useState([]);
+    const [filteredEntires, setFilteredEntries] = useState([]);
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
@@ -69,23 +59,31 @@ function History({ navigation }) {
     };
 
     useEffect(() => {
-        fetchMealEntriesForDate(date); // Initial fetch for today's entries
+        fetchMealEntriesForDate(date); 
     }, [date]);
 
+    //Fetch meal entries from Firebase according to the date created 
     const fetchMealEntriesForDate = async (date) => {
         try {
-            const dateString = date.toISOString().split('T')[0]; // Convert date to YYYY-MM-DD format
+            const dateString = date.toISOString().split('T')[0]; 
             const entries = await getMealHistoryFromFirestore(dateString);
             setMealEntries(entries);
+            setFilteredEntries(entries);
         } catch (error) {
             console.error('Error fetching meal entries:', error);
         }
     };
 
+    // Function to handle Search filter
+    const handleSearch = (query) => {
+        const filtered = mealEntries.filter(entry=> entry.name.toLowerCase().includes(query.toLowerCase()));
+        setFilteredEntries(filtered);
+      }
+
 
     return (
         <View style={styles.container}>
-            <StatusBar backgroundColor="#406132" barStyle="light-content" />
+            <StatusBar backgroundColor="grey" barStyle="light-content" />
             <SafeAreaView>
                 <ScrollView>
                     <View style={styles.topContainer}>
@@ -111,12 +109,14 @@ function History({ navigation }) {
                         )}
                     </View>
 
+                    <SearchBar onSearch={handleSearch} />
+
                     {/* Displays entries according to date */}
-                    <View>
-                        {mealEntries.length === 0 ? ( // Check if there are no meal entries
+                    <View style={{marginTop: 10}}>
+                        {filteredEntires.length === 0 ? ( 
                             <Text style={styles.noMealsText}>No meals logged yet</Text>
                         ) : (
-                            mealEntries.map((entry, index) => (
+                            filteredEntires.map((entry, index) => (
                                 <View key={index}>
                                     <Entry title={entry.name} navigation={navigation} documentId={entry.id} />
                                 </View>
