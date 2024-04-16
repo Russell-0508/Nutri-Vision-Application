@@ -45,8 +45,8 @@ function ScannerPage({ navigation }) {
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [galleryPermission, setGalleryPermission] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
-  const cameraRef = useRef(null); // Reference to the camera
-  const isFocused = useIsFocused(); // Check if screen is focused
+  const cameraRef = useRef(null); 
+  const isFocused = useIsFocused(); 
 
   useEffect(() => {
     (async () => {
@@ -59,9 +59,9 @@ function ScannerPage({ navigation }) {
   }, []);
 
 
+  //Function to take picture using Expo Camera module, and compressees image to ensure that the image is less than 10MB to be stored in Firebase 
   const takePicture = async () => {
     console.log("Taking picture...");
-    // console.log("cameraRef.current:", cameraRef.current);
     if (cameraRef.current) {
       try {
         let photo = await cameraRef.current.takePictureAsync();
@@ -75,7 +75,7 @@ function ScannerPage({ navigation }) {
 
         console.log('Resized and compressed image:', resizedImage);
 
-        // Convert the captured image to base64
+        // Convert the captured image to base64 for storing to Firebase
         const base64Image = await FileSystem.readAsStringAsync(resizedImage.uri, {
           encoding: FileSystem.EncodingType.Base64,
         });
@@ -94,14 +94,11 @@ function ScannerPage({ navigation }) {
             // Navigate to Confirm Meal page and pass the ingredients of the API response content
             console.log("Navigating to Confirm Meal page...");
             navigation.navigate('Confirm Meal', { base64Image, content });
-            //const ingredientList = await fetchNutritionalInfo(content);
-            //console.log(ingredientList);
           }
 
         } else {
           console.log('No image selected or captured');
         }
-        // console.log('Base64 image:', base64Image);
 
 
 
@@ -114,7 +111,7 @@ function ScannerPage({ navigation }) {
     }
   };
 
-
+//Request permission to access camera and gallery from user 
   if (hasPermission === null || galleryPermission === null) {
     return <View />;
   }
@@ -127,9 +124,11 @@ function ScannerPage({ navigation }) {
 
   const windowHeight = Dimensions.get('window').height;
   const windowWidth = Dimensions.get('window').width;
-  const cameraSize = windowWidth + 190; //camera size
+  const cameraSize = windowWidth + 190; 
   const topOffset = (windowHeight - cameraSize) / 2;
 
+  //Function for users to pick an image from their gallery and upload to the app for meal logging.
+  //Image is also resized and compressed to ensure that it can be stored in Firebase for each unique meal Id 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -145,12 +144,19 @@ function ScannerPage({ navigation }) {
       console.log("Image URI:", selectedImageUri);
 
       try {
-        // Convert the captured image to base64
-        const base64Image = await FileSystem.readAsStringAsync(selectedImageUri, {
+        const resizedImage = await ImageManipulator.manipulateAsync(
+          selectedImageUri,
+          [{ resize: { width: 640, height: 640 } }],
+          { compress: 0.5, format: ImageManipulator.SaveFormat.JPEG }
+        );
+
+        console.log('Resized and compressed image:', resizedImage);
+
+        // Convert the compressed image to base64
+        const base64Image = await FileSystem.readAsStringAsync(resizedImage.uri, {
           encoding: FileSystem.EncodingType.Base64,
         });
 
-        // console.log("Base64 Image:", base64Image);
         if (base64Image) {
           const apiResponse = await sendImageToAPI(base64Image);
           console.log(apiResponse);
@@ -165,14 +171,12 @@ function ScannerPage({ navigation }) {
             // Navigate to Confirm Meal page and pass the ingredients of the API response content
             console.log("Navigating to Confirm Meal page...");
             navigation.navigate('Confirm Meal', { base64Image, content });
-            //const ingredientList = await fetchNutritionalInfo(content);
-            //console.log(ingredientList);
           }
 
         } else {
           console.log('No image selected or captured');
         }
-        // console.log('Base64 image:', base64Image);
+
       } catch (error) {
         console.error("Error converting image to base64:", error);
       }
@@ -237,8 +241,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   captureButton: {
-    alignSelf: 'center', // Center the button horizontally in the container
-    backgroundColor: '#424242', //grey
+    alignSelf: 'center', 
+    backgroundColor: '#424242', 
     borderRadius: 50,
     padding: 15,
   },
@@ -254,9 +258,9 @@ const styles = StyleSheet.create({
 
   infoContainer: {
     position: 'absolute',
-    alignSelf: 'center', // Center the container horizontally
-    bottom: -70, // Adjust this value as needed to position the text above the gallery button
-    alignItems: 'center', // Center the text vertically within the container
+    alignSelf: 'center', 
+    bottom: -70, 
+    alignItems: 'center', 
     right: 20,
     width: '85%',
 
@@ -288,8 +292,5 @@ const styles = StyleSheet.create({
   },
 });
 
-function handleArrowPress() {
-  // Handle the arrow button press event
-}
 
 export default ScannerPage;

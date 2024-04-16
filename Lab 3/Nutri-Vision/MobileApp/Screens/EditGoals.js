@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { StyleSheet, View, Text, TextInput, Button, Image, SafeAreaView, ScrollView, TouchableOpacity, Linking} from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, SafeAreaView, ScrollView, TouchableOpacity} from 'react-native';
 import { getFirestore, collection, query, where, getDocs, updateDoc, doc, getDoc } from 'firebase/firestore';
 
 
@@ -16,7 +16,7 @@ const EditGoals = ({ navigation }) => {
 
     const handleNextPress = async () => {
         if (selectedGoal) {
-            const userEmail = "PAN@GMAIL.COM"; // Substitute with dynamic user email if available
+            const userEmail = "haolun@gmail.com"; 
             const profilesColRef = collection(db, 'profile');
             const q = query(profilesColRef, where("email", "==", userEmail));
 
@@ -30,7 +30,8 @@ const EditGoals = ({ navigation }) => {
                     await updateDoc(userDoc.ref, { goals: selectedGoal });
                     
                     console.log('Goal updated successfully:', selectedGoal);
-                    navigation.navigate('Tabs'); // Navigate to the next screen after goal update
+                    global.lastGoalUpdateTime = new Date();
+                    navigation.navigate('Tabs'); 
                 } else {
                     console.log('Profile not found.');
                     alert('Profile not found.');
@@ -61,7 +62,7 @@ const EditGoals = ({ navigation }) => {
       
       // Function to fetch and display goal details given a goal ID
       async function fetchAndDisplayGoalDetails(goalId) {
-        const goalRef = doc(db, 'goalsDetail', goalId); // Ensure 'goalsDetail' matches your collection name
+        const goalRef = doc(db, 'goalsDetail', goalId); 
         const goalSnap = await getDoc(goalRef);
       
         if (goalSnap.exists()) {
@@ -77,9 +78,7 @@ const EditGoals = ({ navigation }) => {
         console.log("Goal Details:", goalDetails);
       }
       
-      fetchUserProfileByEmail("PAN@GMAIL.COM");
-
-
+      fetchUserProfileByEmail("haolun@gmail.com");
 
  
     return (
@@ -108,10 +107,6 @@ const EditGoals = ({ navigation }) => {
                             <Text style={styles.createProfileText}>Edit Goals</Text>
                         </TouchableOpacity>
                     </View>
-                    
-
-
-                
                 </View>
             </ScrollView>
         </SafeAreaView>

@@ -8,10 +8,10 @@ import SearchBar from '../Components/SearchBar';
 function FavouritesPage() {
   const navigation = useNavigation();
   // Placeholder image URI
-  const headerImageUri = 'https://via.placeholder.com/150'; // Update this to your desired image URL
+  const headerImageUri = 'https://via.placeholder.com/150'; 
 
   // Simulate a dynamic list of images
-  const images = new Array(8).fill(headerImageUri); // Example: 8 images. Adjust the number as needed.
+  const images = new Array(8).fill(headerImageUri); 
 
   const [favoriteMealEntries, setFavoriteMealEntries] = useState([]);
   const [filteredEntires, setFilteredEntries] = useState([]);
@@ -28,10 +28,10 @@ function FavouritesPage() {
     console.log('Current filtered entries:', filteredEntires);
   }, [favoriteMealEntries, filteredEntires]);
 
-    // Fetch favorite meal entries
+    // Fetch favorite meal entries from Firebase  
     const fetchFavorites = async () => {
       try {
-        const favorites = await getFavouriteMealEntries(); // Fetch favorite meal entries
+        const favorites = await getFavouriteMealEntries(); 
         setFavoriteMealEntries(favorites); // Update state with the fetched entries
         setFilteredEntries(favorites);
       } catch (error) {
@@ -39,6 +39,7 @@ function FavouritesPage() {
       }
     };
 
+    //Clicking on feach favourite meal entry leads to Individual Meal page which displays the macro nutrients of the specific meal by its documentId
   const handlePress = (documentId) => {
     navigation.navigate('IndividualMeal', { documentId });
     console.log('Navigating to documentId:', documentId);
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
   },
   gridContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap', // Allows items to wrap to the next line
+    flexWrap: 'wrap', 
     justifyContent: 'space-around',
     paddingTop: 20,
   },
@@ -95,8 +96,8 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   image: {
-    width: '100%', // Use the full width of the container
-    height: 150, // Set a fixed height for the images
+    width: '100%', 
+    height: 150, 
   },
   imageText: {
     marginTop: 8,

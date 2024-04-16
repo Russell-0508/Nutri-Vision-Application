@@ -1,13 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, Image, Dimensions, StatusBar, FlatList, ScrollView, Modal, TextInput } from 'react-native';
-import { Camera } from 'expo-camera';
-import * as ImagePicker from 'expo-image-picker';
+import React, { useState } from 'react';
+import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity, 
+        StatusBar, FlatList, Modal, TextInput } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { saveMealToFirestore } from '../../MealHistory';
-import { useNavigation } from '@react-navigation/native';
-
 
 function ConfirmMealPage({ navigation, route }) {
+
   const { content } = route.params;
   const { base64Image } = route.params;
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -15,13 +12,6 @@ function ConfirmMealPage({ navigation, route }) {
   const [ingredientMass, setIngredientMass] = useState('');
 
   const [selectedIngredient, setSelectedIngredient] = useState(null);
-  /*
-  // Placeholder ingredients
-  const [ingredients, setIngredients] = useState([
-    { id: '1', name: 'Rice', portion: '200g' },
-    { id: '2', name: 'Chicken', portion: '150g' },
-  ]);
-  */
 
   //parse ingredient string and return array of ingredient objects
   const parseIngredients = (ingredientString) => {
@@ -45,12 +35,14 @@ function ConfirmMealPage({ navigation, route }) {
       backgroundColor: 'grey',
       marginTop: 5,
       marginBottom: 5,
-      marginLeft: 60, // Adjust this value to control the starting point
-      marginRight: 100, // Adjust this value to control the ending point
+      marginLeft: 60, 
+      marginRight: 100, 
     }} />
   );
 
 
+
+  //Function to add ingredient  name and mass to the existing ingredients list 
   const handleAddIngredient = () => {
     console.log("Add button pressed with ingredient name:", ingredientName, "and mass:", ingredientMass);
     const newIngredient = {
@@ -64,7 +56,7 @@ function ConfirmMealPage({ navigation, route }) {
     setIsModalVisible(false);
   };
 
-
+  //Function to handle the update and deletion of ingredient list entries 
   const EditIngredientModal = () => (
     <Modal
       animationType="slide"
@@ -103,9 +95,10 @@ function ConfirmMealPage({ navigation, route }) {
   const handlePress = (item) => {
     setSelectedIngredient(item);
     setIngredientName(item.name);
-    setIngredientMass(item.portion.replace('g', '')); // Assuming 'portion' is always in grams
+    setIngredientMass(item.portion.replace('g', '')); 
   };
 
+  //Function to handle the updating of ingredient's name and mass 
   const handleUpdateIngredient = () => {
     const updatedIngredients = ingredients.map(ing => {
       if (ing.id === selectedIngredient.id) {
@@ -118,6 +111,7 @@ function ConfirmMealPage({ navigation, route }) {
     setSelectedIngredient(null);
   };
 
+  //Function to delete the ingredient entry from ingredients list 
   const handleDeleteIngredient = () => {
     const filteredIngredients = ingredients.filter(ing => ing.id !== selectedIngredient.id);
     setIngredients(filteredIngredients);
@@ -134,7 +128,6 @@ function ConfirmMealPage({ navigation, route }) {
     </TouchableOpacity >
   );
 
-
   const AddIngredientButton = () => (
     <View>
       {/* Add a separator view at the top of the footer component */}
@@ -147,6 +140,7 @@ function ConfirmMealPage({ navigation, route }) {
     </View>
   );
 
+  //When 'Confirm Meal' button is pressed, it navigates to Nutritional Info Page and passes the ingredients list entries and the image of the food as base64Image
   const handleConfirmMeal = () => {
     const query = ingredients.map(ingredient => `${ingredient.portion} ${ingredient.name}`).join(' , ');
     navigation.navigate('Nutritional Info', { ingredients: query, base64Image });
@@ -192,7 +186,7 @@ function ConfirmMealPage({ navigation, route }) {
           <Button title="Add" onPress={handleAddIngredient} />
         </View>
       </Modal>
-      <StatusBar backgroundColor="rgba(173, 219, 199, 1)" barStyle="light-content" />
+      <StatusBar backgroundColor="white" barStyle="light-content" />
       <View style={styles.nutritionalInfoContainer}>
         <Text style={styles.ingredientsHeaderText}>Ingredients</Text>
         <FlatList
@@ -200,7 +194,7 @@ function ConfirmMealPage({ navigation, route }) {
           renderItem={renderIngredientItem}
           keyExtractor={item => item.id}
           ListFooterComponent={AddIngredientButton}
-          ItemSeparatorComponent={IngredientSeparator} // Add this line
+          ItemSeparatorComponent={IngredientSeparator} 
           style={styles.ingredientsList}
         />
         <ConfirmMealButton />
