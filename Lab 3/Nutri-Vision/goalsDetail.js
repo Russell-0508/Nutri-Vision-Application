@@ -38,6 +38,7 @@ export const fetchUserGoalDetails = async (userEmail) => {
 };
 
 // Function to check if the logged meal matches the user's target calories
+// Returns true if the meal fits the target
 export const checkMealTarget = async (userEmail, mealCalories) => {
     try {
         // Fetch user's goal details

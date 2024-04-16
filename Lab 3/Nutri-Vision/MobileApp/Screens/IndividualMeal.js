@@ -10,7 +10,7 @@ function IndividualMeal({ route }) {
 
   // This will read the data passed from the navigate function in the HistoryPage.js
   const { documentId } = route.params;
-
+  //Set initial meal entry to null, and initial goal details to  empty 
   const [mealEntry, setMealEntry] = useState(null);
   const [goalsDetails, setGoalsDetails] = useState([]);
 
@@ -21,11 +21,11 @@ function IndividualMeal({ route }) {
     }
   }, [documentId]);
 
-   // Goals for macronutrients
-   const goalCalories = goalsDetails.Calories;
-   const goalCarbohydrates = goalsDetails.Carbs;
-   const goalProtein = goalsDetails.Protein;
-   const goalFat = goalsDetails.Fats;
+  // Goals for macronutrients
+  const goalCalories = goalsDetails.Calories;
+  const goalCarbohydrates = goalsDetails.Carbs;
+  const goalProtein = goalsDetails.Protein;
+  const goalFat = goalsDetails.Fats;
 
   // State to hold the image URI
   const [imageUri, setImageUri] = useState(null); // Initial state is null
@@ -33,7 +33,7 @@ function IndividualMeal({ route }) {
   // Placeholder image URI
   const placeholderImageUri = 'https://via.placeholder.com/150'; // Placeholder URL
 
-
+  //Set the macro nutrients values
   const [calories, setCalories] = useState('Loading...');
   const [carbohydrates, setCarbohydrates] = useState('Loading...');
   const [protein, setProtein] = useState('Loading...');
@@ -44,6 +44,9 @@ function IndividualMeal({ route }) {
   // State for heart button color
   const [heartColor, setHeartColor] = useState("black");
 
+  // This function fetches nutritional info by the meal document Id from Firebase.
+  // It then sets the heart colour according to the boolean 'favourite' attribute in Firebase. If favourite == true, heart is red; else heart is black.
+  // It displays the values of calories, carbs, proteins and fats of the specific meal Id, and its corresponding image 
   const fetchNutritionalInfo = async (documentId) => {
     try {
       if (!documentId) {
@@ -54,9 +57,9 @@ function IndividualMeal({ route }) {
       console.log('Fetched meal entry:', mealEntry); 
 
       setMealEntry(mealEntry);
-      setIsFavorite(mealEntry.favourite); 
-      setHeartColor(mealEntry.favourite ? "red" : "black"); 
-      const attributesToDisplay = ['calories', 'carbohydrates', 'cholesterol', 'fiber', 'protein', 'saturatedFat', 'sodium', 'sugar', 'totalFat','picture'];
+      setIsFavorite(mealEntry.favourite); // Set isFavorite state based on fetched data
+      setHeartColor(mealEntry.favourite ? "red" : "black"); // Set heart color based on fetched data
+      const attributesToDisplay = ['calories', 'carbohydrates', 'protein', 'totalFat', 'picture'];
       attributesToDisplay.forEach(attribute => {
         if (mealEntry[attribute] !== 0) {
           switch (attribute) {
@@ -89,42 +92,42 @@ function IndividualMeal({ route }) {
   const totalCaloriesConsumed = calories;
   const totalCarbohydratesConsumed = carbohydrates;
   const totalFatConsumed = totalFat;
-  const totlaProteinConsumed = protein;   
+  const totlaProteinConsumed = protein;
 
-  // Calculating percentages
+  // Calculating percentages of macros 
   const calculateCaloriePercentage = () => {
-    if (goalCalories > 0){
-        return (totalCaloriesConsumed / goalCalories) * 100;
+    if (goalCalories > 0) {
+      return (totalCaloriesConsumed / goalCalories) * 100;
     }
     return 0;
-};
+  };
 
-const calculateCarbohydratePercentage = () => {
-    if (goalCarbohydrates > 0){
-        return (totalCarbohydratesConsumed / goalCarbohydrates) * 100;
+  const calculateCarbohydratePercentage = () => {
+    if (goalCarbohydrates > 0) {
+      return (totalCarbohydratesConsumed / goalCarbohydrates) * 100;
     }
     return 0;
-};
+  };
 
-const calculateFatPercentage = () => {
-    if (goalFat > 0){
-        return (totalFatConsumed / goalFat) * 100;
+  const calculateFatPercentage = () => {
+    if (goalFat > 0) {
+      return (totalFatConsumed / goalFat) * 100;
     }
     return 0;
-};
+  };
 
-const calculateProteinPercentage = () => {
-    if (goalProtein > 0){
-        return (totlaProteinConsumed / goalProtein) * 100;
+  const calculateProteinPercentage = () => {
+    if (goalProtein > 0) {
+      return (totlaProteinConsumed / goalProtein) * 100;
     }
     return 0;
-};
+  };
 
-// Calculate the percentages for the Circles
-const caloriePercantage = Math.min(calculateCaloriePercentage(), 100);
-const CarbohydratePercentage = Math.min(calculateCarbohydratePercentage(), 100);
-const FatPercentage = Math.min(calculateFatPercentage(), 100);
-const ProteinPercentage = Math.min(calculateProteinPercentage(), 100);
+  // Calculate the percentages for the Circles
+  const caloriePercantage = Math.min(calculateCaloriePercentage(), 100);
+  const CarbohydratePercentage = Math.min(calculateCarbohydratePercentage(), 100);
+  const FatPercentage = Math.min(calculateFatPercentage(), 100);
+  const ProteinPercentage = Math.min(calculateProteinPercentage(), 100);
 
 
   // Trigger the API call on component mount and when route parameters change
@@ -154,6 +157,7 @@ const ProteinPercentage = Math.min(calculateProteinPercentage(), 100);
     console.log(`Pressed ${action}`);
   };
 
+  //To display the percentage of macros in a circle chart 
   const ProgressCircle = ({ percentage, fillColor, label, value }) => {
     const size = 75; 
     const strokeWidth = 5; 
@@ -187,20 +191,20 @@ const ProteinPercentage = Math.min(calculateProteinPercentage(), 100);
         </Svg>
         {/* Percentage Text with absolute positioning */}
         <Text style={{
-            position: 'absolute',
-            fontWeight: 'bold',
-            fontSize: 14, 
-            left: '55%',
-            top: '35%',
-            transform: [{ translateX: -size * 0.2 }, { translateY: -size * 0.1 }],
+          position: 'absolute',
+          fontWeight: 'bold',
+          fontSize: 14, // Adjust the font size as needed
+          left: '55%',
+          top: '35%',
+          transform: [{ translateX: -size * 0.2 }, { translateY: -size * 0.1 }],
         }}>
-            {Math.round(percentage)}%
+          {Math.round(percentage)}%
         </Text>
         {/* Label and Value Text */}
         <Text style={{ fontWeight: 'bold', marginTop: 4 }}>{label}</Text>
       </View>
     );
-};
+  };
 
 
 
@@ -211,10 +215,10 @@ const ProteinPercentage = Math.min(calculateProteinPercentage(), 100);
         <View style={styles.imageContainer}>
           {/* Image placeholder */}
           <Image
-          source={{ uri: `data:image/png;base64,${imageUri}` || placeholderImageUri }}
-          style={styles.imageStyle}
-          resizeMode="contain"
-        />
+            source={{ uri: `data:image/png;base64,${imageUri}` || placeholderImageUri }}
+            style={styles.imageStyle}
+            resizeMode="contain"
+          />
           {/* Heart button */}
           <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
             <MaterialIcons

@@ -16,7 +16,7 @@ const GoalsReg = ({ navigation }) => {
 
     const handleNextPress = async () => {
         if (selectedGoal) {
-            const userEmail = "haolun@gmail.com"; // Substitute with dynamic user email if available
+            const userEmail = "haolun@gmail.com";
             const profilesColRef = collection(db, 'profile');
             const q = query(profilesColRef, where("email", "==", userEmail));
 
@@ -45,7 +45,7 @@ const GoalsReg = ({ navigation }) => {
     };
 
 
- 
+
     return (
         <SafeAreaView style={styles.safeArea}>
             <ScrollView style={styles.scrollView}>
@@ -60,11 +60,11 @@ const GoalsReg = ({ navigation }) => {
                                 styles.option,
                                 selectedGoal === goal && styles.selectedOption,
                             ]}
-                             onPress={() => handleGoalSelection(goal)}
+                            onPress={() => handleGoalSelection(goal)}
                         >
                             <Text style={styles.optionText}>{goal}</Text>
                         </TouchableOpacity>
-                    ))}              
+                    ))}
         
                     {/* Navigation Buttons */}
                     <View style={styles.buttonContainer}>
@@ -123,41 +123,39 @@ const styles = StyleSheet.create({
         color : '#000',
         fontWeight : 'bold',
     },
-    
- // -----------------------------------------------------------------------
 
     createProfileButton: {
         marginTop: 50,
-        backgroundColor: '#6db193', 
+        backgroundColor: '#6db193',
         borderRadius: 20,
         paddingVertical: 10,
         paddingHorizontal: 70,
-        alignItems: 'center', 
-        justifyContent: 'center', 
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 
     createProfileText: {
-        color: '#ffffff', 
+        color: '#ffffff',
         fontSize: 18,
         fontWeight: 'bold',
     },
     
     skipButton: {
         marginTop: 10,
-        backgroundColor: '#808080', 
+        backgroundColor: '#808080',
         borderRadius: 20,
         paddingVertical: 10,
         paddingHorizontal: 70,
-        alignItems: 'center', 
-        justifyContent: 'center', 
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 
     skipText: {
-        color: '#ffffff', 
+        color: '#ffffff',
         fontSize: 18,
         fontWeight: 'bold',
     },
 
-  });
+});
 
-  export default GoalsReg;
+export default GoalsReg;

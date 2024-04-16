@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
-import { Linking, SafeAreaView, ScrollView, StyleSheet, 
-        Text, TextInput, TouchableOpacity, View, Image, Alert } from 'react-native';
+import {
+    Alert,
+    Image,
+    Linking, SafeAreaView, ScrollView, StyleSheet,
+    Text, TextInput, TouchableOpacity, View
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import { auth } from '../../firebase/config';
@@ -108,7 +112,6 @@ const AccountReg = ({ navigation }) => {
 
             navigation.navigate('Login');
         } else {
-            //the error message is set by checkPasswordsMatch,
             console.log("Passwords do not match.");
         }
     };
@@ -269,8 +272,6 @@ const styles = StyleSheet.create({
         marginTop: 8,
     },
 
-    //--------------------------------------------------------------------------------
-
     input: {
         flex: 1,
         paddingVertical: 10,
@@ -302,8 +303,6 @@ const styles = StyleSheet.create({
         color: 'green',
     },
 
-    //--------------------------------------------------------------------------------
-
 
     linkText: {
         color: 'blue',
@@ -329,7 +328,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#007bff',
     },
 
-    //--------------------------------------------------------------------------------
 
     createAccountButton: {
         marginTop: 20,
@@ -371,11 +369,11 @@ const styles = StyleSheet.create({
     
     },
     signInWithGoogle: {
-        backgroundColor: '#fff', 
+        backgroundColor: '#fff',
     },
 
     signInWithFacebook: {
-        backgroundColor: '#3b5998', 
+        backgroundColor: '#3b5998',
     },
 
     logo: {

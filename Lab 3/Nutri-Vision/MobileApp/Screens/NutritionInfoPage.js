@@ -9,6 +9,7 @@ import { fetchUserGoalDetails, checkMealTarget } from '../../goalsDetail';
 
 function NutritionalInfoPage({ route, navigation }) {
   const { content } = route.params;
+  //Retrieves the encoding of meal image from Confirm Meal Page
   const { base64Image } = route.params;
 
   // State to hold the image URI
@@ -32,6 +33,7 @@ function NutritionalInfoPage({ route, navigation }) {
   useEffect(() => {
     console.log("Received ingredients:", ingredients);
     setImageUri(base64Image);
+    //Calls Calorie Ninja API to retrieve nutritional values of each of the ingredient in the list  
     fetchNutritionalInfo(ingredients)
       .then(data => {
         let totalCalories = 0;
@@ -64,6 +66,7 @@ function NutritionalInfoPage({ route, navigation }) {
         setFats(totalFats);
         setProtein(totalProtein);
 
+        //Check if the calories for this meal fits the average calorie target allocated for each meal per day
         checkMealTarget('haolun@gmail.com', totalCalories) 
         .then(result => {
           setIsTargetFit(result);
@@ -81,7 +84,7 @@ function NutritionalInfoPage({ route, navigation }) {
           picture: base64Image
         };
 
-        // Save the combined meal data to Firestore
+        // Save the combined meal data (macros and image encoding) to Firestore with a unique meal Id 
         saveMealToFirestore(mealData)
           .then(mealId => {
             setMealId(mealId);
@@ -94,7 +97,7 @@ function NutritionalInfoPage({ route, navigation }) {
 
   // For toggling favourites 
   const [isFavorite, setIsFavorite] = useState(false);
-  // State for heart button color
+  // State for heart button colour
   const [heartColor, setHeartColor] = useState("black");
 
   // Update favourites attribute in database when heart icon is pressed
@@ -117,6 +120,9 @@ function NutritionalInfoPage({ route, navigation }) {
     console.log(`Pressed ${action}`);
   };
 
+  //Sets the colour of the target button depending on whether the meal logged fits the user's target.
+  //Red target button if the meal does not fit user's target.
+  //Green target button if the meal fits the user's target. 
   const ConfirmMealButton = () => {
     if (isTargetFit==true) {
       return (
@@ -133,18 +139,19 @@ function NutritionalInfoPage({ route, navigation }) {
     }
   };
 
+  //Set initial macros percentage to 0
   const [carbsPercentage, setCarbsPercentage] = useState(0); 
   const [fatsPercentage, setFatsPercentage] = useState(0); 
   const [proteinPercentage, setProteinPercentage] = useState(0); 
 
   useEffect(() => {
-    // Fetch user's goal details
+    // Fetch user's goal details based on user's email 
     const fetchGoalDetails = async () => {
       try {
         const userEmail = 'haolun@gmail.com';
         const goalDetails = await fetchUserGoalDetails(userEmail);
 
-        // Calculate percentages
+        // Calculate the percentages of macros for the meal logged 
         const targetCarbs = goalDetails.Carbs;
         const targetFats = goalDetails.Fats;
         const targetProtein = goalDetails.Protein;

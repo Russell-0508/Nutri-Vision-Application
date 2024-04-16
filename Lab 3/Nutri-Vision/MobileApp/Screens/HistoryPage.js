@@ -62,6 +62,7 @@ function History({ navigation }) {
         fetchMealEntriesForDate(date); 
     }, [date]);
 
+    //Fetch meal entries from Firebase according to the date created 
     const fetchMealEntriesForDate = async (date) => {
         try {
             const dateString = date.toISOString().split('T')[0]; 
