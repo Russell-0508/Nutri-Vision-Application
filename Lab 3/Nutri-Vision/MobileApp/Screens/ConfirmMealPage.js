@@ -3,6 +3,13 @@ import { Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity,
         StatusBar, FlatList, Modal, TextInput } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
+/**
+ * Displays a page where users can confirm their meal, add, update, or delete ingredients.
+ *
+ * @param {Object} props - Component props.
+ * @param {Object} props.navigation - Navigation object provided by React Navigation.
+ * @param {Object} props.route - Route object provided by React Navigation, contains parameters passed from the previous screen.
+ */
 function ConfirmMealPage({ navigation, route }) {
 
   const { content } = route.params;
@@ -10,15 +17,16 @@ function ConfirmMealPage({ navigation, route }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [ingredientName, setIngredientName] = useState('');
   const [ingredientMass, setIngredientMass] = useState('');
-
   const [selectedIngredient, setSelectedIngredient] = useState(null);
 
-  //parse ingredient string and return array of ingredient objects
+  /**
+   * Parses a string of ingredients and returns an array of ingredient objects.
+   *
+   * @param {string} ingredientString - A comma-separated string of ingredients.
+   * @returns {Object[]} An array of ingredient objects with properties id, name, and portion.
+   */
   const parseIngredients = (ingredientString) => {
-    // Split the string into individual ingredients based on " and "
     const ingredientParts = ingredientString.split(', ');
-
-    // Map over each part, extracting the portion and name, and return an array of objects
     return ingredientParts.map((part, index) => {
       const [portion, ...nameParts] = part.split(' ');
       const name = nameParts.join(' ');
@@ -29,7 +37,11 @@ function ConfirmMealPage({ navigation, route }) {
   const [ingredients, setIngredients] = useState(parseIngredients(content));
   console.log(content);
 
-  //Function to separate ingredients in ingredients list
+  /**
+   * Renders a separator between ingredient items.
+   *
+   * @returns {JSX.Element} A View component styled as a separator.
+   */
   const IngredientSeparator = () => (
     <View style={{
       height: 1,
@@ -41,9 +53,9 @@ function ConfirmMealPage({ navigation, route }) {
     }} />
   );
 
-
-
-  //Function to add ingredient  name and mass to the existing ingredients list 
+  /**
+   * Adds a new ingredient to the list.
+   */
   const handleAddIngredient = () => {
     console.log("Add button pressed with ingredient name:", ingredientName, "and mass:", ingredientMass);
     const newIngredient = {
@@ -57,7 +69,11 @@ function ConfirmMealPage({ navigation, route }) {
     setIsModalVisible(false);
   };
 
-  //Function to handle the update and deletion of ingredient list entries 
+  /**
+   * Modal component for editing ingredients.
+   *
+   * @returns {JSX.Element} A modal with form inputs and buttons for updating or deleting an ingredient.
+   */
   const EditIngredientModal = () => (
     <Modal
       animationType="slide"
@@ -91,15 +107,20 @@ function ConfirmMealPage({ navigation, route }) {
     </Modal>
   );
 
-
-  // Placeholder function for button presses
+  /**
+   * Sets the selected ingredient for editing.
+   *
+   * @param {Object} item - The ingredient object selected for editing.
+   */
   const handlePress = (item) => {
     setSelectedIngredient(item);
     setIngredientName(item.name);
     setIngredientMass(item.portion.replace('g', '')); 
   };
 
-  //Function to handle the updating of ingredient's name and mass 
+  /**
+   * Updates the selected ingredient in the list.
+   */
   const handleUpdateIngredient = () => {
     const updatedIngredients = ingredients.map(ing => {
       if (ing.id === selectedIngredient.id) {
@@ -112,14 +133,21 @@ function ConfirmMealPage({ navigation, route }) {
     setSelectedIngredient(null);
   };
 
-  //Function to delete the ingredient entry from ingredients list 
+  /**
+   * Deletes the selected ingredient from the list.
+   */
   const handleDeleteIngredient = () => {
     const filteredIngredients = ingredients.filter(ing => ing.id !== selectedIngredient.id);
     setIngredients(filteredIngredients);
     setSelectedIngredient(null);
   };
 
-  //Function to showcase ingredient items
+  /**
+   * Renders an ingredient item.
+   *
+   * @param {Object} param0 - Item and index from the ingredient list.
+   * @returns {JSX.Element} A View component representing an ingredient.
+   */
   const renderIngredientItem = ({ item }) => (
     <TouchableOpacity onPress={() => handlePress(item)}>
       <View style={styles.ingredientItem}>
@@ -129,10 +157,13 @@ function ConfirmMealPage({ navigation, route }) {
     </TouchableOpacity >
   );
 
-  //Button to add ingredients
+  /**
+   * Button component for adding new ingredients.
+   *
+   * @returns {JSX.Element} A View component with a button to trigger adding a new ingredient.
+   */
   const AddIngredientButton = () => (
     <View>
-      {/* Add a separator view at the top of the footer component */}
       <IngredientSeparator />
       <TouchableOpacity style={styles.addIngredientButton} onPress={() => setIsModalVisible(true)}>
         <Text style={styles.addIngredientText}>Add Ingredients</Text>
@@ -142,13 +173,19 @@ function ConfirmMealPage({ navigation, route }) {
     </View>
   );
 
-  //When 'Confirm Meal' button is pressed, it navigates to Nutritional Info Page and passes the ingredients list entries and the image of the food as base64Image
+  /**
+   * Handles confirmation of the meal and navigates to the Nutritional Info page.
+   */
   const handleConfirmMeal = () => {
     const query = ingredients.map(ingredient => `${ingredient.portion} ${ingredient.name}`).join(' , ');
     navigation.navigate('Nutritional Info', { ingredients: query, base64Image });
   };
 
-  //Confirm meal button
+  /**
+   * Button component to confirm the meal.
+   *
+   * @returns {JSX.Element} A button that triggers meal confirmation.
+   */
   const ConfirmMealButton = () => (
     <TouchableOpacity style={styles.confirmMealButton} onPress={handleConfirmMeal}>
       <Text style={styles.confirmMealText}>Confirm Meal</Text>

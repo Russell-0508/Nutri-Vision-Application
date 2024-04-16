@@ -1,4 +1,4 @@
-import React, { useState, useEffect }from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity, 
         StyleSheet, Modal, Switch } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -6,20 +6,25 @@ import { useNavigation } from '@react-navigation/native';
 import { getFirestore, collection, query, where, onSnapshot } from 'firebase/firestore';
 import { getProfileByEmail } from '../../ProfileHistory';
 
-
+/**
+ * Displays user profile information with options to edit and manage account settings.
+ * @param {Object} navigation - Navigation prop passed from parent component for navigation between screens.
+ */
 function ProfileScreen({navigation}){
 
-  //Function to show notification modal
+  // State for showing or hiding the notification modal
   const [showNotificationsModal, setShowNotificationsModal] = useState(false);
-  //Function to set notifications
+  // State for managing notification toggle
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
 
-  //Function to handle notifications
+  /**
+   * Toggles the state of notification enabling.
+   */
   const toggleNotifications = () => {
     setNotificationsEnabled(!notificationsEnabled);
   };
 
-  //Function to display profile information
+  // State to hold profile data
   const [profileData, setProfileData] = useState({
     name: 'Loading...', 
     height: '...',
@@ -27,46 +32,47 @@ function ProfileScreen({navigation}){
     age: '...',
   });
 
-
-  //Function to set profile avatar
+  // State for managing the profile avatar URL
   const [avatarUrl, setAvatarUrl] = useState();
 
-    useEffect(() => {
-        fetchProfileByEmail();
-    }, []);
-
-    //Function to fetch profile from firestore using email
-    const fetchProfileByEmail = async () => {
-        try {
-            const email = "haolun@gmail.com"; 
-            const profiles = await getProfileByEmail(email); 
-            if (profiles.length > 0) {
-                const profile = profiles[0];
-                // Handling avatarUrl
-                if (profile.avatarUrl) {
-                    setAvatarUrl(profile.avatarUrl); 
-                } else {
-                    console.log('Profile found but no avatar URL present.');
-                }
-            } else {
-                console.log('No profile found for the given email:', email);
-            }
-        } catch (error) {
-            console.error("Error fetching profile by email:", error);
-        }
-    };
-
+  /**
+   * Fetches the user profile from Firestore by email upon component mount.
+   */
   useEffect(() => {
-    //Function to get firestore date
-    const db = getFirestore();
-    //Set email
-    const email = 'haolun@gmail.com'
+    fetchProfileByEmail();
+  }, []);
 
-    // Create a reference to the collection and query
+  /**
+   * Fetches user profile data from Firestore using a specific email.
+   */
+  const fetchProfileByEmail = async () => {
+      try {
+          const email = "haolun@gmail.com"; 
+          const profiles = await getProfileByEmail(email); 
+          if (profiles.length > 0) {
+              const profile = profiles[0];
+              if (profile.avatarUrl) {
+                  setAvatarUrl(profile.avatarUrl);  // Set avatar URL if available
+              } else {
+                  console.log('Profile found but no avatar URL present.');
+              }
+          } else {
+              console.log('No profile found for the given email:', email);
+          }
+      } catch (error) {
+          console.error("Error fetching profile by email:", error);
+      }
+  };
+
+  /**
+   * Initializes a real-time listener to Firestore to automatically update profile information when changes occur.
+   */
+  useEffect(() => {
+    const db = getFirestore();
+    const email = 'haolun@gmail.com';
     const profilesRef = collection(db, "profile");
     const q = query(profilesRef, where("email", "==", email));
 
-    // Setting up the onSnapshot listener
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const profiles = querySnapshot.docs.map(doc => ({
         id: doc.id,
@@ -74,8 +80,8 @@ function ProfileScreen({navigation}){
       }));
 
       if (profiles.length > 0) {
-        setProfileData(profiles[0]); 
-        if(profiles[0].avatarUrl){
+        setProfileData(profiles[0]);
+        if (profiles[0].avatarUrl) {
           setAvatarUrl(profiles[0].avatarUrl);
         }
       } else {
@@ -84,13 +90,13 @@ function ProfileScreen({navigation}){
       }
     }, error => {
       console.error("Error fetching profile by email:", error);
-      setProfileData({ name: 'Error fetching profile' }); 
+      setProfileData({ name: 'Error fetching profile' });
     });
 
-    return () => unsubscribe(); 
+    return () => unsubscribe();
   }, []);
-  
-  // Function for logging button presses
+
+  // Function to log button press actions (not part of the original snippet)
   const handlePress = (action) => {
     console.log(`Pressed ${action}`);
   };
