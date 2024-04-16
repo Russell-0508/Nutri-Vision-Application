@@ -20,7 +20,7 @@ const CreateProfile = ({ navigation }) => {
     const [dateOfBirth, setDateOfBirth] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
     const minDate = new Date('1900-01-01');
-    const maxDate = new Date(); // Today's date
+    const maxDate = new Date();
 
     const handleCreateProfile = async () => {
 
@@ -113,9 +113,9 @@ const CreateProfile = ({ navigation }) => {
     const handleHeightChange = (text) => {
         const heightNum = parseFloat(text);
         if (text === "") {
-            setHeight(text);  // Allow clearing the input
+            setHeight(text);  
         } else if (heightNum > 0 && heightNum <= 300) {
-            setHeight(text);  // Set height if valid
+            setHeight(text);
         } else if (heightNum == 0) {
             alert("Height cannot be 0");
         } else if (heightNum < 0) {
@@ -128,9 +128,9 @@ const CreateProfile = ({ navigation }) => {
     const handleWeightChange = (text) => {
         const weightNum = parseFloat(text);
         if (text === "") {
-            setWeight(text);  // Allow clearing the input
+            setWeight(text);  
         } else if (weightNum > 0 && weightNum <= 1000) {
-            setWeight(text);  // Set weight if valid
+            setWeight(text);
         } else if (weightNum == 0) {
             alert("Weight cannot be 0");
         } else if (weightNum < 0) {
@@ -157,7 +157,7 @@ const CreateProfile = ({ navigation }) => {
 
         if (heightInMeters > 0 && weightInKilograms > 0) {
           const calculatedBmi = weightInKilograms / (heightInMeters * heightInMeters);
-          setBmi(calculatedBmi.toFixed(2)); // rounded to two decimal places
+          setBmi(calculatedBmi.toFixed(2)); 
 
           console.log(`Calculated BMI: ${calculatedBmi}`);
 
@@ -301,7 +301,6 @@ const CreateProfile = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
-    //Safe Area for IOS devices
     safeArea: {
         flex: 1,
         backgroundColor: '#f4e5c2',

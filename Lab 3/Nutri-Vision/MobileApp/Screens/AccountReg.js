@@ -6,11 +6,10 @@ import {
     Text, TextInput, TouchableOpacity, View
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { auth } from '../../firebase/config';
 
+import { auth } from '../../firebase/config';
 import FacebookLogo from '../assets/images/facebook-logo.jpg';
 import GoogleLogo from '../assets/images/google-logo.jpg';
-
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
 const AccountReg = ({ navigation }) => {
@@ -75,7 +74,7 @@ const AccountReg = ({ navigation }) => {
             setPasswordMismatchError("Passwords do not match");
             return false;
         }
-        setPasswordMismatchError(""); // Clear any existing error message
+        setPasswordMismatchError(""); 
         return true;
     };
 
@@ -92,7 +91,7 @@ const AccountReg = ({ navigation }) => {
             return;
         }
 
-        const passwordsDoMatch = checkPasswordsMatch(); // Check if passwords match
+        const passwordsDoMatch = checkPasswordsMatch(); 
         const isPasswordStrong = passwordStrength && passwordStrength.message === 'Strong';
         
         if (!termsAccepted) {
@@ -147,7 +146,7 @@ const AccountReg = ({ navigation }) => {
                         placeholder='Enter Your Email'
                         keyboardType="email-address"
                         value={email}
-                        onChangeText={setEmail} //Update email state
+                        onChangeText={setEmail} 
                     />
 
 
@@ -157,7 +156,7 @@ const AccountReg = ({ navigation }) => {
                         <TextInput
                             style={styles.input}
                             placeholder='Enter Your Password'
-                            secureTextEntry={!passwordVisible} // Hide password by default
+                            secureTextEntry={!passwordVisible} 
                             value={password} 
                             onChangeText={(newPassword) => {
                                 setPassword(newPassword);
@@ -187,9 +186,9 @@ const AccountReg = ({ navigation }) => {
                         <TextInput
                             style={styles.input}
                             placeholder='Re-Enter Your Password'
-                            secureTextEntry={!confirmPasswordVisible} // Hide confirm password by default
+                            secureTextEntry={!confirmPasswordVisible} 
                             value={confirmPassword}
-                            onChangeText={setConfirmPassword} // Update confirm password state
+                            onChangeText={setConfirmPassword} 
                         />
 
                         {/* Toggle Password Visibility Button for Confirm Password */}
@@ -234,7 +233,6 @@ const AccountReg = ({ navigation }) => {
                             <Text style={[styles.signInButtonText, styles.facebookText]}>Sign in With Facebook</Text>
                         </TouchableOpacity>
                     </View>
-
                 </View>
             </ScrollView>
         </SafeAreaView>

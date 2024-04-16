@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { StyleSheet, View, Text, TextInput, Button, Image, SafeAreaView, ScrollView, TouchableOpacity, Linking} from 'react-native';
+import { StyleSheet, View, Text, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
 import { getFirestore, collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
 
 
@@ -30,7 +30,7 @@ const GoalsReg = ({ navigation }) => {
                     await updateDoc(userDoc.ref, { goals: selectedGoal });
                     
                     console.log('Goal updated successfully:', selectedGoal);
-                    navigation.navigate('Tabs'); // Navigate to the next screen after goal update
+                    navigation.navigate('Tabs'); 
                 } else {
                     console.log('Profile not found.');
                     alert('Profile not found.');
@@ -75,9 +75,6 @@ const GoalsReg = ({ navigation }) => {
                             <Text style={styles.skipText}>Skip</Text>
                         </TouchableOpacity>
                     </View>
-                    
-
-
                 
                 </View>
             </ScrollView>
