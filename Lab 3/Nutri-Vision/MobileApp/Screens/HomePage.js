@@ -77,13 +77,13 @@ export default function HomePage({navigation}) {
 
     // Filter entries based on selected date
     const onChange = (event, selectedDate) => {
-      const currentDate = selectedDate || date;
-      setShowDatePicker(Platform.OS === 'ios');
-      setDate(currentDate);
+        const currentDate = selectedDate || date;
+        setShowDatePicker(Platform.OS === 'ios');
+        setDate(currentDate);
     };
-  
+
     const formatDate = (date) => {
-      return `${date.getDate()} ${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`;
+        return `${date.getDate()} ${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`;
     };
 
     // Allows the component to interact with external system (Firestore database)
@@ -141,19 +141,19 @@ export default function HomePage({navigation}) {
         const radius = (size / 2) - (strokeWidth * 2); // Radius of the circle
         const circumference = 2 * Math.PI * radius;
         const strokeDashoffset = circumference - (percentage / 100) * circumference;
-      
+
         return (
-          <View style={{ alignItems: 'center', margin: 10 }}>
+        <View style={{ alignItems: 'center', margin: 10 }}>
             <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-              <Circle
-                stroke="#ddd" // This is the color for the "unfilled" part of the circle
+            <Circle
+                stroke="#ddd"
                 fill="none"
                 cx={size / 2}
                 cy={size / 2}
                 r={radius}
                 strokeWidth={strokeWidth}
-              />
-              <Circle
+            />
+            <Circle
                 stroke={fillColor}
                 fill="none"
                 cx={size / 2}
@@ -164,13 +164,13 @@ export default function HomePage({navigation}) {
                 strokeDashoffset={strokeDashoffset}
                 strokeLinecap="round"
                 transform={`rotate(-90, ${size / 2}, ${size / 2})`}
-              />
+            />
             </Svg>
             <Text style={{ position: 'absolute', fontWeight: 'bold', top: size * 0.35 }}>{Math.round(percentage)}%</Text>
             <Text style={{ marginTop: 4, fontWeight: 'bold' }}>{label}</Text> 
-          </View>
+        </View>
         );
-      };
+    };
 
     const CalorieProgressCircle = ({ percentage, calories }) => {
         const size = 180; // Diameter of the calorie circle
@@ -183,7 +183,7 @@ export default function HomePage({navigation}) {
             <View style={{ alignItems: 'center', justifyContent: 'center', marginVertical: 20 }}>
                 <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
                     <Circle
-                        stroke="#eee" // Background circle color
+                        stroke="#eee"
                         fill="none"
                         cx={size / 2}
                         cy={size / 2}
@@ -191,7 +191,7 @@ export default function HomePage({navigation}) {
                         strokeWidth={strokeWidth}
                     />
                     <Circle
-                        stroke="#FFA726" // Fill circle color
+                        stroke="#FFA726"
                         fill="none"
                         cx={size / 2}
                         cy={size / 2}
@@ -214,8 +214,8 @@ export default function HomePage({navigation}) {
     const HeartRateTracker = ({ percentage, fillColor }) => {
         const size = 150; // Diameter
         const strokeWidth = 8; // Width 
-        const radius = (size - strokeWidth) / 2; // Radius 
-        const circumference = Math.PI * radius; 
+        const radius = (size - strokeWidth) / 2; // Radius
+        const circumference = Math.PI * radius;
         const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
         return (
@@ -245,7 +245,7 @@ export default function HomePage({navigation}) {
                 </View>
             </View>
         );
-      };
+    };
 
 
 
@@ -259,7 +259,7 @@ export default function HomePage({navigation}) {
                             //source={require('../assets/hacker.png')}
                             style={styles.avatar}
                         />
-                     </View>
+                    </View>
                     <View style={styles.titleAndDatePicker}>
                         <Text style={styles.headerText}>Home Page</Text>
                         <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePickerRow}>
@@ -332,7 +332,7 @@ export default function HomePage({navigation}) {
                     </View>
                 </View>
 
-  
+
             </ScrollView>
         </SafeAreaView>
     );
@@ -341,7 +341,7 @@ export default function HomePage({navigation}) {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#f4e5c2', 
+        backgroundColor: '#f4e5c2',
     },
     
     container: {
@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     avatarContainer: {
-        marginRight: 15, // Adds space between the avatar and the text/date picker
+        marginRight: 15,
     },
     avatar: {
         width: 50,
@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
         fontWeight : 'bold',
     },
 
-    // -----------------------------------------------------------------
+
     caloriesSection: {
         padding: 16,
         backgroundColor: '#FFF',
@@ -424,9 +424,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#f4e5c2',
         marginVertical: 3,
     },
-// ---------------------------------------------------------------------------
+
     recipe: {
-        backgroundColor: '#fff', 
+        backgroundColor: '#fff',
         borderRadius: 20,
         padding: 10,
         marginHorizontal: 25,
@@ -436,16 +436,16 @@ const styles = StyleSheet.create({
     recipeTitle: {
         fontSize: 23,
         fontWeight: 'bold',
-        color: '#333', 
-        marginBottom: 10, 
-        textAlign: 'center', 
+        color: '#333',
+        marginBottom: 10,
+        textAlign: 'center',
     },
-      
+
     recipeDescription: {
         fontSize: 16,
         color: '#666',
         textAlign: 'center',
-        marginTop : -5, 
+        marginTop : -5,
     },
 
     recipeHighlight: {
@@ -458,13 +458,13 @@ const styles = StyleSheet.create({
     TextContainer: {
         flexDirection: 'column',
     },
-      
+
     recipeImage: {
-        width: 60, 
-        height: 60, 
+        width: 60,
+        height: 60,
         marginRight: 40,
     },
-      
+
     recipeButtons: {
         flexDirection: 'row',
         justifyContent: 'space-around', 
@@ -487,19 +487,17 @@ const styles = StyleSheet.create({
         color : '#555555',
         textAlign : 'center',
     },
-      
-    //--------------------------------------------------
     buttonGetStarted: {
-        backgroundColor: '#FFA500', 
+        backgroundColor: '#FFA500',
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderRadius: 20,
     },
-      
+
     buttonText: {
-        color: '#fff', 
+        color: '#fff',
         fontSize: 18,
         fontWeight: 'bold',
-        textAlign: 'center', 
+        textAlign: 'center',
     },
 });

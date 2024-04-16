@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Image, SafeAreaView, ScrollView, StyleSheet, 
+import { Image, SafeAreaView, ScrollView, StyleSheet,
         Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
-
 import { differenceInYears, format } from 'date-fns';
 import DateTimePicker from '@react-native-community/datetimepicker';
-
 import firestore from '../../firebase/config';
 import { addDoc, collection } from 'firebase/firestore';
 
@@ -61,11 +59,11 @@ const CreateProfile = ({ navigation }) => {
             age: age,
             avatarUrl: avatarUrls[selectedAvatarIndex],
         };
-      
+    
         try {
             const docRef = await addDoc(profileCollection, profileData);
             console.log('Profile created with ID:', docRef.id);
-            navigation.navigate('GoalsReg'); // Navigate to the next screen after profile creation
+            navigation.navigate('GoalsReg');
         } catch (error) {
             console.error('Error creating profile:', error);
         }
@@ -73,8 +71,8 @@ const CreateProfile = ({ navigation }) => {
 
 
     const onChangeDate = (event, selectedDate) => {
-        const currentDate = selectedDate || dateOfBirth; // Use selectedDate, fallback to current if null (e.g., user pressed 'Cancel')
-        setShowDatePicker(false);  // Hide picker
+        const currentDate = selectedDate || dateOfBirth;
+        setShowDatePicker(false);
         setDateOfBirth(currentDate);
     };
 
@@ -306,7 +304,7 @@ const styles = StyleSheet.create({
     //Safe Area for IOS devices
     safeArea: {
         flex: 1,
-        backgroundColor: '#f4e5c2', 
+        backgroundColor: '#f4e5c2',
     },
 
     chooseAvatar : {
@@ -339,14 +337,13 @@ const styles = StyleSheet.create({
     },
 
     label: {
-        fontSize: 14, 
-        color: '#000', 
-        fontWeight: 'bold', 
-        marginBottom: 3, 
+        fontSize: 14,
+        color: '#000',
+        fontWeight: 'bold',
+        marginBottom: 3,
         marginTop: 8,
     },
 
-    //--------------------------------------------------------------------------------
     genderContainer: {
         flexDirection: 'row',
         justifyContent: 'space-around',
@@ -361,7 +358,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     genderButtonSelected: {
-        backgroundColor: '#007bff', 
+        backgroundColor: '#007bff',
     },
     genderButtonText: {
         textAlign: 'center',
@@ -369,10 +366,8 @@ const styles = StyleSheet.create({
         fontWeight : 'bold',
     },
     genderButtonTextSelected: {
-        color: '#fff', 
+        color: '#fff',
     },
-
-    //--------------------------------------------------------------------------------
 
     photoContainer: {
         alignItems: 'center',
@@ -385,18 +380,16 @@ const styles = StyleSheet.create({
         width: 120,
         borderRadius: 60,
         borderWidth: 3,
-        borderColor: '#ffffff', // Adjust the border color
+        borderColor: '#ffffff',
         justifyContent: 'center',
         alignItems: 'center',
-        overflow: 'hidden', // Ensures the image doesn't bleed outside the border
+        overflow: 'hidden',
     },
     avatar: {
         width: 110,
         height: 110,
         borderRadius: 55,
     },
-    //--------------------------------------------------------------------------------
-
 
     input: {
         flex: 1,
@@ -407,33 +400,28 @@ const styles = StyleSheet.create({
     },
 
     inputWrapper: {
-        flexDirection: 'row', // Arrange items in a row
-        alignItems: 'center', // Center items vertically
+        flexDirection: 'row',
+        alignItems: 'center',
         borderWidth: 1,
         borderColor: 'gray',
         backgroundColor: '#FFF',
         borderRadius : 10,
     },
 
-    //--------------------------------------------------------------------------------
-
     datePickerToggle: {
         borderWidth: 1,
         borderColor: 'gray',
         padding: 10,
         marginBottom: 10,
-        borderRadius: 5, // Match input styles for consistency
-        backgroundColor: '#FFF', // Keeping it white to resemble an input field
-        alignItems: 'center', // Center the text horizontally
+        borderRadius: 5,
+        backgroundColor: '#FFF',
+        alignItems: 'center',
     },
 
-    // Additional styling for the date display text
     datePickerText: {
         fontSize: 17,
-        color: '#000', 
+        color: '#000',
     },
-
-    //--------------------------------------------------------------------------------
 
 
     bmiContainer: {

@@ -113,7 +113,6 @@ const AccountReg = ({ navigation }) => {
 
             navigation.navigate('Login');
         } else {
-            //the error message is set by checkPasswordsMatch,
             console.log("Passwords do not match.");
         }
     };
@@ -275,8 +274,6 @@ const styles = StyleSheet.create({
         marginTop: 8,
     },
 
-    //--------------------------------------------------------------------------------
-
     input: {
         flex: 1,
         paddingVertical: 10,
@@ -308,8 +305,6 @@ const styles = StyleSheet.create({
         color: 'green',
     },
 
-    //--------------------------------------------------------------------------------
-
 
     linkText: {
         color: 'blue',
@@ -335,7 +330,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#007bff',
     },
 
-    //--------------------------------------------------------------------------------
 
     createAccountButton: {
         marginTop: 20,
@@ -377,11 +371,11 @@ const styles = StyleSheet.create({
     
     },
     signInWithGoogle: {
-        backgroundColor: '#fff', // Google button with white background
+        backgroundColor: '#fff',
     },
 
     signInWithFacebook: {
-        backgroundColor: '#3b5998', // Facebook button with blue background
+        backgroundColor: '#3b5998',
     },
 
     logo: {

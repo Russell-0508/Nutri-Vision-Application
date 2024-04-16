@@ -6,6 +6,7 @@ import SearchBar from '../Components/SearchBar';
 const CommunityScreen = () => {
     const [searchQuery, setSearchQuery] = useState('');
   
+    // Posts for Recipe
     const posts = [
       {
         id: 1,
@@ -46,7 +47,7 @@ const CommunityScreen = () => {
   
     return (
       <ScrollView style={styles.container}>
-        <SearchBar onSearch={setSearchQuery}/>  
+        <SearchBar onSearch={setSearchQuery}/>
         <View style={styles.postsContainer}>
           {filteredPosts.map((post) => (
             <View key={post.id} style={styles.postCard}>
