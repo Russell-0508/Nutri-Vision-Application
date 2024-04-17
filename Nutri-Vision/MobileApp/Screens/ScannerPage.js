@@ -44,7 +44,7 @@ function extractContent(inputString) {
  */
 function containsKeywords(content) {
   // Define regex for keywords related to blur or obfuscation
-  const pattern = /\b(blur.*|obsfucat.*|cannot|unable|image|contain)\b/i;
+  const pattern = /\b(blur.*|obsfucat.*|cannot|unable|image|contain|sorry|error)\b/i;
 
   // Test the content against the pattern
   return pattern.test(content);
