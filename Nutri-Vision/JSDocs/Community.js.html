@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Community.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Community.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState } from 'react';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import SearchBar from '../Components/SearchBar';
+
+/**
+ * Displays a list of community posts related to recipes, with the ability to search through them.
+ * Each post includes an image, title, duration, and the name of the poster. The search function
+ * filters the posts based on the title.
+ *
+ * @component
+ * @example
+ * return &lt;CommunityScreen />;
+ */
+const CommunityScreen = () => {
+    const [searchQuery, setSearchQuery] = useState('');
+  
+    // Posts for Recipe
+    const posts = [
+      {
+        id: 1,
+        title: 'Chicken Rice',
+        imageUri: require('../assets/images/ChickenRice.jpg'),
+        duration: '&lt;60 mins',
+        profile: {
+          name: 'Russell',
+          imageUri: require('../assets/images/Man1.png'),
+        },
+      },
+      
+      {
+        id: 2,
+        title: 'Pancake',
+        imageUri: require('../assets/images/Pancake.jpg'),
+        duration: '&lt;20 mins',
+        profile: {
+          name: 'Randy',
+          imageUri: require('../assets/images/Woman1.png'),
+        },
+      },
+      {
+        id: 3,
+        title: 'Spaghetti',
+        imageUri: require('../assets/images/Spaghetti.jpg'),
+        duration: '&lt;30 mins',
+        profile: {
+          name: 'Bob',
+          imageUri: require('../assets/images/Man2.png'),
+        },
+      },
+    ];
+
+    /**
+   * Filters posts based on the user's search query. This function is integrated within the
+   * CommunityScreen component and is triggered whenever the user types into the search bar.
+   *
+   * @function filteredPosts
+   * @param {string} searchQuery - The search query used to filter the posts.
+   * @returns {Array} An array of post objects that match the search query.
+   */
+    const filteredPosts = posts.filter(post =>
+      post.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  
+    return (
+      &lt;ScrollView style={styles.container}>
+        &lt;SearchBar onSearch={setSearchQuery}/>
+        &lt;View style={styles.postsContainer}>
+          {filteredPosts.map((post) => (
+            &lt;View key={post.id} style={styles.postCard}>
+              &lt;Image
+                source={post.profile.imageUri}
+                style={styles.profileImage}
+              />
+              &lt;Text style={styles.profileName}>{post.profile.name}&lt;/Text>
+              &lt;Image
+                source={post.imageUri}
+                style={styles.foodImage}
+              />
+              &lt;View style={styles.textContainer}>
+                &lt;Text style={styles.title}>{post.title}&lt;/Text>
+                &lt;Text style={styles.duration}>{post.duration}&lt;/Text>
+              &lt;/View>
+
+              &lt;TouchableOpacity
+                style={styles.getStartedButton}
+              >
+                &lt;Text style={styles.getStartedButtonText}>Get Started&lt;/Text>
+              &lt;/TouchableOpacity>
+
+            &lt;/View>
+          ))}
+        &lt;/View>
+      &lt;/ScrollView>
+    );
+  };
+  
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#f4e5c2',
+    },
+    searchBarContainer: {
+      padding: 10,
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: '#f2f2f2',
+      borderRadius: 20,
+      margin: 10,
+    },
+    searchInput: {
+      flex: 1,
+      padding: 10,
+      fontSize: 16,
+      color: '#000',
+    },
+    postsContainer: {
+      padding: 10,
+    },
+    postCard: {
+      backgroundColor: '#fff',
+      borderRadius: 20,
+      padding: 15,
+      marginBottom: 20,
+      alignItems: 'center',
+    },
+    profileImage: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+    },
+    foodImage: {
+      width: '100%',
+      height: 200,
+      borderRadius: 15,
+      marginVertical: 10,
+    },
+    textContainer: {
+      alignItems: 'center',
+      marginBottom: 10,
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: 'bold',
+    },
+    duration: {
+      fontSize: 14,
+      fontWeight: 'bold'
+    },
+    profileName: {
+      fontSize: 16,
+    },
+
+    getStartedButton: {
+      backgroundColor: '#FFA500',
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      borderRadius: 20,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  
+    getStartedButtonText: {
+      color: '#fff',
+      fontSize: 18,
+      fontWeight: 'bold',
+    },
+  });
+  
+  export default CommunityScreen;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AccountReg">AccountReg</a></li><li><a href="global.html#Calories">Calories</a></li><li><a href="global.html#CommunityScreen">CommunityScreen</a></li><li><a href="global.html#ConfirmMealPage">ConfirmMealPage</a></li><li><a href="global.html#CreateProfile">CreateProfile</a></li><li><a href="global.html#EditGoals">EditGoals</a></li><li><a href="global.html#EditProfilePage">EditProfilePage</a></li><li><a href="global.html#Entry">Entry</a></li><li><a href="global.html#FavouritesPage">FavouritesPage</a></li><li><a href="global.html#GoalsReg">GoalsReg</a></li><li><a href="global.html#History">History</a></li><li><a href="global.html#IndividualMeal">IndividualMeal</a></li><li><a href="global.html#LandingUI">LandingUI</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#NutritionalInfoPage">NutritionalInfoPage</a></li><li><a href="global.html#ProfileScreen">ProfileScreen</a></li><li><a href="global.html#ScannerPage">ScannerPage</a></li><li><a href="global.html#addFood">addFood</a></li><li><a href="global.html#calculateBmi">calculateBmi</a></li><li><a href="global.html#checkPasswordStrength">checkPasswordStrength</a></li><li><a href="global.html#checkPasswordsMatch">checkPasswordsMatch</a></li><li><a href="global.html#containsKeywords">containsKeywords</a></li><li><a href="global.html#displayGoalDetails">displayGoalDetails</a></li><li><a href="global.html#extractContent">extractContent</a></li><li><a href="global.html#fetchAndDisplayGoalDetails">fetchAndDisplayGoalDetails</a></li><li><a href="global.html#fetchMealEntriesForDate">fetchMealEntriesForDate</a></li><li><a href="global.html#fetchUserProfileByEmail">fetchUserProfileByEmail</a></li><li><a href="global.html#filteredPosts">filteredPosts</a></li><li><a href="global.html#handleCreateAccountPress">handleCreateAccountPress</a></li><li><a href="global.html#handleCreateProfile">handleCreateProfile</a></li><li><a href="global.html#handleGoalSelection">handleGoalSelection</a></li><li><a href="global.html#handleHeightChange">handleHeightChange</a></li><li><a href="global.html#handleNextPress">handleNextPress</a></li><li><a href="global.html#handlePressTerms">handlePressTerms</a></li><li><a href="global.html#handleWeightChange">handleWeightChange</a></li><li><a href="global.html#onChange">onChange</a></li><li><a href="global.html#onChangeDate">onChangeDate</a></li><li><a href="global.html#showDatepicker">showDatepicker</a></li><li><a href="global.html#updateCalories">updateCalories</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Apr 17 2024 12:45:14 GMT+0800 (Singapore Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
