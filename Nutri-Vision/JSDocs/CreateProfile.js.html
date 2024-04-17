@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: CreateProfile.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: CreateProfile.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useEffect, useState } from 'react';
+import { Image, SafeAreaView, ScrollView, StyleSheet,
+        Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
+import { differenceInYears, format } from 'date-fns';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import firestore from '../../firebase/config';
+import { addDoc, collection } from 'firebase/firestore';
+
+/**
+ * Provides a user interface for creating a new user profile with fields for name, gender, date of birth,
+ * height, weight, and avatar selection. The form ensures all fields are validated before submitting the
+ * data to a Firestore collection.
+ *
+ * @component
+ * @param {object} props - Component props.
+ * @param {object} props.navigation - Navigation prop injected by the navigation library for routing.
+ */
+const CreateProfile = ({ navigation }) => {
+
+    // Create connection to Firestore via collection reference
+    const profileCollection = collection(firestore, 'profile');
+    
+    // State for form fields
+    const [name, setName] = useState('');
+    const [selectedGender, setSelectedGender] = useState(null);
+    const [height, setHeight] = useState('');
+    const [weight, setWeight] = useState('');
+    const [selectedAvatarIndex, setSelectedAvatarIndex] = useState(0);
+    const [phoneNumber, setPhoneNumber] = useState('');
+
+
+    // State for date picker
+    const [dateOfBirth, setDateOfBirth] = useState(new Date());
+    const [showDatePicker, setShowDatePicker] = useState(false);
+    const minDate = new Date('1900-01-01');
+    const maxDate = new Date();
+
+    /**
+     * Handles the submission of the profile form. Validates all form fields for correctness and completeness,
+     * calculates the user's age, and submits the data to Firestore. Alerts the user in case of validation failures
+     * or informs them upon successful creation of the profile.
+     *
+     * @async
+     * @function handleCreateProfile
+     */
+        const handleCreateProfile = async () => {
+
+        // Check for empty or invalid fields
+        if (!selectedGender) {
+            Alert.alert("Missing Information", "Please select a gender.");
+            return;
+        }
+        if (!name.trim()) {
+            Alert.alert("Missing Information", "Please enter your name.");
+            return;
+        }
+        // Check if the dateOfBirth is reasonable, e.g., not a future date or too old
+        if (dateOfBirth > new Date() || dateOfBirth &lt; new Date('1900-01-01')) {
+            Alert.alert("Invalid Date", "Please enter a valid date of birth.");
+            return;
+        }
+        if (!height || parseFloat(height) &lt;= 0 || parseFloat(height) > 300) {
+            Alert.alert("Invalid Input", "Please enter a valid height in cm.");
+            return;
+        }
+        if (!weight || parseFloat(weight) &lt;= 0 || parseFloat(weight) > 1000) {
+            Alert.alert("Invalid Input", "Please enter a valid weight in kg.");
+            return;
+        }
+
+        //calculate age from current date and dateOfBirth
+        const age = differenceInYears(new Date(), dateOfBirth);
+        
+        // Create profile data object
+        const profileData = {
+            name,
+            gender: selectedGender,
+            height: parseFloat(height),
+            weight: parseFloat(weight),
+            phoneNumber: parseInt(phoneNumber, 8),
+            dateOfBirth: dateOfBirth,
+            age: age,
+            avatarUrl: avatarUrls[selectedAvatarIndex],
+        };
+    
+        try {
+            const docRef = await addDoc(profileCollection, profileData);
+            console.log('Profile created with ID:', docRef.id);
+            navigation.navigate('GoalsReg');
+        } catch (error) {
+            console.error('Error creating profile:', error);
+        }
+    }
+
+    /**
+     * Manages date input changes and updates component state. Hides the date picker upon selection.
+     *
+     * @function onChangeDate
+     * @param {Event} event - The event object associated with the change of input.
+     * @param {Date} selectedDate - The date selected by the user.
+     */
+    const onChangeDate = (event, selectedDate) => {
+        const currentDate = selectedDate || dateOfBirth;
+        setShowDatePicker(false);
+        setDateOfBirth(currentDate);
+    };
+
+    /**
+     * Triggers the display of the date picker for the date of birth selection.
+     *
+     * @function showDatepicker
+     */
+    const showDatepicker = () => {
+        setShowDatePicker(true);
+    };
+
+    const [showAvatarSelection, setShowAvatarSelection] = useState(false);
+
+    // Preloaded Avatar URLs that is stored in Firebase Storage
+    const avatarUrls = [
+        'https://firebasestorage.googleapis.com/v0/b/nutri-vision-78db7.appspot.com/o/Man1.png?alt=media&amp;token=36480a3b-e065-4629-8703-771f5c7c1831',
+        'https://firebasestorage.googleapis.com/v0/b/nutri-vision-78db7.appspot.com/o/Man2.png?alt=media&amp;token=65310e0d-131f-4179-9e8a-d267b641d1e4',
+        'https://firebasestorage.googleapis.com/v0/b/nutri-vision-78db7.appspot.com/o/hacker.png?alt=media&amp;token=8691a89d-74d6-452b-ad90-6686e9806c72',
+        'https://firebasestorage.googleapis.com/v0/b/nutri-vision-78db7.appspot.com/o/Woman1.png?alt=media&amp;token=7ecd59d7-3335-4ad0-ad5d-3438ee1c13ff',
+        'https://firebasestorage.googleapis.com/v0/b/nutri-vision-78db7.appspot.com/o/Woman2.png?alt=media&amp;token=5920e6ee-0341-492c-a116-cd5450dfa15b',
+        'https://firebasestorage.googleapis.com/v0/b/nutri-vision-78db7.appspot.com/o/Woman3.png?alt=media&amp;token=2470a34c-1c9b-44b7-ba9a-5422f7a61873',
+        
+    ];
+
+
+    // Preloaded Avatar Icons
+    const avatarImages = [
+        require('../assets/images/Man1.png'),
+        require('../assets/images/Man2.png'),
+        require('../assets/images/hacker.png'),
+        require('../assets/images/Woman1.png'),
+        require('../assets/images/Woman2.png'),
+        require('../assets/images/Woman3.png'),
+
+    ];
+
+    const handleAvatarSelect = (index) => {
+        setSelectedAvatarIndex(index);
+        setShowAvatarSelection(false);
+        console.log('Avatar pressed'); 
+    };
+
+    /**
+     * Validates and sets the height based on the user's input. Provides feedback for invalid inputs.
+     *
+     * @function handleHeightChange
+     * @param {string} text - The input text from the height input field.
+     */
+    const handleHeightChange = (text) => {
+        const heightNum = parseFloat(text);
+        if (text === "") {
+            setHeight(text);  
+        } else if (heightNum > 0 &amp;&amp; heightNum &lt;= 300) {
+            setHeight(text);
+        } else if (heightNum == 0) {
+            alert("Height cannot be 0");
+        } else if (heightNum &lt; 0) {
+            alert("Height cannot be negative.");
+        } else if (heightNum > 300) {
+            alert("You can't be that tall!");
+        }
+    };
+    
+    /**
+     * Validates and sets the weight based on the user's input. Provides feedback for invalid inputs.
+     *
+     * @function handleWeightChange
+     * @param {string} text - The input text from the weight input field.
+     */
+    const handleWeightChange = (text) => {
+        const weightNum = parseFloat(text);
+        if (text === "") {
+            setWeight(text);  
+        } else if (weightNum > 0 &amp;&amp; weightNum &lt;= 1000) {
+            setWeight(text);
+        } else if (weightNum == 0) {
+            alert("Weight cannot be 0");
+        } else if (weightNum &lt; 0) {
+            alert("Weight cannot be negative.");
+        } else if (weightNum > 1000) {
+            alert("That weight is too high!");
+        }
+    };
+
+
+    const [bmi, setBmi] = useState(null);
+    const [bmiCategory, setBmiCategory] = useState('');
+
+    useEffect(() => {
+        calculateBmi();
+    }, [height, weight]);
+
+    /**
+     * Calculates the Body Mass Index (BMI) based on the height and weight entered by the user. Sets the BMI and
+     * categorizes it into different health ranges.
+     *
+     * @function calculateBmi
+     */
+    const calculateBmi = () => {
+        console.log(`Input Height: ${height} cm`);
+        const heightInMeters = parseFloat(height) / 100;
+        const weightInKilograms = parseFloat(weight);
+        console.log(`Height in meters: ${heightInMeters}, Weight in kilograms: ${weightInKilograms}`);
+
+        if (heightInMeters > 0 &amp;&amp; weightInKilograms > 0) {
+          const calculatedBmi = weightInKilograms / (heightInMeters * heightInMeters);
+          setBmi(calculatedBmi.toFixed(2)); 
+
+          console.log(`Calculated BMI: ${calculatedBmi}`);
+
+          // Determine BMI Category
+          if (calculatedBmi &lt; 18.5) {
+            setBmiCategory('Underweight');
+          } else if (calculatedBmi &lt; 25) {
+            setBmiCategory('Normal weight');
+          } else if (calculatedBmi &lt; 30) {
+            setBmiCategory('Overweight');
+          } else {
+            setBmiCategory('Obesity');
+          }
+        } else {
+          setBmi(null);
+          setBmiCategory('');
+        }
+      };
+
+    return (
+        &lt;SafeAreaView style={styles.safeArea}>
+            &lt;ScrollView style={styles.scrollView}>
+                &lt;View style={styles.container}>
+                    &lt;Text style = {styles.chooseAvatar}>Choose Your Avatar&lt;/Text>
+
+                    &lt;TouchableOpacity onPress={() => setShowAvatarSelection(!showAvatarSelection)} style={styles.avatarSelectButton}>
+                        &lt;Image source={avatarImages[selectedAvatarIndex]} style={styles.avatar} />
+                    &lt;/TouchableOpacity>
+
+                    {showAvatarSelection &amp;&amp; (
+                         &lt;View style={styles.avatarPicker}>
+                             &lt;ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.avatarScrollView}>
+                                {avatarImages.map((avatar, index) => (
+                                    &lt;TouchableOpacity
+                                        key={index}
+                                        onPress={() => handleAvatarSelect(index)}
+                                        style={styles.avatarOption}
+                                    >
+                                        &lt;Image source={avatar} style={styles.avatar} />
+                                    &lt;/TouchableOpacity>
+                                ))}
+                            &lt;/ScrollView>
+                        &lt;/View>
+                    )}
+
+
+                    {/* Gender Selection */}
+                    &lt;Text style={styles.genderLabel}>Gender: &lt;/Text>
+                    &lt;View style={styles.genderContainer}>
+                        {['Male', 'Female', 'Prefer Not to Say'].map((gender) => (
+                            &lt;TouchableOpacity
+                                key={gender}
+                                style={[
+                                    styles.genderButton,
+                                    selectedGender === gender &amp;&amp; styles.genderButtonSelected
+                                ]}
+                                onPress={() => setSelectedGender(gender)}
+                            >
+                                &lt;Text style={[
+                                    styles.genderButtonText,
+                                    selectedGender === gender &amp;&amp; styles.genderButtonTextSelected
+                                ]}>
+                                    {gender}
+                                &lt;/Text>
+                            &lt;/TouchableOpacity>
+                        ))}
+                    &lt;/View>
+
+                    {/* Name input */}
+                    &lt;Text style={styles.label}>Your Name&lt;/Text>
+                    &lt;TextInput
+                        style={styles.input}
+                        placeholder="Enter your name"
+                        value={name}
+                        onChangeText={setName}
+                    />
+
+                    {/* DOB Selection */}
+                    &lt;Text style={styles.label}>Date of Birth&lt;/Text>
+                    &lt;TouchableOpacity onPress={showDatepicker} style={styles.datePickerToggle}>
+                        &lt;Text style={styles.datePickerText}>
+                            {format(dateOfBirth, 'dd/MM/yyyy')}
+                        &lt;/Text>
+                    &lt;/TouchableOpacity>
+
+                    {showDatePicker &amp;&amp; (
+                        &lt;DateTimePicker
+                            value={dateOfBirth}
+                            mode="date"
+                            is24Hour={true}
+                            display="default"
+                            onChange={onChangeDate}
+                            minimumDate={minDate}
+                            maximumDate={maxDate}
+                        />
+                    )}
+
+                    {/* Height input */}
+                    &lt;Text style={styles.label}>Height (cm)&lt;/Text>
+                    &lt;TextInput
+                        style={styles.input}
+                        placeholder="Enter your height"
+                        keyboardType="numeric"
+                        value={height}
+                        onChangeText={handleHeightChange}
+                    />
+
+                    {/* Weight input */}
+                    &lt;Text style={styles.label}>Weight (kg)&lt;/Text>
+                    &lt;TextInput
+                        style={styles.input}
+                        placeholder="Enter your weight"
+                        keyboardType="numeric"
+                        value={weight}
+                        onChangeText={handleWeightChange}
+                    />
+
+                    {bmi &amp;&amp; (
+                        &lt;View style={styles.bmiContainer}>
+                            &lt;Text style={styles.bmiText}>Your BMI: {bmi}&lt;/Text>
+                            &lt;Text style={[
+                                styles.bmiCategoryText,
+                                bmiCategory === 'Normal weight' &amp;&amp; styles.normalWeight,
+                                bmiCategory === 'Underweight' &amp;&amp; styles.underweight,
+                                    (bmiCategory === 'Overweight' || bmiCategory === 'Obesity') &amp;&amp; styles.overweight, // Combined overweight and obesity for the same color
+                            ]}>
+                                {bmiCategory}
+                            &lt;/Text>
+                            &lt;/View>
+                    )}
+
+
+                    &lt;TouchableOpacity onPress={handleCreateProfile} style={styles.createAccountButton}>
+                        &lt;Text style={styles.createAccountButtonText}>Create Profile&lt;/Text>
+                    &lt;/TouchableOpacity>
+                
+            &lt;/View>
+        &lt;/ScrollView>
+    &lt;/SafeAreaView>
+    );
+}
+
+const styles = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        backgroundColor: '#f4e5c2',
+    },
+
+    chooseAvatar : {
+        fontSize : 22,
+        marginBottom : 20,
+        fontWeight : 'bold',
+        textAlign : 'center',
+    },
+    avatarSelectButton: {
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    avatarPicker: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginBottom: 20,
+    },
+    avatarOption: {
+        marginHorizontal: 10,
+    },
+    avatar: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+    },
+    
+    container: {
+        flex: 1,
+        padding: 20,
+    },
+
+    label: {
+        fontSize: 14,
+        color: '#000',
+        fontWeight: 'bold',
+        marginBottom: 3,
+        marginTop: 8,
+    },
+
+    genderContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        margin: 10,
+    },
+    genderButton: {
+        borderWidth: 1,
+        borderColor: '#aaa',
+        borderRadius: 20,
+        paddingVertical: 10,
+        paddingHorizontal: 17,
+        backgroundColor: '#fff',
+    },
+    genderButtonSelected: {
+        backgroundColor: '#007bff',
+    },
+    genderButtonText: {
+        textAlign: 'center',
+        color: '#000',
+        fontWeight : 'bold',
+    },
+    genderButtonTextSelected: {
+        color: '#fff',
+    },
+
+    photoContainer: {
+        alignItems: 'center',
+        marginVertical: 20,
+    },
+
+    avatarContainer: {
+        marginVertical: 20,
+        height: 120,
+        width: 120,
+        borderRadius: 60,
+        borderWidth: 3,
+        borderColor: '#ffffff',
+        justifyContent: 'center',
+        alignItems: 'center',
+        overflow: 'hidden',
+    },
+    avatar: {
+        width: 110,
+        height: 110,
+        borderRadius: 55,
+    },
+
+    input: {
+        flex: 1,
+        paddingVertical: 10,
+        paddingLeft : 10,
+        backgroundColor: '#FFF',
+        borderRadius : 10,
+    },
+
+    inputWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: 'gray',
+        backgroundColor: '#FFF',
+        borderRadius : 10,
+    },
+
+    datePickerToggle: {
+        borderWidth: 1,
+        borderColor: 'gray',
+        padding: 10,
+        marginBottom: 10,
+        borderRadius: 5,
+        backgroundColor: '#FFF',
+        alignItems: 'center',
+    },
+
+    datePickerText: {
+        fontSize: 17,
+        color: '#000',
+    },
+
+
+    bmiContainer: {
+        marginTop: 20,
+        alignItems: 'center',
+    },
+    
+    bmiText: {
+        fontSize: 19,
+        fontWeight: 'bold',
+    },
+    
+    bmiCategoryText: {
+        fontSize: 17,
+    },
+    normalWeight: {
+        color: 'green',
+    },
+    underweight: {
+        color: 'orange',
+    },
+    overweight: {
+        color: 'red',
+    },
+    obesity: {
+        color: 'red',
+    },
+
+    createAccountButton: {
+        marginTop: 20,
+        backgroundColor: '#007bff',
+        borderRadius: 20,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    
+    createAccountButtonText: {
+        color: '#ffffff',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+
+});
+
+export default CreateProfile;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AccountReg">AccountReg</a></li><li><a href="global.html#Calories">Calories</a></li><li><a href="global.html#CommunityScreen">CommunityScreen</a></li><li><a href="global.html#ConfirmMealPage">ConfirmMealPage</a></li><li><a href="global.html#CreateProfile">CreateProfile</a></li><li><a href="global.html#EditGoals">EditGoals</a></li><li><a href="global.html#EditProfilePage">EditProfilePage</a></li><li><a href="global.html#Entry">Entry</a></li><li><a href="global.html#FavouritesPage">FavouritesPage</a></li><li><a href="global.html#GoalsReg">GoalsReg</a></li><li><a href="global.html#History">History</a></li><li><a href="global.html#IndividualMeal">IndividualMeal</a></li><li><a href="global.html#LandingUI">LandingUI</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#NutritionalInfoPage">NutritionalInfoPage</a></li><li><a href="global.html#ProfileScreen">ProfileScreen</a></li><li><a href="global.html#ScannerPage">ScannerPage</a></li><li><a href="global.html#addFood">addFood</a></li><li><a href="global.html#calculateBmi">calculateBmi</a></li><li><a href="global.html#checkPasswordStrength">checkPasswordStrength</a></li><li><a href="global.html#checkPasswordsMatch">checkPasswordsMatch</a></li><li><a href="global.html#containsKeywords">containsKeywords</a></li><li><a href="global.html#displayGoalDetails">displayGoalDetails</a></li><li><a href="global.html#extractContent">extractContent</a></li><li><a href="global.html#fetchAndDisplayGoalDetails">fetchAndDisplayGoalDetails</a></li><li><a href="global.html#fetchMealEntriesForDate">fetchMealEntriesForDate</a></li><li><a href="global.html#fetchUserProfileByEmail">fetchUserProfileByEmail</a></li><li><a href="global.html#filteredPosts">filteredPosts</a></li><li><a href="global.html#handleCreateAccountPress">handleCreateAccountPress</a></li><li><a href="global.html#handleCreateProfile">handleCreateProfile</a></li><li><a href="global.html#handleGoalSelection">handleGoalSelection</a></li><li><a href="global.html#handleHeightChange">handleHeightChange</a></li><li><a href="global.html#handleNextPress">handleNextPress</a></li><li><a href="global.html#handlePressTerms">handlePressTerms</a></li><li><a href="global.html#handleWeightChange">handleWeightChange</a></li><li><a href="global.html#onChange">onChange</a></li><li><a href="global.html#onChangeDate">onChangeDate</a></li><li><a href="global.html#showDatepicker">showDatepicker</a></li><li><a href="global.html#updateCalories">updateCalories</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Apr 17 2024 12:45:14 GMT+0800 (Singapore Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: HistoryPage.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: HistoryPage.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useEffect, useRef, useState } from 'react';
+import { View, StyleSheet, Image, Text, TouchableOpacity,
+        SafeAreaView, ScrollView, StatusBar } from 'react-native';
+
+import { getMealHistoryFromFirestore } from '../../MealHistory';
+import SearchBar from '../Components/SearchBar';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+
+curveHeight = 100
+screenWidth = 500
+
+/**
+ * Entry component that displays a single meal entry with a title, description, and navigation to a detailed page.
+ * 
+ * @component
+ * @param {Object} props - Props for the Entry component.
+ * @param {string} props.title - Title of the meal entry.
+ * @param {string} props.description - Description of the meal entry.
+ * @param {Object} props.navigation - Navigation object provided by React Navigation.
+ * @param {string} props.documentId - Unique identifier for the meal document, used for navigation.
+ */
+function Entry({ title, description, navigation, documentId}) {
+
+     /**
+     * Handles the press event to navigate to the IndividualMeal component.
+     */
+    const handleNextEntryPress = () => {
+        navigation.navigate('IndividualMeal', { documentId: documentId })
+        console.log('Navigatiing to documentId: ', { documentId: documentId })
+    }
+    return (
+        &lt;View style={styles.entry}>
+            &lt;View style={styles.entryContainer}>
+                &lt;Text style={styles.entryTitle}> {title} &lt;/Text>
+                &lt;Text style={styles.entryDescription}> {description}&lt;/Text>
+
+            &lt;/View>
+            &lt;View>
+                &lt;TouchableOpacity onPress={handleNextEntryPress}>
+                    &lt;Image
+                        style={styles.arrowlogo}
+                        source={require('../assets/right_pointing_arrow.png')}
+                        resizeMode='contain'
+                    />
+                &lt;/TouchableOpacity>
+            &lt;/View>
+        &lt;/View>
+    );
+}
+
+/**
+ * History component that displays a list of meal entries filtered by date and provides a search functionality.
+ * 
+ * @component
+ * @param {Object} props - Props for the History component.
+ * @param {Object} props.navigation - Navigation object provided by React Navigation for navigating to other screens.
+ */
+function History({ navigation }) {
+
+    // Defining state for date picker method
+    const [date, setDate] = useState(new Date());
+    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [mealEntries, setMealEntries] = useState([]);
+    const [filteredEntires, setFilteredEntries] = useState([]);
+
+    /**
+     * Handles date change events from the DatePicker component.
+     * @param {Object} event - Event object.
+     * @param {Date} selectedDate - The date selected by the user.
+     */
+    const onChange = (event, selectedDate) => {
+        const currentDate = selectedDate || date;
+        setShowDatePicker(false);
+        setDate(currentDate);
+        fetchMealEntriesForDate(currentDate);
+    };
+
+    // Function to format date
+    const formatDate = (date) => {
+        return `${date.getDate()} ${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`;
+    };
+
+    useEffect(() => {
+        fetchMealEntriesForDate(date); 
+    }, [date]);
+
+    /**
+     * Fetches meal entries from Firestore based on the specified date.
+     * @param {Date} date - The date for which to fetch meal entries.
+     */
+    const fetchMealEntriesForDate = async (date) => {
+        try {
+            const dateString = date.toISOString().split('T')[0]; 
+            const entries = await getMealHistoryFromFirestore(dateString);
+            setMealEntries(entries);
+            setFilteredEntries(entries);
+        } catch (error) {
+            console.error('Error fetching meal entries:', error);
+        }
+    };
+
+    /**
+     * Filters meal entries based on a search query.
+     * @param {string} query - The search query to filter meal entries.
+     */
+    const handleSearch = (query) => {
+        const filtered = mealEntries.filter(entry=> entry.name.toLowerCase().includes(query.toLowerCase()));
+        setFilteredEntries(filtered);
+      }
+
+
+    return (
+        &lt;View style={styles.container}>
+            &lt;StatusBar backgroundColor="grey" barStyle="light-content" />
+            &lt;SafeAreaView>
+                &lt;ScrollView>
+                    &lt;View style={styles.topContainer}>
+                        &lt;View style={styles.topContent}>
+                            &lt;Text style={styles.pmText}>Past Meals&lt;/Text>
+                        &lt;/View>
+                    &lt;/View>
+
+                    {/* Container to display datetimepicker */}
+                    &lt;View style={styles.dateContainer}>
+                        &lt;TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePickerRow}>
+                            &lt;FontAwesomeIcon name="calendar" size={24} color="#000" />
+                            &lt;Text style={styles.datePickerText}>{formatDate(date)}&lt;/Text>
+                        &lt;/TouchableOpacity>
+                        {showDatePicker &amp;&amp; (
+                            &lt;DateTimePicker
+                                key={date.toString()}
+                                value={date}
+                                mode="date"
+                                display="default"
+                                onChange={onChange}
+                            />
+                        )}
+                    &lt;/View>
+
+                    &lt;SearchBar onSearch={handleSearch} />
+
+                    {/* Displays entries according to date */}
+                    &lt;View style={{marginTop: 10}}>
+                        {filteredEntires.length === 0 ? ( 
+                            &lt;Text style={styles.noMealsText}>No meals logged yet&lt;/Text>
+                        ) : (
+                            filteredEntires.map((entry, index) => (
+                                &lt;View key={index}>
+                                    &lt;Entry title={entry.name} navigation={navigation} documentId={entry.id} />
+                                &lt;/View>
+                            ))
+                        )}
+                    &lt;/View>
+                &lt;/ScrollView>
+            &lt;/SafeAreaView>
+        &lt;/View >
+    );
+}
+
+const styles = StyleSheet.create({
+    arrowlogo: {
+        height: 30,
+        width: 30,
+    },
+
+    buttonCollapse: {
+        fontSize: 15,
+        alignSelf: 'center',
+        color: 'black',
+        fontWeight: '600'
+    },
+
+    buttonContainer: {
+        width: 100,
+        height: 50,
+        paddingTop: 13,
+        borderRadius: 100,
+        alignSelf: 'center',
+        backgroundColor: '#f0f0f0'
+    },
+
+    container: {
+        flex: 1,
+        backgroundColor: 'white'
+    },
+
+    dateContainer: {
+        paddingTop: 10,
+
+    },
+
+    dateHeader: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        backgroundColor: '#f0f0f0',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        marginBottom: 5,
+    },
+
+    datepicker: {
+        backgroundColor: 'pink'
+    },
+
+    datePickerRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 10,
+        padding: 10,
+        backgroundColor: '#f2f2f2',
+        borderRadius: 5,
+    },
+
+    datePickerText: {
+        fontSize: 16,
+        marginLeft: 10,
+        color: '#333',
+    },
+
+
+    dateText: {
+        fontSize: 16,
+        fontWeight: '400',
+        marginBottom: 10
+    },
+
+    entry: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+    },
+
+    entryContainer: {
+        flex: 1
+    },
+
+    entryDescription: {
+        fontSize: 14,
+        color: '#666',
+    },
+
+    entryTitle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+        backgroundColor: 'pink'
+    },
+
+    headerText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+
+    morelogo: {
+        height: 30,
+        width: 30,
+        marginRight: 10,
+    },
+
+    pmText: {
+        fontSize: 25,
+        fontWeight: 'bold',
+    },
+
+    searchlogo: {
+        height: 30,
+        width: 30,
+    },
+
+    topContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: '#ddf0dd',
+    },
+
+    topContent: {
+        flex: 1,
+        marginLeft: 18,
+        marginTop: 10,
+        paddingBottom: 20,
+    },
+
+    topIcons: {
+        flexDirection: 'row',
+    },
+
+    viewLessButton: {
+        backgroundColor: '#f0f0f0',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        alignItems: 'center',
+    },
+
+    viewLessText: {
+        fontSize: 16,
+        color: 'blue',
+    },
+    noMealsText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginTop: 30, 
+        color: 'gray', 
+    },
+})
+
+export default History;
+
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AccountReg">AccountReg</a></li><li><a href="global.html#Calories">Calories</a></li><li><a href="global.html#CommunityScreen">CommunityScreen</a></li><li><a href="global.html#ConfirmMealPage">ConfirmMealPage</a></li><li><a href="global.html#CreateProfile">CreateProfile</a></li><li><a href="global.html#EditGoals">EditGoals</a></li><li><a href="global.html#EditProfilePage">EditProfilePage</a></li><li><a href="global.html#Entry">Entry</a></li><li><a href="global.html#FavouritesPage">FavouritesPage</a></li><li><a href="global.html#GoalsReg">GoalsReg</a></li><li><a href="global.html#History">History</a></li><li><a href="global.html#IndividualMeal">IndividualMeal</a></li><li><a href="global.html#LandingUI">LandingUI</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#NutritionalInfoPage">NutritionalInfoPage</a></li><li><a href="global.html#ProfileScreen">ProfileScreen</a></li><li><a href="global.html#ScannerPage">ScannerPage</a></li><li><a href="global.html#addFood">addFood</a></li><li><a href="global.html#calculateBmi">calculateBmi</a></li><li><a href="global.html#checkPasswordStrength">checkPasswordStrength</a></li><li><a href="global.html#checkPasswordsMatch">checkPasswordsMatch</a></li><li><a href="global.html#containsKeywords">containsKeywords</a></li><li><a href="global.html#displayGoalDetails">displayGoalDetails</a></li><li><a href="global.html#extractContent">extractContent</a></li><li><a href="global.html#fetchAndDisplayGoalDetails">fetchAndDisplayGoalDetails</a></li><li><a href="global.html#fetchMealEntriesForDate">fetchMealEntriesForDate</a></li><li><a href="global.html#fetchUserProfileByEmail">fetchUserProfileByEmail</a></li><li><a href="global.html#filteredPosts">filteredPosts</a></li><li><a href="global.html#handleCreateAccountPress">handleCreateAccountPress</a></li><li><a href="global.html#handleCreateProfile">handleCreateProfile</a></li><li><a href="global.html#handleGoalSelection">handleGoalSelection</a></li><li><a href="global.html#handleHeightChange">handleHeightChange</a></li><li><a href="global.html#handleNextPress">handleNextPress</a></li><li><a href="global.html#handlePressTerms">handlePressTerms</a></li><li><a href="global.html#handleWeightChange">handleWeightChange</a></li><li><a href="global.html#onChange">onChange</a></li><li><a href="global.html#onChangeDate">onChangeDate</a></li><li><a href="global.html#showDatepicker">showDatepicker</a></li><li><a href="global.html#updateCalories">updateCalories</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Apr 17 2024 12:45:14 GMT+0800 (Singapore Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
