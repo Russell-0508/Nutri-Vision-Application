@@ -6,12 +6,11 @@ import { getFirestore, collection, query, where, getDocs, updateDoc } from 'fire
 import { getProfileByEmail } from '../../ProfileHistory';
 import { differenceInYears, format } from 'date-fns';
 
+/**
+ * Provides UI for editing user profile information.
+ */
 const EditProfilePage = () => {
-
-    // Create connection to Firestore via collection reference
     const db = getFirestore();
-
-    // State variables for input fields
     const [name, setName] = useState('');
     const [email, setEmail] = useState('haolun@gmail.com'); 
     const [selectedGender, setSelectedGender] = useState('');
@@ -21,7 +20,9 @@ const EditProfilePage = () => {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [profileId, setProfileId] = useState('');
 
-    // Fetch profile from Firestore to display before editing
+    /**
+     * Fetches profile data by email upon component mount.
+     */
     useEffect(() => {
         const fetchProfileByEmail = async () => {
             try {
@@ -46,17 +47,21 @@ const EditProfilePage = () => {
         fetchProfileByEmail();
     }, []);
 
-    //Function to change date
+    /**
+     * Handles the selection of a date in the DatePicker.
+     * @param {Object} event - The event object.
+     * @param {Date} selectedDate - The date picked by the user.
+     */
     const onChangeDate = (event, selectedDate) => {
         const currentDate = selectedDate || date; 
         setShowDatePicker(false); 
         setDate(currentDate); 
     };
 
-
-    //Function to handle various profile updates
+    /**
+     * Validates input fields and updates the profile document in Firestore.
+     */
     const handleEditProfile = async () => {
-
         // Check for empty or invalid fields
         if (!name.trim()) {
             Alert.alert("Missing Information", "Please enter your name.");
@@ -66,7 +71,6 @@ const EditProfilePage = () => {
             Alert.alert("Missing Information", "Please select a gender.");
             return;
         }
-        // Check if the dateOfBirth is reasonable, e.g., not a future date or too old
         if (!(date instanceof Date && !isNaN(date))) {
             Alert.alert("Invalid Date", "Please enter a valid date of birth.");
             return;
@@ -184,7 +188,6 @@ const EditProfilePage = () => {
                             <Text style={styles.buttonText}>Save Changes</Text>
                         </TouchableOpacity>
                     </View>
-                    
                 </View>
             </ScrollView>
         </SafeAreaView>

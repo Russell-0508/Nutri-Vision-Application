@@ -12,9 +12,14 @@ import * as FileSystem from 'expo-file-system';
 import { sendImageToAPI } from '../../GPT4API';
 import { fetchNutritionalInfo } from '../../CalorieNinjaAPI';
 
+// Icon for photo library
 <MaterialIcons name="photo-library" size={30} color="black" />
 
-//extract content from JSON, json traversal doesnt work for some reason
+/**
+ * Extracts content from a JSON response where traversal might fail due to formatting.
+ * @param {string} inputString - String containing JSON data.
+ * @returns {string} - Extracted content string or a not found message.
+ */
 function extractContent(inputString) {
   // Define a regex to search for "content":" followed by any text until the next quote
   const regex = /"content":"(.*?)"/;
@@ -32,24 +37,33 @@ function extractContent(inputString) {
   }
 }
 
+/**
+ * Checks if the given content string contains certain keywords indicating potential issues.
+ * @param {string} content - Text content to check.
+ * @returns {boolean} - True if keywords are found, false otherwise.
+ */
 function containsKeywords(content) {
-  //regex keywords
+  // Define regex for keywords related to blur or obfuscation
   const pattern = /\b(blur.*|obsfucat.*|cannot|unable|image|contain)\b/i;
 
-  //Test the content
+  // Test the content against the pattern
   return pattern.test(content);
 }
 
-//Functions for scanner page, includes taking and uploading pictures
+/**
+ * Component to capture or select images, process them for nutritional content, and navigate accordingly based on content analysis.
+ */
 function ScannerPage({ navigation }) {
-  const [hasPermission, setHasPermission] = useState(null);
-  const [type, setType] = useState(Camera.Constants.Type.back);
-  const [galleryPermission, setGalleryPermission] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const cameraRef = useRef(null); 
-  const isFocused = useIsFocused(); 
+  const [hasPermission, setHasPermission] = useState(null);  // Stores camera permission status
+  const [type, setType] = useState(Camera.Constants.Type.back);  // Camera type state
+  const [galleryPermission, setGalleryPermission] = useState(null);  // Stores gallery permission status
+  const [selectedImage, setSelectedImage] = useState(null);  // Stores the selected image
+  const cameraRef = useRef(null);  // Reference to the camera component
+  const isFocused = useIsFocused();  // Determines if the screen is focused
 
-  //Function to set camera and gallery permissions
+  /**
+   * Requests camera and gallery permissions on component mount.
+   */
   useEffect(() => {
     (async () => {
       const cameraStatus = await Camera.requestCameraPermissionsAsync();
@@ -60,71 +74,52 @@ function ScannerPage({ navigation }) {
     })();
   }, []);
 
-
-  //Function to take picture using Expo Camera module, and compress image to ensure that the image is less than 10MB to be stored in Firebase 
+  /**
+   * Captures an image, compresses it, and handles nutritional data extraction.
+   */
   const takePicture = async () => {
-    //Function to log taking a picture
     console.log("Taking picture...");
     if (cameraRef.current) {
       try {
         let photo = await cameraRef.current.takePictureAsync();
-        //Function to log photo capured uri
         console.log("Photo captured: ", photo.uri);
 
-        //Function to resize image to fit requirements
         const resizedImage = await ImageManipulator.manipulateAsync(
           photo.uri,
           [{ resize: { width: 640, height: 640 } }],
           { compress: 0.5, format: ImageManipulator.SaveFormat.JPEG }
         );
 
-        //Function to log resized and compressed image
         console.log('Resized and compressed image:', resizedImage);
 
-        // Convert the captured image to base64 for storing to Firebase
         const base64Image = await FileSystem.readAsStringAsync(resizedImage.uri, {
           encoding: FileSystem.EncodingType.Base64,
         });
 
         if (base64Image) {
-          //Function to get API response
           const apiResponse = await sendImageToAPI(base64Image);
-          //Function to log API response
           console.log(apiResponse);
-          //Function to get API response content
           const content = extractContent(apiResponse);
-          //Function to log API response content
           console.log(content);
 
           if (containsKeywords(content)) {
-            Alert.Alert.alert("Image is blur or has errors. Please rescan.");
+            Alert.Alert.alert("Image is blurry or has errors. Please rescan.");
           } else {
-            //Check if content is blur or needs to be retaken
-
-            // Navigate to Confirm Meal page and pass the ingredients of the API response content
             console.log("Navigating to Confirm Meal page...");
             navigation.navigate('Confirm Meal', { base64Image, content });
           }
-
         } else {
-          //Function to log no image selected or captured
           console.log('No image selected or captured');
         }
-
-
-
       } catch (error) {
-        //Function to log error taking pictures
         console.error('Error taking picture:', error);
       }
-    }
-    else {
-      //Function to log cameraRed is null or undefined
+    } else {
       console.log("cameraRef is null or undefined");
     }
   };
 
-//Request permission to access camera and gallery from user 
+  // Handle permission status for camera and gallery access
   if (hasPermission === null || galleryPermission === null) {
     return <View />;
   }
@@ -140,8 +135,9 @@ function ScannerPage({ navigation }) {
   const cameraSize = windowWidth + 190; 
   const topOffset = (windowHeight - cameraSize) / 2;
 
-  //Function for users to upload an image from their gallery and upload to the app for meal logging.
-  //Image is also resized and compressed to ensure that it can be stored in Firebase for each unique meal Id 
+  /**
+   * Allows the user to select an image from their gallery for analysis.
+   */
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -149,59 +145,42 @@ function ScannerPage({ navigation }) {
       aspect: [1, 1],
       quality: 1,
     });
-    
-    //Function to log image picked
+
     console.log("ImagePicker Result:", result);
 
     if (!result.canceled && result.assets.length > 0) {
-      //Function to select image uri
       const selectedImageUri = result.assets[0].uri;
-      //Function to log selected image uri
       console.log("Image URI:", selectedImageUri);
 
       try {
-        //Function to resize image
         const resizedImage = await ImageManipulator.manipulateAsync(
           selectedImageUri,
           [{ resize: { width: 640, height: 640 } }],
           { compress: 0.5, format: ImageManipulator.SaveFormat.JPEG }
         );
         
-        //Function to log resized and compressed image
         console.log('Resized and compressed image:', resizedImage);
 
-        // Convert the compressed image to base64
         const base64Image = await FileSystem.readAsStringAsync(resizedImage.uri, {
           encoding: FileSystem.EncodingType.Base64,
         });
 
         if (base64Image) {
-          //Function to get API response
           const apiResponse = await sendImageToAPI(base64Image);
-          //Function to log API response
           console.log(apiResponse);
-          //Function to get API response content
           const content = extractContent(apiResponse);
-          //Function to log API response content
           console.log(content);
 
           if (containsKeywords(content)) {
             Alert.Alert.alert("Image is blur or has errors. Please rescan.");
           } else {
-            //Check if content is blur or needs to be retaken
-
-            // Navigate to Confirm Meal page and pass the ingredients of the API response content
             console.log("Navigating to Confirm Meal page...");
             navigation.navigate('Confirm Meal', { base64Image, content });
           }
-
         } else {
-          //Function to log no image selected or captured
           console.log('No image selected or captured');
         }
-
       } catch (error) {
-        //Function to log error converting image to base64 type
         console.error("Error converting image to base64:", error);
       }
     }
