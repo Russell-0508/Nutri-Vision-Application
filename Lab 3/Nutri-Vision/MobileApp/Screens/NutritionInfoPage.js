@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity, Image, StatusBar} from 'react-native';
+import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity, Image, StatusBar } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { saveMealToFirestore, updateMealDataInFirestore } from '../../MealHistory';
 import { fetchNutritionalInfo } from '../../CalorieNinjaAPI';
@@ -7,19 +7,22 @@ import { useNavigation } from '@react-navigation/native';
 import Svg, { Circle } from 'react-native-svg';
 import { fetchUserGoalDetails, checkMealTarget } from '../../goalsDetail';
 
+/**
+ * Displays nutritional information and allows user interactions for saving or adjusting meal preferences.
+ * @param {object} route - Contains parameters passed from the previous screen.
+ * @param {object} navigation - Allows navigation to other screens.
+ */
 function NutritionalInfoPage({ route, navigation }) {
   const { content } = route.params;
-  //Retrieves the encoding of meal image from Confirm Meal Page
   const { base64Image } = route.params;
 
-  // State to hold the image URI
-  const [imageUri, setImageUri] = useState(null); 
+  /** State for storing the image URI for display */
+  const [imageUri, setImageUri] = useState(null);
 
+  /** Placeholder URI for image display */
+  const placeholderImageUri = 'https://via.placeholder.com/150';
 
-  // Placeholder image URI
-  const placeholderImageUri = 'https://via.placeholder.com/150'; 
-
-  // State variables for nutritional information
+  /** State variables to store nutritional values */
   const [calories, setCalories] = useState('Loading...');
   const [carbohydrates, setCarbohydrates] = useState('Loading...');
   const [fats, setFats] = useState('Loading...');
@@ -30,10 +33,10 @@ function NutritionalInfoPage({ route, navigation }) {
 
   const { ingredients } = route.params;
 
+  /** Fetches and sets nutritional info based on ingredients */
   useEffect(() => {
     console.log("Received ingredients:", ingredients);
     setImageUri(base64Image);
-    //Calls Calorie Ninja API to retrieve nutritional values of each of the ingredient in the list  
     fetchNutritionalInfo(ingredients)
       .then(data => {
         let totalCalories = 0;
@@ -42,7 +45,6 @@ function NutritionalInfoPage({ route, navigation }) {
         let totalProtein = 0;
         let ingredientNames = [];
 
-        // Iterate through each item in the API response
         data.items.forEach(item => {
           totalCalories += item.calories;
           totalCarbohydrates += item.carbohydrates_total_g;
@@ -52,13 +54,11 @@ function NutritionalInfoPage({ route, navigation }) {
           ingredientNames.push(item.name);
         });
 
-        // Round the total nutritional values to whole numbers
         totalCalories = Math.round(totalCalories);
         totalCarbohydrates = Math.round(totalCarbohydrates);
         totalFats = Math.round(totalFats);
         totalProtein = Math.round(totalProtein);
 
-        // Set values to display
         const mealName = ingredientNames.join(' , ');
         setMealName(mealName);
         setCalories(totalCalories);
@@ -66,13 +66,11 @@ function NutritionalInfoPage({ route, navigation }) {
         setFats(totalFats);
         setProtein(totalProtein);
 
-        //Check if the calories for this meal fits the average calorie target allocated for each meal per day
         checkMealTarget('haolun@gmail.com', totalCalories) 
         .then(result => {
           setIsTargetFit(result);
-        })
+        });
 
-        // Prepare the meal data
         const mealData = {
           name: mealName,
           calories: totalCalories,
@@ -84,7 +82,6 @@ function NutritionalInfoPage({ route, navigation }) {
           picture: base64Image
         };
 
-        // Save the combined meal data (macros and image encoding) to Firestore with a unique meal Id 
         saveMealToFirestore(mealData)
           .then(mealId => {
             setMealId(mealId);
@@ -93,38 +90,31 @@ function NutritionalInfoPage({ route, navigation }) {
           .catch(error => console.error('Error saving combined meal:', error));
       })
       .catch(error => console.error('Error fetching nutritional info:', error));
-  }, [base64Image, ingredients]); 
+  }, [base64Image, ingredients]);
 
-  // For toggling favourites 
+  /** Toggles the favorite status of the meal */
   const [isFavorite, setIsFavorite] = useState(false);
-  // State for heart button colour
   const [heartColor, setHeartColor] = useState("black");
 
-  // Update favourites attribute in database when heart icon is pressed
+  /** Updates favorite status in the database */
   const toggleFavorite = async () => {
     try {
-      // Toggle the favorite status locally
       setIsFavorite(!isFavorite);
-
-      // Update the database to reflect the change
       updateMealDataInFirestore(mealId, { favourite: !isFavorite });
       setHeartColor(!isFavorite ? "red" : "black");
     } catch (error) {
       console.error('Error toggling favorite status:', error);
-      // Handle error
     }
   };
 
-  // Placeholder function for button presses
+  /** Logs button presses for diagnostic purposes */
   const handlePress = (action) => {
     console.log(`Pressed ${action}`);
   };
 
-  //Sets the colour of the target button depending on whether the meal logged fits the user's target.
-  //Red target button if the meal does not fit user's target.
-  //Green target button if the meal fits the user's target. 
+  /** Component to display a button based on meal fit to target */
   const ConfirmMealButton = () => {
-    if (isTargetFit==true) {
+    if (isTargetFit == true) {
       return (
         <TouchableOpacity style={[styles.confirmMealButton, { backgroundColor: 'rgb(96, 190, 61)' }]} onPress={() => navigation.navigate('Tabs')}>
           <Text style={styles.confirmMealText}>It fits your target!</Text>
@@ -139,27 +129,23 @@ function NutritionalInfoPage({ route, navigation }) {
     }
   };
 
-  //Set initial macros percentage to 0
-  const [carbsPercentage, setCarbsPercentage] = useState(0); 
-  const [fatsPercentage, setFatsPercentage] = useState(0); 
-  const [proteinPercentage, setProteinPercentage] = useState(0); 
+  /** Sets initial macros percentages */
+  const [carbsPercentage, setCarbsPercentage] = useState(0);
+  const [fatsPercentage, setFatsPercentage] = useState(0);
+  const [proteinPercentage, setProteinPercentage] = useState(0);
 
+  /** Updates macro percentages based on user goals */
   useEffect(() => {
-    // Fetch user's goal details based on user's email 
     const fetchGoalDetails = async () => {
       try {
         const userEmail = 'haolun@gmail.com';
         const goalDetails = await fetchUserGoalDetails(userEmail);
-
-        // Calculate the percentages of macros for the meal logged 
         const targetCarbs = goalDetails.Carbs;
         const targetFats = goalDetails.Fats;
         const targetProtein = goalDetails.Protein;
         const carbsPercent = Math.round((carbohydrates / targetCarbs) * 100);
         const fatsPercent = Math.round((fats / targetFats) * 100);
         const proteinPercent = Math.round((protein / targetProtein) * 100);
-
-        // Update state with calculated percentages
         setCarbsPercentage(carbsPercent);
         setFatsPercentage(fatsPercent);
         setProteinPercentage(proteinPercent);
@@ -170,11 +156,11 @@ function NutritionalInfoPage({ route, navigation }) {
     fetchGoalDetails();
   }, [carbohydrates, fats, protein]);
 
-  //Function to create macros progression circle
+  /** Renders a progress circle for macronutrients */
   const ProgressCircle = ({ percentage, fillColor, label }) => {
-    const size = 75; 
-    const strokeWidth = 5; 
-    const radius = (size / 2) - (strokeWidth * 2); 
+    const size = 75;
+    const strokeWidth = 5;
+    const radius = (size / 2) - (strokeWidth * 2);
     const circumference = 2 * Math.PI * radius;
     const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
@@ -182,7 +168,7 @@ function NutritionalInfoPage({ route, navigation }) {
       <View style={{ alignItems: 'center', margin: 10 }}>
         <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
           <Circle
-            stroke="#ddd" 
+            stroke="#ddd"
             fill="none"
             cx={size / 2}
             cy={size / 2}
@@ -208,18 +194,15 @@ function NutritionalInfoPage({ route, navigation }) {
     );
   };
 
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar backgroundColor="rgba(173, 219, 199, 1)" barStyle="light-content" />
       <View style={styles.imageContainer}>
-        {/* Image placeholder */}
         <Image
           source={{ uri: `data:image/png;base64,${imageUri}` || placeholderImageUri }}
           style={styles.imageStyle}
           resizeMode="contain"
         />
-        {/* Heart button */}
         <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
           <MaterialIcons
             name={isFavorite ? "favorite" : "favorite-border"} 
@@ -230,12 +213,10 @@ function NutritionalInfoPage({ route, navigation }) {
       </View>
       <View style={styles.nutritionalInfoContainer}>
         <Text style={styles.nutritionalInfoContainerText}>{mealName}</Text>
-        {/* Mass and Calories with Icons */}
         <View style={styles.nutritionalDetailsContainer}>
           <MaterialIcons name="local-fire-department" size={20} color="rgb(127, 127, 127)" />
           <Text style={styles.nutritionalDetailsText}>{calories}</Text>
         </View>
-        {/*Nutritional Information */}
         <Text style={styles.ingredientsHeaderText}>Nutritional Information</Text>
         <View style={styles.innerGreyContainer}>
           <View style={styles.nutritionalInfoRow}>
@@ -255,7 +236,6 @@ function NutritionalInfoPage({ route, navigation }) {
             <Text style={styles.valueText}>{protein}</Text>
           </View>
         </View>
-        {/* Nutritional information progress circles */}
         <View style={styles.progressCirclesContainer}>
           <ProgressCircle percentage={carbsPercentage} fillColor="brown" label="Carbohydrates" />
           <ProgressCircle percentage={fatsPercentage} fillColor="yellow" label="Fats" />
