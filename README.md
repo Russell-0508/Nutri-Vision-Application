@@ -1,5 +1,7 @@
 # SC2006 Nutri-Vision Application
 
+![App Logo](/MobileApp/assets/appLogo.png)
+
 # About
 This is a project for NTU SC2006 Software Engineering Module.
 
