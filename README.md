@@ -1,1 +1,1 @@
-# 2006-SCMA-SEITRAMS
+# SC2006 Nutri-Vision Application
