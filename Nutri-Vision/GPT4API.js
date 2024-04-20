@@ -8,7 +8,7 @@
  *
  */
 export async function sendImageToAPI(base64Image) {
-  const api_key = process.env.OPENAI_API_KEY;
+  const api_key = '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' // Assuming you've stored this securely
   const headers = {
     "Content-Type": "application/json",
     "Authorization": `Bearer ${api_key}`
